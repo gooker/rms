@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, Form, Input, Modal, Row, Select } from 'antd';
 import { LoadingOutlined, LockOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
-import { dealResponse, extractNameSpaceInfoFromEnvs, formatMessage, getAllEnvironments, isNull } from '@/utils/util';
+import { dealResponse, extractNameSpaceInfoFromEnvs, formatMessage, getAllEnvironments } from '@/utils/util';
 import requestAPI from '@/utils/requestAPI';
 import { selectAllDB, updateDB } from '@/utils/IndexDBUtil';
 import { fetchLogin } from '@/services/SSOService';
@@ -23,23 +23,32 @@ const Login = (props) => {
   const controllerRef = React.useRef(null); // axios 取消请求控制器
 
   const [formRef] = Form.useForm();
-  const [allEnvironments, setAllEnvironments] = useState([]);
+  const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    window.RMS.push = history.push;
-
     if (!window.isProductionEnv) {
       window.localStorage.setItem('dev', 'true');
     }
 
+    // 挂载push函数
+    window.RMS.push = history.push;
+
+    // 获取所有自定义环境
+    async function init() {
+      const { allEnvs, activeEnv } = await getAllEnvironments(window.dbContext);
+      setOptions(allEnvs);
+      formRef.setFieldsValue({ environment: activeEnv });
+    }
+
     init();
 
-    /********************* 一个彩蛋 *********************/
+    // 一个彩蛋
     function mousedownCb(ev) {
       eggValue.current.clientX = ev.clientX;
     }
+
     function dragendCb(ev) {
       const { left, right } = eggRef.current.getBoundingClientRect();
       if (
@@ -66,24 +75,16 @@ const Login = (props) => {
     const targetNode = eggRef.current;
     targetNode.addEventListener('pointerdown', mousedownCb);
     targetNode.addEventListener('dragend', dragendCb);
+
     return () => {
       targetNode.removeEventListener('pointerdown', mousedownCb);
       targetNode.removeEventListener('dragend', dragendCb);
     };
   }, []);
 
-  // 获取所有自定义环境
-  async function init() {
-    const { allEnvs, activeEnv } = await getAllEnvironments(window.dbContext);
-    setAllEnvironments(allEnvs);
-    if (window.localStorage.getItem('dev') === 'true') {
-      formRef.setFieldsValue({ environment: activeEnv });
-    }
-  }
-
   async function updateSelectOptions() {
     const _options = await selectAllDB(window.dbContext);
-    setAllEnvironments(_options);
+    setOptions(_options);
     setVisible(false);
   }
 
@@ -91,27 +92,26 @@ const Login = (props) => {
     formRef.validateFields().then(async (values) => {
       controllerRef.current = new AbortController();
       setLoading(true);
-      if (isNull(values.environment)) {
-        // 防止存在本地nginx部署问题
-        const { activeEnv } = await getAllEnvironments(window.dbContext);
-        values.environment = activeEnv;
-      }
-      let activeEnv = find(allEnvironments, { active: true });
-      if (activeEnv.id !== values.environment) {
-        allEnvironments.forEach((item) => {
-          if (item.id !== 'default') {
-            const dbLoad = { ...item, active: item.id === values.environment };
-            updateDB(window.dbContext, dbLoad);
-            if (dbLoad.active) {
-              activeEnv = dbLoad;
-            }
-          }
-        });
-      }
-      if (values.environment === 'default') {
+      if (values.environment === undefined) {
         window.nameSpacesInfo = requestAPI();
       } else {
-        window.nameSpacesInfo = extractNameSpaceInfoFromEnvs(activeEnv);
+        let activeEnv = find(options, { active: true });
+        if (activeEnv.id !== values.environment) {
+          options.forEach((item) => {
+            if (item.id !== 'default') {
+              const dbLoad = { ...item, active: item.id === values.environment };
+              updateDB(window.dbContext, dbLoad);
+              if (dbLoad.active) {
+                activeEnv = dbLoad;
+              }
+            }
+          });
+        }
+        if (values.environment === 'default') {
+          window.nameSpacesInfo = requestAPI();
+        } else {
+          window.nameSpacesInfo = extractNameSpaceInfoFromEnvs(activeEnv);
+        }
       }
       const response = await fetchLogin(values, {
         signal: controllerRef.current.signal,
@@ -176,7 +176,7 @@ const Login = (props) => {
                     ]}
                   >
                     <Select>
-                      {allEnvironments.map(({ envName, id }) => (
+                      {options.map(({ envName, id }) => (
                         <Select.Option key={id} value={id}>
                           {envName}
                         </Select.Option>
