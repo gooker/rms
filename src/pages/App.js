@@ -17,6 +17,7 @@ class App extends Component {
 
   async componentDidMount() {
     try {
+      // TODO: 开发环境不需要自定义环境功能
       window.dbContext = await openDB();
       const defaultAPI = requestAPI();
       const customEnvironments = await selectAllDB(window.dbContext);
