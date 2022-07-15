@@ -85,11 +85,11 @@ const StationForm = (props) => {
     }
   }
 
-  function checkStopIdDuplicate(stopcellId) {
-    if (isStrictNull(stopcellId)) {
+  function checkStopIdDuplicate(stopCellId) {
+    if (isStrictNull(stopCellId)) {
       return Promise.reject(new Error(formatMessage({ id: 'app.common.select' })));
     }
-    if (latentToteVisible && isNull(station) && !Array.isArray(stopcellId)) {
+    if (latentToteVisible && isNull(station) && !Array.isArray(stopCellId)) {
       return Promise.reject(new Error('停止点要选择2个'));
     }
 
@@ -99,7 +99,6 @@ const StationForm = (props) => {
   function latentToteSubmit() {
     const angle = formRef.getFieldValue('angle');
     if (isStrictNull(angle)) {
-      // formRef.validateFields(['angle'], { force: true });
       message.error('选择角度');
       return;
     }
@@ -261,12 +260,12 @@ const StationForm = (props) => {
             currentCellId={selectCellIds}
             icon={
               <img
-                alt="stop"
+                alt='stop'
                 style={{ width: 25 }}
                 src={require('../../../../../public/images/stop.png').default}
               />
             }
-            showlatentTote={latentToteVisible && isNull(station)}
+            showLatentTote={latentToteVisible && isNull(station)}
           />
         </Form.Item>
 
@@ -416,7 +415,7 @@ const StationForm = (props) => {
         <Form.Item
           name={'iconAngle'}
           initialValue={station?.iconAngle || 0}
-          label={<FormattedMessage id="app.common.angle" />}
+          label={<FormattedMessage id='editor.station.icon.angle' />}
         >
           <AngleSelector disabled width={'100%'} />
         </Form.Item>

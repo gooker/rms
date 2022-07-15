@@ -136,6 +136,7 @@ export default {
   'editor.station.icon': '图标',
   'editor.station.icon.width': '图标宽度',
   'editor.station.icon.height': '图标高度',
+  'editor.station.icon.angle': '图标角度',
   'editor.aisle.unLockCells': '解锁点',
   'editor.delivery': '投递点',
   'editor.delivery.basket': '投递框',

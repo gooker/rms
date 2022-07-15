@@ -5,7 +5,7 @@ import { cloneDeep, find, groupBy, orderBy, pickBy, sortBy } from 'lodash';
 import { CoordinateType, LineType, NavigationType } from '@/config/config';
 import { CellSize, MapSelectableSpriteType, VehicleState } from '@/config/consts';
 import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
-import { CellEntity, LineArrow, LogicArea } from '@/entities';
+import { CellEntity, LogicArea } from '@/entities';
 import json from '../../package.json';
 
 // 根据行列数批量生成点位
@@ -184,119 +184,11 @@ export function getRelationSelectionBG(width, height) {
 }
 
 /**
- * 获取当前线条的起始点坐标和角度
- * @param {*} relations
- * @param {*} beginCell
- * @param {*} endCell
- * @param {*} angle
- * @returns {{distance: number, length: number, fromX: number, fromY: number}}
- */
-export function getLineAnchor(relations, beginCell, endCell, angle) {
-  let fromX;
-  let fromY;
-  let length;
-
-  // 计算线条起点
-  if (getHasOppositeDirection(relations, beginCell.id, endCell.id)) {
-    fromX = (beginCell.x + endCell.x) / 2;
-    fromY = (beginCell.y + endCell.y) / 2;
-  } else {
-    switch (angle) {
-      case 0: {
-        fromX = beginCell.x;
-        fromY = beginCell.y - CellSize.height / 2;
-        break;
-      }
-      case 90: {
-        fromX = beginCell.x + CellSize.height / 2;
-        fromY = beginCell.y;
-        break;
-      }
-      case 180: {
-        fromX = beginCell.x;
-        fromY = beginCell.y + CellSize.width / 2;
-        break;
-      }
-      case 270: {
-        fromX = beginCell.x - CellSize.height / 2;
-        fromY = beginCell.y;
-        break;
-      }
-      default: {
-        const data = getLineCorner(relations, beginCell, endCell, angle);
-        fromX = data.x1;
-        fromY = data.y1;
-        break;
-      }
-    }
-  }
-
-  // 计算线条长度
-  if ([0, 90, 180, 270].includes(angle)) {
-    length = calculateCellDistance({ x: fromX, y: fromY }, endCell) - CellSize.height / 2;
-  } else {
-    length =
-      calculateCellDistance({ x: fromX, y: fromY }, endCell) -
-      Math.sqrt(CellSize.height ** 2 + CellSize.width ** 2) / 2;
-  }
-
-  const distance = calculateCellDistance(beginCell, endCell);
-  return { fromX, fromY, length, distance };
-}
-
-/**
- * 获取线条实例
- * @param relations
- * @param beginCell
- * @param endCell
- * @param lineAngle
- * @param cost
- * @param select
- * @param ctrlSelect
- * @param refresh
- * @param mapMode
- * @returns {LineArrow}
- */
-export function createRelation(
-  relations,
-  beginCell,
-  endCell,
-  lineAngle,
-  cost,
-  select,
-  ctrlSelect,
-  refresh,
-  mapMode,
-) {
-  const interactive = !isNull(select) || !isNull(ctrlSelect);
-  const { fromX, fromY, length, distance } = getLineAnchor(
-    relations,
-    beginCell,
-    endCell,
-    lineAngle,
-  );
-  return new LineArrow({
-    id: `${beginCell.id}_${endCell.id}`,
-    fromX,
-    fromY,
-    lineAngle,
-    cost,
-    length,
-    distance,
-    interactive,
-    refresh,
-    select,
-    ctrlSelect,
-    isClassic: mapMode === 'standard',
-  });
-}
-
-/**
  * 根据所选的点位，和方向，优先级生成线
  * @param {*} cells cellIds
  * @param {*} dir  方向
  * @param {*} value 优先级
- * TIPS: 这个方法最低效，采用枚举法；实际上可以根据dir对点位进行分组，随后按组进行reduce操作
+ * TIPS: 这个方法最低效，因为采用穷举法；实际上可以根据dir对点位进行分组，随后按组进行reduce操作
  */
 export function batchGenerateLine(cells, dir, value) {
   const result = {};
@@ -357,29 +249,6 @@ export function moveCell(cell, angle, distance) {
 }
 
 /**
- * 根据参数获取点位ID
- * @param cellMap
- * @param start
- * @param loopStep
- * @param step
- * @param way
- * @returns {[]|*}
- */
-export function generateCellId(cellMap, start, loopStep, step, way) {
-  let newId = start + loopStep.loop * step;
-  if (way === 'subtract') {
-    newId = start - loopStep.loop * step;
-  }
-  // 没找到就可以使用
-  if (cellMap[newId] === undefined) {
-    loopStep.loop += 1;
-    return newId;
-  }
-  loopStep.loop += 1;
-  return generateCellId(cellMap, start, loopStep, step);
-}
-
-/**
  * 获取二维码ID。该方法只能用来处理牧星点位批量获取ID的场景
  */
 export function generateCellIds(cellMap, requiredCount) {
@@ -433,48 +302,6 @@ export function transform(object, oldValue, newValue, isUpdate) {
     }
     return object;
   }
-}
-
-export function transformCurveData(lineData) {
-  /**
-   *  cost: 10
-   *  type: "curve"
-   *  source: primary
-   *  target: third
-   *  bparam1: secondary.x
-   *  bparam2: secondary.y,
-   *  angle:angle
-   * */
-  if (lineData.type === 'line') return lineData;
-  const { type, cost, angle, primary, secondary, third } = lineData;
-  return {
-    cost,
-    type,
-    angle,
-    source: primary,
-    target: third,
-    bparam1: secondary.x,
-    bparam2: secondary.y,
-  };
-}
-
-// ************************ 地图部分数据转换 ************************ //
-export function renderCommonList(commonList, cellMap) {
-  return commonList.map((record) => {
-    const { stopCellId, x, y } = record;
-    if (stopCellId) {
-      const stopCell = cellMap[stopCellId];
-      if (!isNull(stopCell)) {
-        return {
-          ...record,
-          x: stopCell.x + x,
-          y: stopCell.y + y,
-        };
-      }
-      return record;
-    }
-    return record;
-  });
 }
 
 export function renderWorkStationList(workstationList, cellMap) {
@@ -624,43 +451,6 @@ export function generateLogicCellMap(record, innerCellMap) {
   return result;
 }
 
-export function getLogicCellMap(record, ele, currentLogic) {
-  let innerMappings = {};
-  for (let index = 0; index < ele.length; index++) {
-    const element = ele[index];
-    const { logicLocations } = element;
-
-    if (logicLocations && logicLocations[currentLogic.id]?.innerMapping) {
-      innerMappings = {
-        ...innerMappings,
-        ...logicLocations[currentLogic.id].innerMapping,
-      };
-    }
-  }
-  return generateLogicCellMap(record, innerMappings);
-}
-
-export function mergeStorageRack(storageRack) {
-  const { angle, virtualStorages } = storageRack;
-  const result = { angle, columns: [] };
-  const group = groupBy(
-    virtualStorages,
-    (storage) => `${storage.coordinate.x}_${storage.coordinate.y}`,
-  );
-  Object.values(group).forEach((value) => {
-    result.columns.push({
-      x: value[0].coordinate.x,
-      y: value[0].coordinate.y,
-      cellId: value[0].storageCellId,
-      disabled: value[0].disabled,
-      code: value[0].storageBaseCode.slice(0, 8),
-      width: value[0].size.width,
-      height: value[0].size.depth,
-    });
-  });
-  return result;
-}
-
 /**
  * 验证地图JSON数据是否合法
  * @param {*} mapData 地图JSON数据
@@ -677,51 +467,6 @@ export function validateMapData(mapData) {
     }
   }
   return true;
-}
-
-export function getTunnelGateCells(entrance, exit) {
-  const gateSet = new Set();
-  entrance.forEach((item) => {
-    const [source] = item.split('-');
-    gateSet.add(source);
-  });
-  exit.forEach((item) => {
-    const [, target] = item.split('-');
-    gateSet.add(target);
-  });
-  return [...gateSet];
-}
-
-export function formatTunnelStateDataSource(targetCunnelName, response) {
-  const result = [];
-  const tunnels = Object.values(response);
-  tunnels.forEach(({ tunnelName, in: entrance, out: exit, lockOn, lockOnVehicle }) => {
-    if (tunnelName !== targetCunnelName) return;
-    const resultItem = { tunnelName, in: [], out: [] };
-    if (lockOn && lockOnVehicle != null) {
-      // 如果通道被锁，那么只需要简单显示该小车ID即可，不需要显示对应的入口或者出口
-      resultItem.in.push(lockOnVehicle);
-      resultItem.out.push(lockOnVehicle);
-    } else {
-      Object.keys(entrance).forEach((item) => {
-        resultItem.in.push({
-          code: item, // 入口或者出口ID
-          vehicles: entrance[item],
-        });
-      });
-      Object.keys(exit).forEach((item) => {
-        resultItem.out.push({
-          code: item,
-          vehicles: exit[item],
-        });
-      });
-    }
-
-    if (resultItem.in.length > 0 || resultItem.out.length > 0) {
-      result.push(resultItem);
-    }
-  });
-  return result;
 }
 
 export function convertCadToMap(file) {
@@ -824,17 +569,6 @@ export function convertCadToMap(file) {
       reslove(mapJSON);
     };
   });
-}
-
-export function calculateCellDistance(cell1, cell2) {
-  if (cell1.x === cell2.x) {
-    return Math.abs(cell1.y - cell2.y);
-  }
-  if (cell1.y === cell2.y) {
-    return Math.abs(cell1.x - cell2.x);
-  }
-
-  return Number.parseInt(Math.sqrt((cell1.x - cell2.x) ** 2 + (cell1.y - cell2.y) ** 2), 10);
 }
 
 export function getCurrentLogicAreaData(namespace = 'editor') {
@@ -1092,46 +826,6 @@ export function getElevatorMapCellId(currentCellId) {
     currentCellId = elevatorCellMap[currentCellId][currentLogicId];
   }
   return Number(currentCellId);
-}
-
-/**
- * 根据起点和终点获取线条数据
- * @param {*} idLineMap
- * @param {*} source
- * @param {*} target
- * @returns
- */
-export function getLineEntityFromMap(idLineMap, source, target) {
-  let line = null;
-  Object.keys(idLineMap).forEach((cost) => {
-    const lineMaps = idLineMap[cost];
-    const key = `${source}-${target}`;
-    if (lineMaps.has(key)) {
-      line = lineMaps.get(key);
-    }
-  });
-  return line;
-}
-
-/**
- * 根据线条ID从Map对象获取线条数据
- * @param {*} lineId
- * @param {*} idLineMap
- * @returns
- */
-export function getLineFromIdLineMap(lineId, idLineMap) {
-  const keys = Object.keys(idLineMap);
-  let result = [];
-  for (let index = 0; index < keys.length; index++) {
-    const key = keys[index];
-    const map = idLineMap[key];
-    const line = map.get(lineId);
-    if (line) {
-      result = [key, line]; // [cost, LineEntity]
-      break;
-    }
-  }
-  return result;
 }
 
 /**
@@ -1504,23 +1198,6 @@ export function adaptLabelSize({ width, height }, labelSize, isRect) {
     adjust();
   }
   return [textWidth, textHeight];
-}
-
-export function checkControlUsageByXY(naviCellMap, x, y) {
-  // {AA:{ AA1: {} }, }
-  const naviCellGroup = Object.values(naviCellMap);
-  for (let i = 0; i < naviCellGroup.length; i++) {
-    // { AA1: {} }
-    const naviCells = Object.values(naviCellGroup[i]);
-    for (let j = 0; j < naviCells.length; j++) {
-      const naviCell = naviCells[j];
-      if (naviCell.x === x && naviCell.y === y) {
-        return true;
-      }
-    }
-  }
-
-  return false;
 }
 
 /**

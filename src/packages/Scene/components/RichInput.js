@@ -1,15 +1,14 @@
 import React, { memo, useState } from 'react';
-import { Row, Input, Button, Col, InputNumber } from 'antd';
+import { Button, Col, Input, InputNumber, Row } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import commonStyles from '@/common.module.less';
 
-export default memo(function MapInput(props) {
-  const { currentCellId, icon, btnDisabled = false, type = 'string', showlatentTote } = props;
+const RichInput = (props) => {
+  const { currentCellId, icon, btnDisabled = false, type = 'string', showLatentTote } = props;
 
   const [value, setValue] = useState(props.value);
 
   return (
-    <Row type="flex">
+    <Row type='flex'>
       <Col span={icon ? 18 : 21}>
         {type === 'string' ? (
           <Input
@@ -38,21 +37,23 @@ export default memo(function MapInput(props) {
         )}
       </Col>
       {icon ? (
-        <Col span={3} className={commonStyles.flexCenter}>
-          {icon}
+        <Col span={3}>
+          <Row justify={'center'} align={'middle'} style={{ height: '100%' }}>
+            {icon}
+          </Row>
         </Col>
       ) : null}
       <Col span={3}>
         {currentCellId ? (
           <Button
             onClick={() => {
-              let curentValue = currentCellId[0];
-              if (showlatentTote && currentCellId.length >= 2) {
+              let currentValue = currentCellId[0];
+              if (showLatentTote && currentCellId.length >= 2) {
                 const newCurrentCellId = [...currentCellId].reverse();
-                curentValue = [newCurrentCellId[0], newCurrentCellId[1]];
+                currentValue = [newCurrentCellId[0], newCurrentCellId[1]];
               }
-              setValue(curentValue);
-              props.onChange(curentValue);
+              setValue(currentValue);
+              props.onChange(currentValue);
             }}
             icon={<PlusOutlined />}
             disabled={currentCellId.length === 0 || btnDisabled}
@@ -61,4 +62,5 @@ export default memo(function MapInput(props) {
       </Col>
     </Row>
   );
-});
+};
+export default memo(RichInput);
