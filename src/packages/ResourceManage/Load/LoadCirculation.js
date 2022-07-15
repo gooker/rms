@@ -88,21 +88,38 @@ const LoadCirculation = (props) => {
       dataIndex: 'loadId',
       align: 'center',
       render: (text, record) => {
-        if (isStrictNull(record.loadType)) {
+        if (isStrictNull(record.loadTypeName)) {
           return text;
         }
-        return `${record.loadType}: ${text}`;
+        return `${record.loadTypeName}: ${text}`;
       },
     },
     {
       title: <FormattedMessage id="resource.load.source.storage" />,
-      dataIndex: 'fromCargoStorage',
+      dataIndex: 'sourceCode',
       align: 'center',
+      render: (text, record) => {
+        if (isStrictNull(record.sourceType)) {
+          return text;
+        }
+        return `${record.sourceType}: ${text}`;
+      },
     },
     {
       title: <FormattedMessage id="resource.load.target.storage" />,
-      dataIndex: 'toCargoStorage',
+      dataIndex: 'targetCode',
       align: 'center',
+      render: (text, record) => {
+        if (isStrictNull(record.targetType)) {
+          return text;
+        }
+        return (
+          <>
+            <span>{`${record.targetType}`} : </span>
+            <span>{text}</span>
+          </>
+        );
+      },
     },
     {
       title: <FormattedMessage id="resource.load.changeTime" />,

@@ -35,6 +35,11 @@ const SearchCirculationComponent = (props) => {
       <Form form={formRef}>
         <Row gutter={24}>
           <Col span={6}>
+            <Form.Item label={<FormattedMessage id="resource.load.id" />} name={'loadId'}>
+              <Input allowClear />
+            </Form.Item>
+          </Col>
+          <Col span={6}>
             <Form.Item label={<FormattedMessage id="app.vehicle" />} name={'vehicleId'}>
               <Input allowClear />
             </Form.Item>
@@ -43,7 +48,7 @@ const SearchCirculationComponent = (props) => {
           <Col span={6}>
             <Form.Item
               label={<FormattedMessage id="resource.load.source.storage" />}
-              name={'fromCargoStorage'}
+              name={'sourceCode'}
             >
               <Input allowClear />
             </Form.Item>
@@ -51,7 +56,7 @@ const SearchCirculationComponent = (props) => {
           <Col span={6}>
             <Form.Item
               label={<FormattedMessage id="resource.load.target.storage" />}
-              name={'toCargoStorage'}
+              name={'targetCode'}
             >
               <Input allowClear />
             </Form.Item>
@@ -63,7 +68,7 @@ const SearchCirculationComponent = (props) => {
           </Col>
 
           {/* 日期 */}
-          <Col span={8}>
+          <Col span={7}>
             <Form.Item name={'createDate'} label={<FormattedMessage id="app.form.dateRange" />}>
               <RangePicker showTime style={{ width: '100%' }} />
             </Form.Item>
