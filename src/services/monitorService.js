@@ -134,17 +134,9 @@ export async function fetchPodToCell(params) {
   });
 }
 
-// 小车命令
-export async function vehicleCommand(VehicleType, params) {
-  return request(`/${NameSpace[VehicleType]}/vehicle/batchSendCommand`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
 // 发送小车命令
-export async function vehicleRemoteControl(VehicleType, params) {
-  return request(`/${NameSpace[VehicleType]}/vehicle/command`, {
+export async function vehicleRemoteControl(params) {
+  return request(`/${NameSpace.Platform}/vehicle/sendVehicleCommand`, {
     method: 'POST',
     data: params,
   });

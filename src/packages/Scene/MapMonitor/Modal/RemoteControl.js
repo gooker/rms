@@ -3,13 +3,7 @@ import { Button, Form, Input, InputNumber, message, Select } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { vehicleRemoteControl } from '@/services/monitorService';
 import { connect } from '@/utils/RmsDva';
-import {
-  dealResponse,
-  formatMessage,
-  getFormLayout,
-  getMapModalPosition,
-  isStrictNull,
-} from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, getMapModalPosition, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 import { find } from 'lodash';
@@ -27,8 +21,8 @@ const RemoteControl = (props) => {
 
   function prefabricatedCommand(code, value) {
     let params = null;
-    const uniqueIds = formRef.getFieldValue('uniqueIds');
-    if (isStrictNull(uniqueIds)) {
+    const vehicleId = formRef.getFieldValue('uniqueIds');
+    if (isStrictNull(vehicleId)) {
       formRef.validateFields(['uniqueIds'], { force: true });
       return;
     }
@@ -38,7 +32,7 @@ const RemoteControl = (props) => {
       case 0x03: {
         const distance = formRef.getFieldValue('distance');
         params = {
-          uniqueIds,
+          vehicleId,
           commandCode: code,
           commandParameter: distance,
           rawCommandHex: null,
@@ -49,7 +43,7 @@ const RemoteControl = (props) => {
       case 0x10:
       case 0x11: {
         params = {
-          uniqueIds,
+          vehicleId,
           commandCode: code,
           commandParameter: value,
           rawCommandHex: null,
@@ -61,7 +55,7 @@ const RemoteControl = (props) => {
       case 0x21: {
         const podId = formRef.getFieldValue('podId');
         params = {
-          uniqueIds,
+          vehicleId,
           commandCode: code,
           commandParameter: podId,
           rawCommandHex: null,
@@ -73,7 +67,7 @@ const RemoteControl = (props) => {
     }
     const vehicle = true; // TODO:到底是多选还是单选//find(allVehicles, { uniqueId:uniqueIds });
     if (vehicle) {
-      vehicleRemoteControl(vehicle.vehicleType, params).then((response) => {
+      vehicleRemoteControl(params).then((response) => {
         if (dealResponse(response)) {
           message.error(formatMessage({ id: 'app.message.operateFailed' }));
         } else {
@@ -86,21 +80,21 @@ const RemoteControl = (props) => {
   }
 
   function sendCustomCommand() {
-    const uniqueIds = formRef.getFieldValue('uniqueIds');
-    if (isStrictNull(uniqueIds)) {
+    const vehicleId = formRef.getFieldValue('uniqueIds');
+    if (isStrictNull(vehicleId)) {
       formRef.validateFields(['uniqueIds'], { force: true });
       return;
     }
     const vehicle = true; // TODO:find(allVehicles, { vehicleId: uniqueIds });
     const hexCommand = formRef.getFieldValue('hexCommand');
     const params = {
-      uniqueIds,
+      vehicleId,
       commandCode: null,
       commandParameter: null,
       rawCommandHex: hexCommand,
     };
     if (vehicle) {
-      vehicleRemoteControl(vehicle.vehicleType, params).then((response) => {
+      vehicleRemoteControl(params).then((response) => {
         if (dealResponse(response)) {
           message.error(formatMessage({ id: 'app.message.operateFailed' }));
         } else {
@@ -133,8 +127,6 @@ const RemoteControl = (props) => {
             <Select
               allowClear
               showSearch
-              // maxTagCount={5}
-              // mode="multiple"
               filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
