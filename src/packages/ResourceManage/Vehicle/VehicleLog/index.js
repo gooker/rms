@@ -16,6 +16,7 @@ const VehicleLog = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [dataSource, setDatasource] = useState([]);
+  const [allData, setAllData] = useState([]);
   const [allAdaptors, setAllAdaptors] = useState({});
   // const [viewing, setViewing] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -109,6 +110,7 @@ const VehicleLog = () => {
         }
       });
       setDatasource(newData);
+      setAllData(newData);
       setAllAdaptors(allAdaptors);
       filterData(newData);
     }
@@ -150,7 +152,7 @@ const VehicleLog = () => {
   return (
     <TablePageWrapper>
       <VehicleLogSearch
-        allData={dataSource}
+        allData={allData}
         onSearch={filterData}
         refreshData={init}
         selectedRows={selectedRows}

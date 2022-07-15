@@ -36,6 +36,7 @@ const VehicleUpgrade = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [allAdaptors, setAllAdaptors] = useState({});
   const [dataSource, setDatasource] = useState([]);
+  const [allData, setAllData] = useState([]);
   const [allFireWareFiles, setAllFireWareFiles] = useState([]); // 固件
 
   const [fileManageVisible, setFileManageVisible] = useState(false);
@@ -192,6 +193,7 @@ const VehicleUpgrade = () => {
         }
       });
       setDatasource(newData);
+      setAllData(newData);
       setAllAdaptors(allAdaptors);
       filterData(newData);
     }
@@ -282,7 +284,7 @@ const VehicleUpgrade = () => {
     <TablePageWrapper>
       <>
         <VehicleLogSearch
-          allData={dataSource}
+          allData={allData}
           onSearch={filterData}
           refreshLog={init}
           selectedRows={selectedRows}

@@ -1,11 +1,22 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, Row, Switch } from 'antd';
-import { DeleteOutlined, DiffOutlined, EditOutlined, PlusOutlined, RedoOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  DiffOutlined,
+  EditOutlined,
+  PlusOutlined,
+  RedoOutlined,
+} from '@ant-design/icons';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
-import { deleteSelectedLoad, fetchAllLoad, fetchAllLoadSpecification, saveLoad } from '@/services/resourceService';
+import {
+  deleteSelectedLoad,
+  fetchAllLoad,
+  fetchAllLoadSpecification,
+  saveLoad,
+} from '@/services/resourceService';
 import { dealResponse, formatMessage, generateResourceGroups, isNull } from '@/utils/util';
 import AddLoadModal from './component/AddLoadModal';
 import SearchLoadComponent from './component/SearchLoadComponent';
@@ -36,19 +47,19 @@ const ContainerManage = () => {
   }, []);
 
   const columns = [
-    { title: <FormattedMessage id='resource.load.id' />, dataIndex: 'loadId', align: 'center' },
+    { title: <FormattedMessage id="resource.load.id" />, dataIndex: 'loadId', align: 'center' },
     {
-      title: <FormattedMessage id='app.common.name' />,
+      title: <FormattedMessage id="app.common.name" />,
       dataIndex: 'loadSpecification',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.common.angle' />,
+      title: <FormattedMessage id="app.common.angle" />,
       dataIndex: 'angle',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='resource.load.location' />,
+      title: <FormattedMessage id="resource.load.location" />,
       dataIndex: 'cellId',
       align: 'center',
     },
@@ -200,7 +211,7 @@ const ContainerManage = () => {
                 setSimulateVisible(true);
               }}
             >
-              <DiffOutlined /> <FormattedMessage id='resource.load.simulation.generate' />
+              <DiffOutlined /> <FormattedMessage id="resource.load.simulation.generate" />
             </Button>
 
             <GroupManager
@@ -215,7 +226,7 @@ const ContainerManage = () => {
             />
 
             <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteSpec}>
-              <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
+              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
 
             <Button
@@ -245,14 +256,16 @@ const ContainerManage = () => {
       />
 
       {/*新增/编辑 载具 */}
-      <AddLoadModal
-        visible={visible}
-        onCancel={onCancel}
-        onOk={getData}
-        updateRecord={updateRecord}
-        allData={dataSource}
-        allLoadSpec={allLoadSpec}
-      />
+      {visible && (
+        <AddLoadModal
+          visible={visible}
+          onCancel={onCancel}
+          onOk={getData}
+          updateRecord={updateRecord}
+          allData={dataSource}
+          allLoadSpec={allLoadSpec}
+        />
+      )}
 
       {/* 模拟生成 */}
       <SimulateLoadModal
