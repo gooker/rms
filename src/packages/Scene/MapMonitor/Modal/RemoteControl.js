@@ -3,7 +3,7 @@ import { Button, Form, Input, InputNumber, message, Select } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { vehicleRemoteControl } from '@/services/monitorService';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout, getMapModalPosition, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, getMapModalPosition, isNull, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 import { find } from 'lodash';
@@ -21,11 +21,21 @@ const RemoteControl = (props) => {
 
   function prefabricatedCommand(code, value) {
     let params = null;
-    const vehicleId = formRef.getFieldValue('uniqueIds');
-    if (isStrictNull(vehicleId)) {
-      formRef.validateFields(['uniqueIds'], { force: true });
+    const uniqueId = formRef.getFieldValue('uniqueId');
+    if (isStrictNull(uniqueId)) {
+      formRef.validateFields(['uniqueId'], { force: true });
       return;
     }
+
+    const vehicleData = find(allVehicles, { uniqueId });
+    if (isNull(vehicleData)) {
+      return;
+    }
+    const {
+      vehicleId,
+      vehicle: { adapterType },
+    } = vehicleData;
+
     switch (code) {
       // 小车直行
       case 0x02:
@@ -33,6 +43,7 @@ const RemoteControl = (props) => {
         const distance = formRef.getFieldValue('distance');
         params = {
           vehicleId,
+          adapterType,
           commandCode: code,
           commandParameter: distance,
           rawCommandHex: null,
@@ -44,6 +55,7 @@ const RemoteControl = (props) => {
       case 0x11: {
         params = {
           vehicleId,
+          adapterType,
           commandCode: code,
           commandParameter: value,
           rawCommandHex: null,
@@ -56,6 +68,7 @@ const RemoteControl = (props) => {
         const podId = formRef.getFieldValue('podId');
         params = {
           vehicleId,
+          adapterType,
           commandCode: code,
           commandParameter: podId,
           rawCommandHex: null,
@@ -65,45 +78,45 @@ const RemoteControl = (props) => {
       default:
         break;
     }
-    const vehicle = true; // TODO:到底是多选还是单选//find(allVehicles, { uniqueId:uniqueIds });
-    if (vehicle) {
-      vehicleRemoteControl(params).then((response) => {
-        if (dealResponse(response)) {
-          message.error(formatMessage({ id: 'app.message.operateFailed' }));
-        } else {
-          message.success(formatMessage({ id: 'app.message.sendCommandSuccess' }));
-        }
-      });
-    } else {
-      console.error('小车id不存在');
-    }
+    vehicleRemoteControl(params).then((response) => {
+      if (dealResponse(response)) {
+        message.error(formatMessage({ id: 'app.message.operateFailed' }));
+      } else {
+        message.success(formatMessage({ id: 'app.message.sendCommandSuccess' }));
+      }
+    });
   }
 
   function sendCustomCommand() {
-    const vehicleId = formRef.getFieldValue('uniqueIds');
-    if (isStrictNull(vehicleId)) {
-      formRef.validateFields(['uniqueIds'], { force: true });
+    const uniqueId = formRef.getFieldValue('uniqueId');
+    if (isStrictNull(uniqueId)) {
+      formRef.validateFields(['uniqueId'], { force: true });
       return;
     }
-    const vehicle = true; // TODO:find(allVehicles, { vehicleId: uniqueIds });
+    const vehicleData = find(allVehicles, { uniqueId });
+    if (isNull(vehicleData)) {
+      return;
+    }
+    const {
+      vehicleId,
+      vehicle: { adapterType },
+    } = vehicleData;
+
     const hexCommand = formRef.getFieldValue('hexCommand');
     const params = {
       vehicleId,
+      adapterType,
       commandCode: null,
       commandParameter: null,
       rawCommandHex: hexCommand,
     };
-    if (vehicle) {
-      vehicleRemoteControl(params).then((response) => {
-        if (dealResponse(response)) {
-          message.error(formatMessage({ id: 'app.message.operateFailed' }));
-        } else {
-          message.success(formatMessage({ id: 'app.message.sendCommandSuccess' }));
-        }
-      });
-    } else {
-      console.error('小车id不存在');
-    }
+    vehicleRemoteControl(params).then((response) => {
+      if (dealResponse(response)) {
+        message.error(formatMessage({ id: 'app.message.operateFailed' }));
+      } else {
+        message.success(formatMessage({ id: 'app.message.sendCommandSuccess' }));
+      }
+    });
   }
 
   return (
@@ -115,7 +128,7 @@ const RemoteControl = (props) => {
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
           <Form.Item
-            name={'uniqueIds'}
+            name={'uniqueId'}
             label={formatMessage({ id: 'vehicle.id' })}
             rules={[{ required: true }]}
             getValueFromEvent={(e) => {
