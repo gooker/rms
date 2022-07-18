@@ -368,7 +368,7 @@ export async function fetchBatchDeleteSimulatorVehicle(params) {
 
 // 获取模拟器错误消息
 export async function fetchSimulatorErrorMessage(params) {
-  return request(`/${NameSpace.Platform}/simulator/errorMessage`, {
+  return request(`/${NameSpace.Platform}/vehicle/errorMessage`, {
     method: 'POST',
     data: params,
   });

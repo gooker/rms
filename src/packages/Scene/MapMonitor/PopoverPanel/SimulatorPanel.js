@@ -20,6 +20,7 @@ import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util
 import styles from '@/packages/Scene/popoverPanel.module.less';
 import simulatorStyle from './simulator.module.less';
 import commonStyles from '@/common.module.less';
+import { find } from 'lodash';
 
 const size = 'small';
 
@@ -78,7 +79,7 @@ const SimulatorPanel = (props) => {
         }
         return (
           <Tag>
-            <FormattedMessage id='app.common.false' />
+            <FormattedMessage id="app.common.false" />
           </Tag>
         );
       },
@@ -194,7 +195,7 @@ const SimulatorPanel = (props) => {
             {addPodVisible && <ClearPodsAndBatchAdd dispatch={dispatch} />}
             {errorVisible && (
               <SimulatorError
-                dispatch={dispatch}
+                data={simulatorVehicleList}
                 selectIds={selectedRowKeys}
                 logicId={currentLogicArea}
                 onCancel={setErrorVisible}
@@ -382,10 +383,13 @@ const SimulatorPanel = (props) => {
                 size={size}
                 allowClear
                 showSearch
-                mode='multiple'
+                mode="multiple"
                 maxTagCount={4}
                 style={{ width: '100%', marginBottom: 10 }}
-                value={selectedRowKeys}
+                value={selectedRowKeys?.map((id) => {
+                  const { vehicleId } = find(simulatorVehicleList, { id });
+                  return vehicleId;
+                })}
                 onChange={(value) => {
                   setSelectedRowKeys(value);
                 }}
@@ -406,7 +410,7 @@ const SimulatorPanel = (props) => {
                 columns={columns}
                 dataSource={simulatorVehicleList}
                 pagination={false}
-                rowKey={({ vehicleId }) => vehicleId}
+                rowKey={({ id }) => id}
                 rowSelection={{
                   selectedRowKeys: selectedRowKeys,
                   getCheckboxProps: (record) => ({

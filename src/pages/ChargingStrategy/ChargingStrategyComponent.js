@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Tabs, Modal, Button, Row, Input, message } from 'antd';
+import { Tabs, Modal, Button, Row, Input, message, InputNumber } from 'antd';
 import ChargingStrategyForm from './ChargingStrategyForm';
 import IdleChargingStrategy from './IdleChargingStrategy';
 import {
@@ -22,6 +22,7 @@ const ChargingStrategyComponent = (props) => {
   const [idleHoursStrategyId, setIdleHoursStrategyId] = useState(null); // 闲时策略id
 
   const [name, setName] = useState(null); //名称
+  const [priority, setPriority] = useState(null); //优先级
   const [code, setCode] = useState(null); //code
   const [isGlobal, setIsGlobal] = useState(null); //是否全局
 
@@ -64,6 +65,7 @@ const ChargingStrategyComponent = (props) => {
     setStrategyId(data?.id || null);
     setIdleHoursStrategyId(data?.idleHoursStrategyId || null);
     setName(data?.name || null);
+    setPriority(data?.priority || 5);
     setCode(data?.code || `cStrategy_${getRandomString(8)}`);
     setIsGlobal(data?.isGlobal || false);
     setChargeStrategy(data);
@@ -105,6 +107,7 @@ const ChargingStrategyComponent = (props) => {
     const idlelData = chargeStrategy.strategyValue?.IdleHours;
     const params = {
       name,
+      priority: priority ?? 5,
       code,
       isGlobal,
       id: strategyId,
@@ -173,6 +176,17 @@ const ChargingStrategyComponent = (props) => {
                 value={name}
                 onChange={(e) => {
                   setName(e.target.value);
+                }}
+              />
+            </div>
+          </div>
+          <div style={{ display: 'flex', flex: 1, alignItems: 'center' }}>
+            <div>{formatMessage({ id: 'app.common.priority' })} :</div>
+            <div style={{ marginLeft: 15 }}>
+              <InputNumber
+                value={priority}
+                onChange={(e) => {
+                  setPriority(e);
                 }}
               />
             </div>

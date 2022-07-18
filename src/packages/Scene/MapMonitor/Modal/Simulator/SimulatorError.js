@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, InputNumber } from 'antd';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import { fetchSimulatorErrorMessage } from '@/services/monitorService';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -7,23 +7,22 @@ import FormattedMessage from '@/components/FormattedMessage';
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
 export default function SimulatorError(props) {
-  const { selectIds = [], logicId, dispatch, onCancel } = props;
+  const { selectIds = [], onCancel } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
 
   function confirm() {
     formRef
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
         const { msgCode } = values;
-        const params = { logicId, msgCode, vehicleId: selectIds.join(',') };
-        setExecuting(true);
-        fetchSimulatorErrorMessage(params).then((res) => {
-          if (!dealResponse(res, 1, formatMessage({ id: 'monitor.simulator.errorCode.success' }))) {
-            onCancel(false);
-          }
-        });
 
+        const params = { msgCode, vehicleUniqueIds: selectIds };
+        setExecuting(true);
+        const response = await fetchSimulatorErrorMessage(params);
+        if (!dealResponse(response, 1)) {
+          onCancel(false);
+        }
         setExecuting(false);
       })
       .catch(() => {});
@@ -34,11 +33,11 @@ export default function SimulatorError(props) {
       <Form form={formRef}>
         <Form.Item
           {...formItemLayout}
-          name={'vehicleId'}
+          name={'msgCode'}
           label={formatMessage({ id: 'monitor.simulator.errorCode' })}
           rules={[{ required: true }]}
         >
-          <Input />
+          <InputNumber style={{ width: 200 }} />
         </Form.Item>
 
         <Form.Item {...formItemLayoutNoLabel}>

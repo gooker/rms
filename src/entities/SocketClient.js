@@ -55,7 +55,7 @@ class SocketClient {
 
     /// /////////////////////////////// 全局  //////////////////////////////////
     // 订阅系统消息提醒
-    this.client.subscribe(`/topic/COORDINATOR_UI_PROBLEM_CHANGE.s${sectionId}`, (response) => {
+    this.client.subscribe(`/topic/ui_monitor_alert.s${sectionId}`, (response) => {
       const p = JSON.parse(response.body);
       if (this.notificationQuestion) this.notificationQuestion(p);
     });
