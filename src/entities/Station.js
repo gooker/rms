@@ -1,11 +1,11 @@
 import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
-import { getTextureFromResources } from '@/utils/mapUtil';
-import { CommonFunctionSize, MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
 import Text from '@/entities/Text';
 import { isStrictNull } from '@/utils/util';
+import { getTextureFromResources } from '@/utils/mapUtil';
+import { MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
 
-export default class CommonFunction extends PIXI.Container {
+export default class Station extends PIXI.Container {
   constructor(props) {
     super();
     this.$$formData = props.$$formData;
@@ -14,21 +14,19 @@ export default class CommonFunction extends PIXI.Container {
     this.y = props.y;
     this.name = props.name;
     this.cullable = true;
-    this.angle = props.iconAngle || 0;
     this.zIndex = zIndex.functionIcon;
+    this.angle = props.iconAngle || 0;
     this.$angle = props.angle || 0; // 仅用于纠正名称角度
     this.icon = props.icon || 'common';
-    this.iconSize = props.size || `${CommonFunctionSize.width}@${CommonFunctionSize.height}`;
+    this.iconWidth = props.iconWidth;
+    this.iconHeight = props.iconHeight;
+    this.stopId = props.stopId;
+
     this.select = props.select;
     this.selected = false; // 标记该工作站是否被选中
 
-    // 尺寸转换(向前兼容)
-    const [iconWidth, iconHeight] = this.iconSize.split('@').map((value) => parseInt(value, 10));
-    this.iconWidth = iconWidth;
-    this.iconHeight = iconHeight;
-
-    this.create();
-    this.addName();
+    this.create(this.icon);
+    this.addName(this.name);
     this.createSelectionBorder();
 
     // 在途小车显示相关
@@ -36,10 +34,10 @@ export default class CommonFunction extends PIXI.Container {
     this.showEmployee = false;
 
     // 点击事件处理
-    this.CommonFunction.interactive = true;
-    this.CommonFunction.buttonMode = true;
-    this.CommonFunction.interactiveChildren = false;
-    this.CommonFunction.on('pointerdown', this.click);
+    this.stationSprite.interactive = true;
+    this.stationSprite.buttonMode = true;
+    this.stationSprite.interactiveChildren = false;
+    this.stationSprite.on('pointerdown', this.click);
   }
 
   // 选择相关
@@ -69,23 +67,41 @@ export default class CommonFunction extends PIXI.Container {
     }
   };
 
-  create() {
-    const commonFunctionTexture = getTextureFromResources(this.icon || 'common');
-    const scaleX = this.iconWidth / commonFunctionTexture.width;
-    const scaleY = this.iconHeight / commonFunctionTexture.height;
-    this.CommonFunction = new PIXI.Sprite(commonFunctionTexture);
-    this.CommonFunction.anchor.set(0.5);
-    this.CommonFunction.setTransform(0, 0, scaleX, scaleY);
-    this.addChild(this.CommonFunction);
+  create(icon) {
+    if (this.stationSprite) {
+      this.stationSprite.destroy();
+      this.removeChild(this.stationSprite);
+      this.stationSprite = null;
+    }
+    const stationTexture = getTextureFromResources(icon || 'common');
+    const scaleX = this.iconWidth / stationTexture.width;
+    const scaleY = this.iconHeight / stationTexture.height;
+    this.stationSprite = new PIXI.Sprite(stationTexture);
+    this.stationSprite.anchor.set(0.5);
+    this.stationSprite.setTransform(0, 0, scaleX, scaleY);
+    this.addChild(this.stationSprite);
   }
 
-  addName() {
-    if (isStrictNull(this.name)) return;
-    const y = this.CommonFunction.height / 2 + 150;
+  addName(name) {
+    if (this.nameSprite) {
+      this.nameSprite.destroy(true);
+      this.removeChild(this.nameSprite);
+      this.nameSprite = null;
+    }
+    if (isStrictNull(name)) return;
+    const y = this.stationSprite.height / 2 + 150;
     this.nameSprite = new Text(this.name, 0, -y, 0xffffff, false, 200);
     this.nameSprite.anchor.set(0.5);
     this.nameSprite.angle = -this.angle;
     this.addChild(this.nameSprite);
+  }
+
+  updateStationIcon(icon, iconWidth, iconHeight, iconAngle) {
+    this.icon = icon;
+    this.iconWidth = iconWidth;
+    this.iconHeight = iconHeight;
+    this.angle = iconAngle;
+    this.create(icon);
   }
 
   // 创建选择边框
@@ -104,8 +120,8 @@ export default class CommonFunction extends PIXI.Container {
   createCommonEmployerMark(color) {
     this.destroyCommonSelectedBorderSprite();
     this.selectedBorderSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
-    this.selectedBorderSprite.width = this.CommonFunction.width + 200;
-    this.selectedBorderSprite.height = this.CommonFunction.height + 200;
+    this.selectedBorderSprite.width = this.stationSprite.width + 200;
+    this.selectedBorderSprite.height = this.stationSprite.height + 200;
     this.selectedBorderSprite.anchor.set(0.5);
     this.selectedBorderSprite.zIndex = 1;
     this.selectedBorderSprite.alpha = 0.6;

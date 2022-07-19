@@ -7,7 +7,6 @@ import StationForm from '../StationForm';
 import ChargerForm from '../ChargerForm';
 import DeliveryForm from '../DeliveryForm';
 import ElevatorForm from '../ElevatorForm';
-import WorkStationForm from '../WorkStationForm';
 import IntersectionForm from '../IntersectionForm';
 import { MapSelectableSpriteType } from '@/config/consts';
 import FormattedMessage from '@/components/FormattedMessage';

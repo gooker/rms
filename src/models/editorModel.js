@@ -7,6 +7,8 @@ import {
   addTemporaryId,
   batchGenerateLine,
   convertChargerToDTO,
+  convertElevatorToView,
+  convertStationToDTO,
   generateCellIds,
   generateCellMapByRowsAndCols,
   generateChargerXY,
@@ -16,8 +18,6 @@ import {
   getCurrentRouteMapData,
   getDistance,
   moveCell,
-  renderElevatorList,
-  renderWorkStationList,
   syncLineState,
   validateMapData,
 } from '@/utils/mapUtil';
@@ -34,7 +34,7 @@ import {
 import { activeMap } from '@/services/commonService';
 import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { MapSelectableSpriteType } from '@/config/consts';
-import { reverseCoordinateTransformer } from '@/utils/mapTransformer';
+import { reverseTransformXYByParams } from '@/utils/mapTransformer';
 import { LineType, NavigationType, NavigationTypeView, ProgramingItemType } from '@/config/config';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
@@ -521,7 +521,7 @@ export default {
         navigationType: navigationType,
         logicId: currentLogicArea,
       });
-      currentMap.cellMap[id] = reverseCoordinateTransformer(
+      currentMap.cellMap[id] = reverseTransformXYByParams(
         cell,
         navigationType,
         currentMap?.transform?.[navigationType],
@@ -1098,51 +1098,42 @@ export default {
         default:
           break;
       }
-      const functionData = scopeData[type] || [];
-      const isAdding = functionData.length < data.flag;
+      let mapScopeTypeData = [];
+      if (Array.isArray(scopeData[type])) {
+        mapScopeTypeData = [...scopeData[type]];
+      }
+      const isAdding = mapScopeTypeData.length < data.flag;
 
-      // 当前传入的"功能"数据
+      // 当前修改的功能地图数据
       let currentFunction = { ...data };
-      const index = data.flag - 1;
+      const currentFunctionIndex = currentFunction.flag - 1;
       delete currentFunction.flag;
+      // 方法返回并渲染到地图的数据
+      let viewReturn;
 
-      let returnPayload = currentFunction;
       if (type === 'chargerList') {
-        returnPayload = generateChargerXY(currentFunction, currentMap.cellMap);
+        // 需要将停止点由导航ID替换为业务ID,当然地图渲染也是基于业务ID
         currentFunction = convertChargerToDTO(currentFunction, currentMap.cellMap);
+        viewReturn = currentFunction;
       }
-      if (type === 'workstationList') {
-        returnPayload = renderWorkStationList([currentFunction], currentMap.cellMap)[0];
+      if (type === 'commonList') {
+        currentFunction = convertStationToDTO(currentFunction, currentMap.cellMap);
+        viewReturn = currentFunction;
       }
       if (type === 'elevatorList') {
-        returnPayload = renderElevatorList([currentFunction])[currentLogicAreaData.id];
+        viewReturn = convertElevatorToView([currentFunction])[currentLogicAreaData.id];
       }
 
-      // 新增
+      // 更新到地图数据
       if (isAdding) {
-        functionData.push({ ...currentFunction });
-        scopeData[type] = functionData;
-        return { type: 'add', payload: returnPayload };
+        mapScopeTypeData.push({ ...currentFunction });
+        scopeData[type] = mapScopeTypeData;
+        return { type: 'add', payload: viewReturn };
+      } else {
+        mapScopeTypeData.splice(currentFunctionIndex, 1, currentFunction);
+        scopeData[type] = mapScopeTypeData;
+        return { type: 'update', current: viewReturn };
       }
-
-      // 更新
-      const oldFunctionData = functionData.splice(index, 1, currentFunction);
-      scopeData[type] = functionData;
-
-      // 对电梯进行特殊处理
-      if (type === 'elevatorList') {
-        const preLoad = renderElevatorList(oldFunctionData)[currentLogicAreaData.id];
-        return {
-          type: 'update',
-          pre: preLoad,
-          current: returnPayload,
-        };
-      }
-      return {
-        type: 'update',
-        pre: oldFunctionData[0],
-        current: returnPayload,
-      };
     },
 
     *removeFunction({ payload }, { select }) {
@@ -1164,24 +1155,16 @@ export default {
       const removedFunctionItem = functionData[flag - 1];
       scopeData[type] = scopeData[type].filter((item, index) => index !== flag - 1);
       let returnPayload = removedFunctionItem;
-      if (type === 'workstationList') {
-        returnPayload = renderWorkStationList([removedFunctionItem], currentMap.cellMap)[0];
-      }
-      if (type === 'chargerList') {
-        // returnPayload = renderChargerList([removedFunctionItem], currentMap.cellMap)[0];
-      }
       if (type === 'elevatorList') {
-        returnPayload = renderElevatorList([removedFunctionItem], currentMap.cellMap)[
+        returnPayload = convertElevatorToView([removedFunctionItem], currentMap.cellMap)[
           currentLogicAreaData.id
-        ];
+          ];
       }
       return returnPayload;
     },
 
     // 批量添加充电桩
     *addChargerInBatches({ payload }, { select }) {
-      const { currentMap } = yield select(({ editor }) => editor);
-
       const { name, angle, priority, supportTypes, cellIds } = payload;
       const scopeData = getCurrentLogicAreaData();
       const functionData = scopeData.chargerList || [];
@@ -1203,7 +1186,7 @@ export default {
           chargingCells: [{ cellId, supportTypes }],
         });
       });
-      tempCharger = tempCharger.map((item) => convertChargerToDTO(item, currentMap.cellMap));
+      tempCharger = tempCharger.map((item) => convertChargerToDTO(item));
       scopeData.chargerList = [...functionData, ...tempCharger];
       return tempCharger;
     },

@@ -132,7 +132,6 @@ export default {
 
   // 功能
   'editor.config.distance': '距离',
-  'editor.workstation.stop': '停止点',
   'editor.station.icon': '图标',
   'editor.station.icon.width': '图标宽度',
   'editor.station.icon.height': '图标高度',

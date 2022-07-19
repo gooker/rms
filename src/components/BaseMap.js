@@ -3,20 +3,23 @@ import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import {
   convertAngleToPixiAngle,
+  drawRelationLine,
   getAngle,
   getArrowDistance,
   getCoordinator,
   getDistance,
+  getKeyByCoordinateType,
+  getOppositeAngle,
   getTextureFromResources,
 } from '@/utils/mapUtil';
-import { BitText, Charger, CommonFunction, Dump, DumpBasket, Elevator, Intersection, WorkStation } from '@/entities';
+import { BitText, Charger, Dump, DumpBasket, Elevator, Intersection, Station } from '@/entities';
 import { isNull } from '@/utils/util';
-import { transformXYByParams } from '@/utils/mapTransformer';
+import { getCoordinateBy2Types, transformXYByParams } from '@/utils/mapTransformer';
 import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
 import CostArrow from '@/entities/CostArrow';
 import { CoordinateType, LineType } from '@/config/config';
-import { MapScaleRatio, zIndex, ZoneMarkerType } from '@/config/consts';
+import { MapScaleRatio, ZoneMarkerType } from '@/config/consts';
 import StraightPath from '@/entities/StraightPath';
 
 function initState(context) {
@@ -44,6 +47,9 @@ function initState(context) {
 export default class BaseMap extends React.PureComponent {
   constructor(props) {
     super(props);
+    // 核心业务逻辑参数
+    this.cellCoordinateType = null; // 当前点位使用的坐标类型
+
     initState(this);
   }
 
@@ -285,286 +291,242 @@ export default class BaseMap extends React.PureComponent {
     }
   };
 
-  renderChargers = (chargerList, callback = null) => {
+  renderChargers = (chargerList, onClick, cellMap) => {
     chargerList.forEach((chargerData, index) => {
-      if (!chargerData) return;
-      const { x, y, name, angle, chargingCells = [] } = chargerData;
-      if (x === null || y === null) return;
-      const charger = new Charger({
-        x,
-        y,
-        name,
-        angle: convertAngleToPixiAngle(angle),
-        $$formData: { flag: index + 1, ...chargerData },
-        // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
-        select: typeof callback === 'function' ? callback : this.select,
-      });
-      this.pixiUtils.viewportAddChild(charger);
-      this.chargerMap.set(name, charger);
+      const { NAVI } = CoordinateType;
+      const { code, name, chargingCells = [] } = chargerData;
 
-      // 渲染充电桩到充电点之间的关系线
+      // 取chargingCells第一个充电点计算充电桩图标位置 -> BUG: 可能有bug
+      if (chargingCells.length > 0) {
+        // TIPS:这里的cellId已经经过转换，目前就是业务ID
+        const { cellId, nangle, distance } = chargingCells[0];
+        if (isNull(cellId)) return;
+        const cellData = cellMap[cellId];
+        let viewAngle = this.cellCoordinateType === NAVI ? nangle : getOppositeAngle(nangle);
+        const [xKey, yKey] = getKeyByCoordinateType(this.cellCoordinateType);
+        const source = getCoordinator(
+          { x: cellData[xKey], y: cellData[yKey] },
+          viewAngle,
+          distance,
+        );
+        const [viewX, viewY] = getCoordinateBy2Types(
+          source,
+          cellData.navigationType,
+          this.cellCoordinateType,
+        );
+
+        // 如果选择显示的物理坐标，那么source的坐标为右手坐标，所以要正常显示的话需要转置成左手坐标
+        const charger = new Charger({
+          x: viewX,
+          y: viewY,
+          name,
+          angle: convertAngleToPixiAngle(viewAngle),
+          $$formData: { flag: index + 1, ...chargerData },
+          // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
+          select: typeof onClick === 'function' ? onClick : this.select,
+        });
+        this.pixiUtils.viewportAddChild(charger);
+        this.chargerMap.set(code, charger);
+
+        // 一个充电桩可能对应多个充电点，所以这里使用数组
+        let lines = this.relationshipLines.get(code);
+        if (!Array.isArray(lines)) {
+          lines = [];
+          this.relationshipLines.set(code, lines);
+        }
+        chargingCells.forEach((chargingCell) => {
+          const cellEntity = this.idCellMap.get(chargingCell.cellId);
+          if (cellEntity) {
+            const relationLine = drawRelationLine(cellEntity, { x: viewX, y: viewY });
+            this.pixiUtils.viewportAddChild(relationLine);
+            lines.push(relationLine);
+          }
+        });
+      } else {
+        console.error('[RMS]: No Charging Cell(s)');
+      }
+    });
+  };
+
+  updateCharger = (charger, cellMap) => {
+    if (!charger) return;
+    const { code, name, chargingCells = [] } = charger;
+    // 取chargingCells第一个充电点计算充电桩图标位置
+    const firstChargingCell = chargingCells[0];
+    if (firstChargingCell) {
+      const { cellId, nangle, distance } = firstChargingCell;
+      const cellData = cellMap[cellId];
+      let viewAngle;
+      if (this.cellCoordinateType === CoordinateType.NAVI) {
+        viewAngle = nangle;
+      } else {
+        viewAngle = getOppositeAngle(nangle);
+      }
+      const [xKey, yKey] = getKeyByCoordinateType(this.cellCoordinateType);
+      const source = { x: cellData[xKey], y: cellData[yKey] };
+      const { x: viewX, y: viewY } = getCoordinator(source, viewAngle, distance);
+      const chargerEntity = this.chargerMap.get(code);
+      chargerEntity.x = viewX;
+      chargerEntity.y = viewY;
+      chargerEntity.addName(name);
+      chargerEntity.angle = convertAngleToPixiAngle(viewAngle);
+
+      // 1. 删除旧的关系线
+      let lines = this.relationshipLines.get(code);
+      lines.map((sprite) => {
+        this.pixiUtils.viewportRemoveChild(sprite);
+        sprite.destroy();
+      });
+      lines.length = 0;
+
+      // 2. 重新渲染关系线
       chargingCells.forEach((chargingCell) => {
         if (chargingCell) {
           const cellEntity = this.idCellMap.get(chargingCell.cellId);
           if (cellEntity) {
-            const relationLine = new PIXI.Graphics();
-            relationLine.lineStyle(40, 0x0389ff);
-            relationLine.moveTo(x, y);
-            relationLine.lineTo(cellEntity.x, cellEntity.y);
-            relationLine.zIndex = zIndex.targetLine;
+            const relationLine = drawRelationLine(cellEntity, { x: viewX, y: viewY });
             this.pixiUtils.viewportAddChild(relationLine);
-            this.relationshipLines.set(`charger_${name}-${cellEntity.id}`, relationLine);
+            lines.push(relationLine);
           }
         }
       });
-    });
+    } else {
+      console.error('[RMS]: No Charging Cell(s)');
+    }
   };
 
   removeCharger = (charger) => {
     if (!charger) return;
-    const { chargingCells = [], name } = charger;
+    const { code } = charger;
 
-    chargingCells.forEach((chargingCell) => {
-      if (chargingCell) {
-        const cellEntity = this.idCellMap.get(chargingCell.cellId);
-        if (cellEntity) {
-          // 删除工作站到停止点之间的关系线
-          const relationshipLine = this.relationshipLines.get(`charger_${name}-${cellEntity.id}`);
-          if (relationshipLine) {
-            this.pixiUtils.viewportRemoveChild(relationshipLine);
-            relationshipLine.destroy(true);
-          }
-        }
-      }
-    });
-
-    const chargerEntity = this.chargerMap.get(name);
+    const chargerEntity = this.chargerMap.get(code);
     if (chargerEntity) {
       this.pixiUtils.viewportRemoveChild(chargerEntity);
       chargerEntity.destroy({ children: true });
     }
-  };
 
-  /**
-   * 渲染一个工作站
-   * @param workStationData 工作站数据
-   * @param callback 点击回调
-   * @param autoSelect 新增完是否有选中样式
-   */
-  addWorkStation = (workStationData, callback, autoSelect = false) => {
-    const {
-      x,
-      y,
-      icon,
-      name,
-      angle,
-      station, // 编码
-      direction,
-      stopCellId,
-      bufferCellId,
-      rotateCellIds,
-      branchPathCellIds,
-      size, // width@height
-    } = workStationData;
-
-    const workStationParam = {
-      x,
-      y,
-      name,
-      direction,
-      icon,
-      size,
-      stopCellId,
-      station,
-      angle: convertAngleToPixiAngle(angle),
-      $$formData: workStationData, // 原始DB数据
-      // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
-      select: typeof callback === 'function' ? callback : this.select,
-    };
-    const workStation = new WorkStation(workStationParam);
-    autoSelect && workStation.onSelect();
-    this.pixiUtils.viewportAddChild(workStation);
-    this.workStationMap.set(`${stopCellId}`, workStation);
-
-    // 扫描点
-    const scanCell = this.idCellMap.get(stopCellId);
-    scanCell && scanCell.plusType('scan_cell', getTextureFromResources('scan_cell'));
-
-    // 停止点
-    const stopCell = this.idCellMap.get(stopCellId);
-    if (stopCell) {
-      stopCell.plusType('stop', getTextureFromResources('stop'));
-      // 渲染工作站到停止点之间的关系线
-      const dashedLine = new PIXI.Graphics();
-      dashedLine.lineStyle(40, 0x0389ff);
-      dashedLine.moveTo(x, y);
-      dashedLine.lineTo(stopCell.x, stopCell.y);
-      dashedLine.zIndex = zIndex.targetLine;
-      this.pixiUtils.viewportAddChild(dashedLine);
-      this.relationshipLines.set(`workStation_${station}`, dashedLine);
-    }
-
-    // 缓冲点
-    const bufferCell = this.idCellMap.get(bufferCellId);
-    bufferCell && bufferCell.plusType('buffer_cell', getTextureFromResources('buffer_cell'));
-
-    // 旋转点
-    if (Array.isArray(rotateCellIds)) {
-      rotateCellIds.forEach((cellId) => {
-        const rotateCell = this.idCellMap.get(parseInt(cellId));
-        rotateCell && rotateCell.plusType('rotate_cell', getTextureFromResources('rotate_cell'));
-      });
-    }
-
-    // 分叉点
-    if (Array.isArray(branchPathCellIds)) {
-      branchPathCellIds.forEach((cellId) => {
-        const bifurcationCell = this.idCellMap.get(parseInt(cellId));
-        bifurcationCell &&
-          bifurcationCell.plusType('bifurcation', getTextureFromResources('bifurcation'));
-      });
-    }
-  };
-
-  removeWorkStation = (workStationData) => {
-    const { station, scanCellId, stopCellId, bufferCellId, rotateCellIds, branchPathCellIds } =
-      workStationData;
-    const workStation = this.workStationMap.get(`${stopCellId}`);
-    if (workStation) {
-      this.pixiUtils.viewportRemoveChild(workStation);
-      workStation.destroy({ children: true });
-    }
-
-    // Render Scan Cell
-    const scanCell = this.idCellMap.get(scanCellId);
-    scanCell && scanCell.removeType('scan_cell');
-
-    // Render Stop Cell
-    const stopCell = this.idCellMap.get(stopCellId);
-    stopCell && stopCell.removeType('stop');
-
-    // Render Buffer Cell
-    const bufferCell = this.idCellMap.get(bufferCellId);
-    bufferCell && bufferCell.removeType('buffer_cell');
-
-    // Render Rotation Cell
-    if (Array.isArray(rotateCellIds)) {
-      rotateCellIds.forEach((cellId) => {
-        const rotateCell = this.idCellMap.get(parseInt(cellId));
-        rotateCell && rotateCell.removeType('rotate_cell');
-      });
-    }
-
-    // 删除分叉点
-    if (Array.isArray(branchPathCellIds)) {
-      branchPathCellIds.forEach((cellId) => {
-        const bifurcationCell = this.idCellMap.get(parseInt(cellId));
-        bifurcationCell && bifurcationCell.removeType('bifurcation');
-      });
-    }
-
-    // 删除工作站到停止点之间的关系线
-    const relationshipLine = this.relationshipLines.get(`workStation_${station}`);
-    if (relationshipLine) {
-      this.pixiUtils.viewportRemoveChild(relationshipLine);
-      relationshipLine.destroy(true);
-    }
+    const lines = this.relationshipLines.get(code);
+    lines.map((sprite) => {
+      this.pixiUtils.viewportRemoveChild(sprite);
+      sprite.destroy();
+    });
+    this.relationshipLines.delete(code);
   };
 
   /**
    * 渲染 通用站点
-   * @param {*} commonList 通用站点数据
+   * @param stationList
    * @param {*} callback 点击通用站点回调函数
-   * @param autoSelect 新增完是否有选中样式
+   * @param cellMap
    */
-  renderCommonFunction = (commonList, callback = null, autoSelect = false) => {
-    commonList.forEach((commonFunctionData, index) => {
-      const {
-        name = '',
-        station,
-        angle,
-        iconAngle,
-        stopCellId,
-        icon,
-        size,
-        offset,
-      } = commonFunctionData;
+  renderStation = (stationList, callback = null, cellMap) => {
+    const { NAVI } = CoordinateType;
+    stationList.forEach((station) => {
+      // 此时这里的stopCellId是业务ID
+      const { name, code, nangle, offset, stopCellId } = station;
+      const { icon, iconAngle, iconWidth, iconHeight } = station;
+
+      const cellData = cellMap[stopCellId];
       const stopCell = this.idCellMap.get(stopCellId);
-      if (!stopCell) return;
+      if (isNull(cellData) || isNull(stopCell)) {
+        console.error(
+          `[RMS]: Render Station Error -> cellData: ${cellData}; stopCell: ${stopCell}`,
+        );
+        return;
+      }
 
-      let commonFunction;
-      let destinationX;
-      let destinationY;
-
-      const callbackOption = {
+      let viewAngle = this.cellCoordinateType === NAVI ? nangle : getOppositeAngle(nangle);
+      const [xKey, yKey] = getKeyByCoordinateType(this.cellCoordinateType);
+      const source = getCoordinator({ x: cellData[xKey], y: cellData[yKey] }, viewAngle, offset);
+      const [viewX, viewY] = getCoordinateBy2Types(
+        source,
+        cellData.navigationType,
+        this.cellCoordinateType,
+      );
+      const commonFunction = new Station({
+        x: viewX,
+        y: viewY,
+        name,
+        angle: convertAngleToPixiAngle(viewAngle), // 相对于停止点的导航角度
+        icon,
+        iconAngle: convertAngleToPixiAngle(iconAngle),
+        iconWidth,
+        iconHeight,
+        stopId: stopCellId, // TODO: 未来可能会有多个停止点，比如潜伏料箱场景
+        $$formData: station,
         // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
         select: typeof callback === 'function' ? callback : this.select,
-      };
-
-      // 兼容旧逻辑(新通用站点必定包含offset数据)
-      if (isNull(offset)) {
-        destinationX = stopCell.x + commonFunctionData.x;
-        destinationY = stopCell.y + commonFunctionData.y;
-        commonFunction = new CommonFunction({
-          x: destinationX,
-          y: destinationY,
-          name,
-          angle, // 相对于停止点的方向
-          iconAngle: angle, // 图标角度，仅用于渲染
-          $$formData: commonFunctionData,
-          ...callbackOption,
-        });
-      } else {
-        const { x, y } = getCoordinator(stopCell, angle, offset);
-        destinationX = x;
-        destinationY = y;
-        commonFunction = new CommonFunction({
-          x,
-          y,
-          name,
-          angle, // 相对于停止点的方向
-          iconAngle: convertAngleToPixiAngle(iconAngle), // 图标角度，仅用于渲染
-          icon, // 图标类型
-          size, // 图标尺寸
-          $$formData: commonFunctionData,
-          ...callbackOption,
-        });
-      }
-      autoSelect && commonFunction.onSelect();
+      });
       this.pixiUtils.viewportAddChild(commonFunction);
-      this.commonFunctionMap.set(`${stopCellId}`, commonFunction);
+      this.commonFunctionMap.set(code, commonFunction);
 
       // 渲染站点到停止点之间的关系线
-      const dashedLine = new PIXI.Graphics();
-      dashedLine.lineStyle(40, 0x0389ff);
-      dashedLine.moveTo(destinationX, destinationY);
-      dashedLine.lineTo(stopCell.x, stopCell.y);
-      dashedLine.zIndex = zIndex.targetLine;
+      const dashedLine = drawRelationLine({ x: viewX, y: viewY }, stopCell);
       this.pixiUtils.viewportAddChild(dashedLine);
-      this.relationshipLines.set(`commonStation_${station}`, dashedLine);
-
-      // 标记停止点
-      stopCell.plusType('stop', getTextureFromResources('stop'));
+      this.relationshipLines.set(code, dashedLine);
     });
   };
 
-  removeCommonFunction = ({ station, stopCellId }) => {
-    const commonFunction = this.commonFunctionMap.get(`${stopCellId}`);
+  updateStation = (station, cellMap) => {
+    const { NAVI } = CoordinateType;
+    // 此时这里的stopCellId是业务ID
+    const { name, code, nangle, offset, stopCellId } = station;
+    const { icon, iconAngle, iconWidth, iconHeight } = station;
+
+    const cellData = cellMap[stopCellId];
+    const stopCell = this.idCellMap.get(stopCellId);
+    if (isNull(cellData) || isNull(stopCell)) {
+      console.error(`[RMS]: Render Station Error -> cellData: ${cellData}; stopCell: ${stopCell}`);
+      return;
+    }
+    const stationSprite = this.commonFunctionMap.get(code);
+
+    // 站点图标调整：位置、角度、图标
+    let viewAngle = this.cellCoordinateType === NAVI ? nangle : getOppositeAngle(nangle);
+    const [xKey, yKey] = getKeyByCoordinateType(this.cellCoordinateType);
+    const source = getCoordinator({ x: cellData[xKey], y: cellData[yKey] }, viewAngle, offset);
+    const [viewX, viewY] = getCoordinateBy2Types(
+      source,
+      cellData.navigationType,
+      this.cellCoordinateType,
+    );
+    stationSprite.x = viewX;
+    stationSprite.y = viewY;
+    stationSprite.addName(name);
+    stationSprite.angle = convertAngleToPixiAngle(viewAngle);
+    stationSprite.updateStationIcon(
+      icon,
+      iconWidth,
+      iconHeight,
+      convertAngleToPixiAngle(iconAngle),
+    );
+
+    /******** 关系线 ********/
+    const relationshipLine = this.relationshipLines.get(code);
+    if (relationshipLine) {
+      this.pixiUtils.viewportRemoveChild(relationshipLine);
+      relationshipLine.destroy(true);
+      this.relationshipLines.delete(code);
+    }
+    const dashedLine = drawRelationLine({ x: viewX, y: viewY }, stopCell);
+    this.pixiUtils.viewportAddChild(dashedLine);
+    this.relationshipLines.set(code, dashedLine);
+  };
+
+  removeStation = ({ code }) => {
+    const commonFunction = this.commonFunctionMap.get(code);
     if (commonFunction) {
       this.pixiUtils.viewportRemoveChild(commonFunction);
       commonFunction.destroy({ children: true });
 
       // 删除站点到停止点之间的关系线
-      const relationshipLine = this.relationshipLines.get(`commonStation_${station}`);
+      const relationshipLine = this.relationshipLines.get(code);
       if (relationshipLine) {
         this.pixiUtils.viewportRemoveChild(relationshipLine);
-        relationshipLine.destroy(true);
+        relationshipLine.destroy();
+        this.relationshipLines.delete(code);
       }
     }
-
-    // Render Stop Cell
-    const stopCell = this.idCellMap.get(stopCellId);
-    stopCell && stopCell.removeType('stop');
   };
 
   // 交汇点

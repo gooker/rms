@@ -12,27 +12,23 @@ const RichInput = (props) => {
       <Col span={icon ? 18 : 21}>
         {type === 'string' ? (
           <Input
-            style={{ width: '100%' }}
             {...props}
+            value={value}
             onChange={({ target }) => {
+              props.onChange(target.value);
               setValue(target.value);
             }}
-            value={value}
-            onBlur={() => {
-              props.onChange(value);
-            }}
+            style={{ width: '100%' }}
           />
         ) : (
           <InputNumber
             style={{ width: '100%' }}
             {...props}
             onChange={({ target }) => {
+              props.onChange(target.value);
               setValue(target.value);
             }}
             value={value}
-            onBlur={() => {
-              props.onChange(value);
-            }}
           />
         )}
       </Col>

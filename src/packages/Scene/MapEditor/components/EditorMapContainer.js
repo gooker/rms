@@ -7,7 +7,6 @@ import EditorShortcutTool from './EditorShortcutTool';
 import { EditorMapSizeKey, ZoneMarkerType } from '@/config/consts';
 import EventManager from '@/utils/EventManager';
 import { getRandomString, isNull } from '@/utils/util';
-import { renderWorkStationList } from '@/utils/mapUtil';
 import { transformXYByParams } from '@/utils/mapTransformer';
 import EditorFooter from '@/packages/Scene/MapEditor/components/EditorFooter';
 import { FooterHeight, HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from '../editorEnums';
@@ -205,18 +204,11 @@ const EditorMapContainer = (props) => {
     const { chargerList, workstationList, commonList } = currentLogicAreaData;
     // 充电桩
     if (Array.isArray(chargerList) && chargerList.length > 0) {
-      mapContext.renderChargers(chargerList);
-    }
-    // 工作站
-    if (Array.isArray(workstationList)) {
-      const workStationListData = renderWorkStationList(workstationList, currentMap.cellMap);
-      workStationListData.forEach((workStation, index) => {
-        mapContext.addWorkStation({ flag: index + 1, ...workStation });
-      });
+      mapContext.renderChargers(chargerList, null, currentMap.cellMap);
     }
     // 通用站点
     if (Array.isArray(commonList)) {
-      mapContext.renderCommonFunction(commonList);
+      mapContext.renderStation(commonList, null, currentMap.cellMap);
     }
 
     const { dumpStations, zoneMarker, labels, emergencyStopFixedList } = currentLogicAreaData;

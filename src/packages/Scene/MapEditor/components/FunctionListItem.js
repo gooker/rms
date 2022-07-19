@@ -1,9 +1,9 @@
 import React, { memo } from 'react';
-import { Divider, Row, Col, Tag } from 'antd';
+import { Col, Divider, Row, Tag } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import styles from '../../popoverPanel.module.less';
 import LabelComponent from '@/components/LabelComponent';
-import { isNull } from '@/utils/util';
+import { getRandomString, isNull } from '@/utils/util';
 
 const FunctionListItem = (props) => {
   const {
@@ -13,16 +13,16 @@ const FunctionListItem = (props) => {
   } = props;
 
   function renderFields() {
-    return fields.map(({ field, label, value, node, col }) => {
+    return fields.map(({ label, value, node, col }) => {
       if (node) {
         return node;
       } else {
         if (Array.isArray(value)) {
           return (
-            <Col key={field} span={col || 24}>
+            <Col key={getRandomString(6)} span={col || 24}>
               <LabelComponent label={label}>
                 {value.map((item) => (
-                  <Tag key={item} color="blue">
+                  <Tag key={item} color='blue'>
                     {item}
                   </Tag>
                 ))}
@@ -31,7 +31,7 @@ const FunctionListItem = (props) => {
           );
         }
         return (
-          <Col key={field} span={col || 12}>
+          <Col key={getRandomString(6)} span={col || 12}>
             <LabelComponent label={label}>{value}</LabelComponent>
           </Col>
         );

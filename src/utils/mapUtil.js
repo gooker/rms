@@ -1,9 +1,10 @@
 import * as PIXI from 'pixi.js';
 import { LINE_SCALE_MODE, SmoothGraphics } from '@pixi/graphics-smooth';
 import * as XLSX from 'xlsx';
+import { DashLine } from 'pixi-dashed-line';
 import { cloneDeep, find, groupBy, orderBy, pickBy, sortBy } from 'lodash';
 import { CoordinateType, LineType, NavigationType } from '@/config/config';
-import { CellSize, MapSelectableSpriteType, VehicleState } from '@/config/consts';
+import { CellSize, MapSelectableSpriteType, VehicleState, zIndex } from '@/config/consts';
 import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
 import { CellEntity, LogicArea } from '@/entities';
 import json from '../../package.json';
@@ -64,6 +65,15 @@ export function convertAngleToPixiAngle(mathAngle) {
     return pixi;
   }
   return null;
+}
+
+// 左右手角度转换
+export function getOppositeAngle(angle) {
+  let _angle = 360 - angle;
+  if (_angle === 360) {
+    return 0;
+  }
+  return _angle;
 }
 
 export function getCoordinator(source, angle, r) {
@@ -304,21 +314,6 @@ export function transform(object, oldValue, newValue, isUpdate) {
   }
 }
 
-export function renderWorkStationList(workstationList, cellMap) {
-  return workstationList.map((record) => {
-    const { stopCellId, angle, offset } = record;
-    if (!isStrictNull(stopCellId) && !isStrictNull(angle)) {
-      const stopCell = cellMap[stopCellId];
-      if (!isNull(stopCell)) {
-        const { x, y } = getCoordinator({ x: stopCell.x, y: stopCell.y }, angle, offset || 1900);
-        return { ...record, x, y };
-      }
-      return record;
-    }
-    return record;
-  });
-}
-
 /**
  // ********************** 充电桩 ********************* //
  **/
@@ -372,28 +367,63 @@ export function convertSupportTypesToDTO(supportTypes) {
   return $$supportTypes;
 }
 
+export function drawRelationLine(source, target) {
+  const relationLine = new PIXI.Graphics();
+  relationLine.zIndex = zIndex.targetLine;
+  const dash = new DashLine(relationLine, {
+    dash: [20, 40],
+    width: 20,
+    color: 0x0389ff,
+  });
+  dash.moveTo(source.x, source.y);
+  dash.lineTo(target.x, target.y);
+  return relationLine;
+}
+
+// 根据导航ID获取业务ID(自增ID)
+// BUG: 如果两种存在相同的naviID, 那么这里会出现bug
+export function getIdByNaviId(naviId, cellMap) {
+  const item = pickBy(cellMap, (value) => value.naviId === naviId);
+  if (item) {
+    return Object.values(item)[0]?.id;
+  }
+  return null;
+}
+
 // 将充电桩数据转换成后台数据结构
 export function convertChargerToDTO(charger, cellMap) {
+  // 这个charger数据是表单数据，避免直接修改值，所以这里clone
   const _charger = cloneDeep(charger);
-  _charger.chargingCells.forEach((item) => {
+  _charger.chargingCells = _charger.chargingCells.map((item) => {
+    item.cellId = getIdByNaviId(item.cellId, cellMap);
     if (Array.isArray(item.supportTypes)) {
       item.supportTypes = convertSupportTypesToDTO(item.supportTypes);
     } else {
       item.supportTypes = [];
     }
+    return item;
   });
-  return generateChargerXY(_charger, cellMap);
+  return _charger;
+}
+
+export function convertStationToDTO(station, cellMap) {
+  const _station = cloneDeep(station);
+  _station.stopCellId = getIdByNaviId(_station.stopCellId, cellMap);
+  return _station;
 }
 
 // 将充电桩后台数据转换成前端数据
-export function convertChargerToView(charger) {
+export function convertChargerToView(charger, cellMap) {
   if (isStrictNull(charger)) return null;
-  const chargingCells = charger.chargingCells.map(({ cellId, supportTypes }) => {
+  // TIPS: 这里的cellId是业务ID，要转成导航ID
+  const chargingCells = charger.chargingCells.map(({ cellId, distance, nangle, supportTypes }) => {
     const _supportTypes = supportTypes.map(({ adapterType, vehicleTypes }) =>
       vehicleTypes.map((item) => `${adapterType}@${item}`),
     );
     return {
-      cellId,
+      cellId: cellMap[cellId]?.naviId,
+      distance,
+      nangle,
       supportTypes: _supportTypes.flat(),
     };
   });
@@ -411,9 +441,9 @@ export function convertRestToView(rest) {
     supportTypes: _supportTypes.flat(),
   };
 }
-// ********************* 充电桩 ********************* //
 
-export function renderElevatorList(elevatorList) {
+// 将电梯数据转换成地图渲染适用的结构
+export function convertElevatorToView(elevatorList) {
   const result = [];
   elevatorList.forEach((record) => {
     const { logicLocations } = record;

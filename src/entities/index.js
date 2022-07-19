@@ -19,7 +19,7 @@ import WorkingState from './WorkingState';
 import ForkPallet from './ForkPallet';
 import TemporaryLock from './TemporaryLock';
 import GroundStorage from './GroundStorage';
-import CommonFunction from './CommonFunction';
+import Station from './Station';
 import Intersection from './Intersection';
 import Dump from './Dump';
 import DumpBasket from './DumpBasket';
@@ -60,7 +60,7 @@ export {
   ForkPallet,
   TemporaryLock,
   GroundStorage,
-  CommonFunction,
+  Station,
   Intersection,
   BackImg,
   ResizeableEmergencyStop,

@@ -18,8 +18,6 @@ class EditorMapView extends BaseMap {
       ...defaultEditorViewConfig,
     };
 
-    // 核心业务逻辑参数
-    this.cellCoordinateType = null; // 当前点位使用的坐标类型
     this.fixedEStopMap = new Map(); // 固定紧急避让区
     this.selectedCells = []; // 缓存选中的点位ID, 用于shift选择
   }

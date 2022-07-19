@@ -28,6 +28,7 @@ export default {
   'app.form.code.duplicate': '编码重复',
   'app.form.id.duplicate': 'ID重复',
   'app.form.name.duplicate': '名称重复',
+  'app.form.required.template': '请选择{name}',
 
   // 通用页面标识内容
   'app.common.fullScreen': '进入全屏',

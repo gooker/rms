@@ -1,5 +1,5 @@
 import { applyToPoint, compose, flipX, rotateDEG, scale, translate } from 'transformation-matrix';
-import { NavigationTypeView } from '@/config/config';
+import { CoordinateType, NavigationTypeView } from '@/config/config';
 
 /**
  * 右手坐标系
@@ -50,20 +50,40 @@ export function transformXYByParams(coordinate, navigationCellType, inputTransfo
   return { x, y };
 }
 
-// coordinateTransformer的逆运算
-export function reverseCoordinateTransformer(coordinate, navigationCellType, transformParams) {
-  const { coordinationType, zoom, compensationOffset, compensationAngle } =
-    transformParams || getDefaultTransformParams(navigationCellType);
+export function reverseTransformXYByParams(coordinate, navigationCellType, inputTransformParams) {
+  const transformParams = inputTransformParams || getDefaultTransformParams(navigationCellType);
+  const { coordinationType, zoom, compensationOffset, compensationAngle } = transformParams;
 
   const matrixParams = [];
-  matrixParams.push(flipX());
-  matrixParams.push(translate(-compensationOffset.x, -compensationOffset.y));
-  matrixParams.push(scale(1 / zoom));
-  matrixParams.push(rotateDEG(compensationAngle));
   if (coordinationType === 'L') {
     matrixParams.push(flipX());
+    matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
+    matrixParams.push(scale(zoom));
+    matrixParams.push(rotateDEG(compensationAngle));
+    matrixParams.push(flipX());
+  } else {
+    matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
+    matrixParams.push(scale(zoom));
+    matrixParams.push(rotateDEG(-compensationAngle));
   }
+
   const matrix = compose(...matrixParams);
-  const { x, y } = applyToPoint(matrix, coordinate);
-  return { ...coordinate, x, y, nx: x, ny: y };
+  const matrixResult = applyToPoint(matrix, coordinate);
+  const x = Math.round(matrixResult.x);
+  const y = Math.round(matrixResult.y);
+  return { x, y };
+}
+
+// 根据当前点位坐标类型和导航点类型获取转换后的坐标
+export function getCoordinateBy2Types(source, navigationType, cellCoordinateType) {
+  let viewX, viewY;
+  if (cellCoordinateType === CoordinateType.NAVI) {
+    const result = transformXYByParams(source, navigationType);
+    viewX = result.x;
+    viewY = result.y;
+  } else {
+    viewX = source.x;
+    viewY = -source.y;
+  }
+  return [viewX, viewY];
 }

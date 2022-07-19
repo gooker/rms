@@ -3,7 +3,6 @@ import { Button, Form, Input, InputNumber, Select } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { debounce } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { formatMessage, getFormLayout, getRandomString } from '@/utils/util';
 import { MapSelectableSpriteType } from '@/config/consts';
 import AngleSelector from '@/components/AngleSelector';
@@ -14,40 +13,30 @@ const { formItemLayout } = getFormLayout(4, 20);
 const { formItemLayout: formItemLayout2 } = getFormLayout(6, 18);
 
 const ChargerForm = (props) => {
-  const { dispatch, flag, charger, mapContext, selectCellIds, allChargers, allAdaptors } = props;
+  const { dispatch, flag, cellMap, charger, mapContext, selectCellIds, allAdaptors } = props;
   const [formRef] = Form.useForm();
 
   function onValueChange() {
-    formRef
-      .validateFields()
-      .then((values) => {
-        console.log(values);
-        dispatch({
-          type: 'editor/updateFunction',
-          payload: { scope: 'logic', type: 'chargerList', data: values },
-        }).then((result) => {
-          const currentLogicAreaData = getCurrentLogicAreaData();
-          if (result.type === 'add') {
-            mapContext.renderChargers([result.payload], null);
-          }
-          if (result.type === 'update') {
-            const { pre, current } = result;
-            mapContext.removeCharger(pre, currentLogicAreaData.id);
-            mapContext.renderChargers([current]);
-          }
-          mapContext.refresh();
+    setTimeout(() => {
+      formRef
+        .validateFields()
+        .then((values) => {
+          dispatch({
+            type: 'editor/updateFunction',
+            payload: { scope: 'logic', type: 'chargerList', data: values },
+          }).then((result) => {
+            if (result.type === 'add') {
+              mapContext.renderChargers([result.payload], null, cellMap);
+            }
+            if (result.type === 'update') {
+              mapContext.updateCharger(result.current, cellMap);
+            }
+            mapContext.refresh();
+          });
+        })
+        .catch(() => {
         });
-      })
-      .catch((err) => {
-        //
-      });
-  }
-
-  function checkNameDuplicate(name) {
-    const existNames = allChargers
-      .filter((item, index) => index !== flag - 1)
-      .map((item) => item.name);
-    return existNames.includes(name);
+    });
   }
 
   function renderSupportTypesOptions() {
@@ -68,19 +57,12 @@ const ChargerForm = (props) => {
     });
   }
 
-  function generateSupportTypes(data) {
-    const newData = [];
-    data?.map((item) => {
-      const newTypes = [];
-      item.supportTypes?.map(({ adapterType, vehicleTypes }) => {
-        newTypes.push(`${adapterType}@${vehicleTypes}`);
-      });
-      newData.push({
-        cellId: item.cellId,
-        supportTypes: [...newTypes],
-      });
-    });
-    return newData;
+  function getFormInitialValue() {
+    if (charger) {
+      return charger.chargingCells;
+    } else {
+      return [{ cellId: null, nangle: null, supportTypes: [] }];
+    }
   }
 
   return (
@@ -99,45 +81,14 @@ const ChargerForm = (props) => {
       />
 
       {/* ----------------------------------------------------------------------------------------- */}
-
       {/* 名称 */}
       <Form.Item
         name={'name'}
         initialValue={charger?.name}
         label={formatMessage({ id: 'app.common.name' })}
-        rules={[
-          { required: true },
-          () => ({
-            validator(_, value) {
-              const isDuplicate = checkNameDuplicate(value);
-              if (!isDuplicate) {
-                return Promise.resolve();
-              }
-              return Promise.reject(new Error(formatMessage({ id: 'app.form.name.duplicate' })));
-            },
-          }),
-        ]}
-      >
-        <Input />
-      </Form.Item>
-
-      {/* 角度 */}
-      <Form.Item
-        name={'angle'}
-        initialValue={charger?.angle}
-        label={formatMessage({ id: 'app.common.angle' })}
         rules={[{ required: true }]}
       >
-        <AngleSelector
-          disabled
-          width={'100%'}
-          addonLabel={{
-            0: formatMessage({ id: 'app.direction.rightSide' }),
-            90: formatMessage({ id: 'app.direction.topSide' }),
-            180: formatMessage({ id: 'app.direction.leftSide' }),
-            270: formatMessage({ id: 'app.direction.bottomSide' }),
-          }}
-        />
+        <Input />
       </Form.Item>
 
       {/* 优先级 */}
@@ -150,14 +101,7 @@ const ChargerForm = (props) => {
       </Form.Item>
 
       {/* 充电点 */}
-      <Form.List
-        name={'chargingCells'}
-        initialValue={
-          Array.isArray(charger?.chargingCells) && charger?.chargingCells.length > 0
-            ? generateSupportTypes(charger?.chargingCells)
-            : [{}]
-        }
-      >
+      <Form.List name={'chargingCells'} initialValue={getFormInitialValue()}>
         {(fields, { add, remove }) => (
           <>
             {fields.map(({ key, name, fieldKey, ...restField }) => (
@@ -171,11 +115,38 @@ const ChargerForm = (props) => {
                     label={formatMessage({ id: 'editor.cellType.charging' })}
                     rules={[{ required: true }]}
                   >
-                    <ButtonInput
-                      type={'number'}
-                      data={selectCellIds[0]}
-                      btnDisabled={selectCellIds.length !== 1}
+                    <ButtonInput data={selectCellIds[0]} btnDisabled={selectCellIds.length !== 1} />
+                  </Form.Item>
+
+                  {/* 导航角度 */}
+                  <Form.Item
+                    {...restField}
+                    {...formItemLayout2}
+                    name={[name, 'nangle']}
+                    label={formatMessage({ id: 'app.common.angle' })}
+                    rules={[{ required: true }]}
+                  >
+                    <AngleSelector
+                      disabled
+                      width={'100%'}
+                      addonLabel={{
+                        0: formatMessage({ id: 'app.direction.rightSide' }),
+                        90: formatMessage({ id: 'app.direction.topSide' }),
+                        180: formatMessage({ id: 'app.direction.leftSide' }),
+                        270: formatMessage({ id: 'app.direction.bottomSide' }),
+                      }}
                     />
+                  </Form.Item>
+
+                  {/* 距离 */}
+                  <Form.Item
+                    {...restField}
+                    {...formItemLayout2}
+                    name={[name, 'distance']}
+                    label={formatMessage({ id: 'editor.config.distance' })}
+                    rules={[{ required: true }]}
+                  >
+                    <InputNumber />
                   </Form.Item>
 
                   {/* 小车类型 */}
@@ -186,7 +157,7 @@ const ChargerForm = (props) => {
                     label={formatMessage({ id: 'app.vehicleType' })}
                     rules={[{ required: true }]}
                   >
-                    <Select mode="multiple">{renderSupportTypesOptions()}</Select>
+                    <Select mode='multiple'>{renderSupportTypesOptions()}</Select>
                   </Form.Item>
                 </div>
                 <Button
@@ -211,22 +182,14 @@ const ChargerForm = (props) => {
 export default connect(({ global, editor }) => {
   const { selections, currentMap, mapContext } = editor;
 
-  // 获取所有充电桩名称列表
-  const allChargers = [];
-  const { logicAreaList } = currentMap;
-  logicAreaList.forEach((item) => {
-    const chargerList = item.chargerList || [];
-    allChargers.push(...chargerList);
-  });
-
   const selectCellIds = selections
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
-    .map(({ id }) => id);
+    .map(({ naviId }) => naviId);
 
   return {
     mapContext,
-    allChargers,
     selectCellIds,
+    cellMap: currentMap.cellMap,
     allAdaptors: global.allAdaptors,
   };
 })(memo(ChargerForm));

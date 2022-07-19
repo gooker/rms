@@ -10,9 +10,12 @@ import ChargerMultiForm from './ChargerMultiForm';
 import FunctionListItem from '../components/FunctionListItem';
 import LabelComponent from '@/components/LabelComponent';
 import commonStyles from '@/common.module.less';
+import Dictionary from '@/utils/Dictionary';
+import { cloneDeep } from 'lodash';
 
+const Colors = Dictionary().color;
 const ChargerPanel = (props) => {
-  const { dispatch, height, mapContext, chargerList } = props;
+  const { dispatch, height, cellMap, mapContext, chargerList } = props;
 
   const [addFlag, setAddFlag] = useState(-1);
   const [formVisible, setFormVisible] = useState(null);
@@ -20,7 +23,13 @@ const ChargerPanel = (props) => {
   const [editing, setEditing] = useState(null);
 
   function edit(index, record) {
-    setEditing(record);
+    // 此处record.chargingCells中的cellId是业务ID，需要转换成导航ID
+    const _record = cloneDeep(record);
+    _record.chargingCells = _record.chargingCells.map((item) => ({
+      ...item,
+      cellId: cellMap[record.stopCellId]?.naviId,
+    }));
+    setEditing(_record);
     setFormVisible(true);
     setAddFlag(index);
   }
@@ -35,45 +44,47 @@ const ChargerPanel = (props) => {
     });
   }
 
+  // TIPS:这里cellId是业务ID，需要转换成对应的导航ID
   function renderChargingCells(chargingCells) {
-    return chargingCells.map(({ cellId, supportTypes }) => (
-      <Col key={getRandomString(6)} span={24}>
-        <LabelComponent
-          label={
-            <>
-              <FormattedMessage id={'editor.cellType.charging'} />({cellId})
-            </>
-          }
-        >
-          {supportTypes
-            .map(({ vehicleTypes }) => vehicleTypes)
-            .flat()
-            .join()}
-        </LabelComponent>
-      </Col>
-    ));
+    return chargingCells.map(({ cellId, supportTypes }) => {
+      const naviID = cellMap[cellId]?.naviId ?? (
+        <span style={{ color: Colors.red }}>
+          <FormattedMessage id={'app.common.notAvailable'} />
+        </span>
+      );
+      return (
+        <Col key={getRandomString(6)} span={24}>
+          <LabelComponent
+            label={
+              <>
+                <FormattedMessage id={'editor.cellType.charging'} />({naviID})
+              </>
+            }
+          >
+            {supportTypes
+              .map(({ vehicleTypes }) => vehicleTypes)
+              .flat()
+              .join()}
+          </LabelComponent>
+        </Col>
+      );
+    });
   }
 
   function getListData() {
     return chargerList.map((item, index) => {
-      const { name, chargingCells, angle } = item;
+      const { code, name, chargingCells } = item;
       return {
-        name,
         index,
+        name,
         rawData: item,
         fields: [
           {
-            field: 'name',
-            label: <FormattedMessage id={'app.common.name'} />,
-            value: name,
+            label: <FormattedMessage id={'app.common.code'} />,
+            value: code,
+            col: 24,
           },
           {
-            field: 'angle',
-            label: <FormattedMessage id={'app.common.angle'} />,
-            value: angle,
-          },
-          {
-            field: 'chargingCells',
             label: <FormattedMessage id={'editor.cellType.charging'} />,
             node: renderChargingCells(chargingCells),
           },
@@ -113,7 +124,7 @@ const ChargerPanel = (props) => {
       {/* 列表区 */}
       <div>
         {formVisible ? (
-          <ChargerForm charger={convertChargerToView(editing)} flag={addFlag} />
+          <ChargerForm charger={convertChargerToView(editing, cellMap)} flag={addFlag} />
         ) : multiFormVisible ? (
           <ChargerMultiForm
             back={() => {
@@ -161,10 +172,10 @@ const ChargerPanel = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { mapContext } = editor;
+  const { mapContext, currentMap } = editor;
 
   const currentLogicAreaData = getCurrentLogicAreaData();
   const chargerList = currentLogicAreaData?.chargerList ?? [];
 
-  return { mapContext, chargerList };
+  return { mapContext, cellMap: currentMap.cellMap, chargerList };
 })(memo(ChargerPanel));

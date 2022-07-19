@@ -3,7 +3,6 @@ import { debounce, throttle } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import EventManager from '@/utils/EventManager';
 import { getRandomString, isNull } from '@/utils/util';
-import { renderWorkStationList } from '@/utils/mapUtil';
 import { transformXYByParams } from '@/utils/mapTransformer';
 import { MonitorMapSizeKey, ZoneMarkerType } from '@/config/consts';
 import MonitorMapView from './MonitorMapView';
@@ -166,16 +165,9 @@ const MonitorMapContainer = (props) => {
     if (Array.isArray(chargerList)) {
       mapContext.renderChargers(chargerList);
     }
-    // 工作站
-    if (Array.isArray(workstationList)) {
-      const workStationListData = renderWorkStationList(workstationList, currentMap.cellMap);
-      workStationListData.forEach((workStation) => {
-        mapContext.addWorkStation(workStation, null);
-      });
-    }
     // 通用站点
     if (Array.isArray(commonList)) {
-      mapContext.renderCommonFunction(commonList);
+      mapContext.renderStation(commonList);
     }
 
     const { dumpStations, zoneMarker, labels, emergencyStopFixedList } = currentLogicAreaData;
