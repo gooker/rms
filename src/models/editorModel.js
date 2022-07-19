@@ -1165,28 +1165,18 @@ export default {
 
     // 批量添加充电桩
     *addChargerInBatches({ payload }, { select }) {
-      const { name, angle, priority, supportTypes, cellIds } = payload;
+      const { currentMap } = yield select(({ editor }) => editor);
+      const { cellIds, name, nangle, distance, priority, supportTypes } = payload;
       const scopeData = getCurrentLogicAreaData();
       const functionData = scopeData.chargerList || [];
-
-      let tempCharger = [];
-      cellIds.forEach((cellId, index) => {
-        let nameWillBeUse = `${name}-${index + 1}`;
-        // 判断该名称是否可用
-        const isExist = findIndex(functionData, { name: nameWillBeUse }) >= 0;
-        if (isExist) {
-          nameWillBeUse = `${name}-${getRandomString(6)}`;
-        }
-
-        tempCharger.push({
-          code: `charger_${getRandomString(6)}`,
-          name: nameWillBeUse,
-          angle,
+      const tempCharger = cellIds
+        .map((cellId) => ({
+          code: `charger_${getRandomString(10)}`,
+          name: `${name}-${getRandomString(10)}`,
           priority,
-          chargingCells: [{ cellId, supportTypes }],
-        });
-      });
-      tempCharger = tempCharger.map((item) => convertChargerToDTO(item));
+          chargingCells: [{ cellId, nangle, distance, supportTypes }],
+        }))
+        .map((item) => convertChargerToDTO(item, currentMap.cellMap));
       scopeData.chargerList = [...functionData, ...tempCharger];
       return tempCharger;
     },

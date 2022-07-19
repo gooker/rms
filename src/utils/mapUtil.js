@@ -383,6 +383,10 @@ export function drawRelationLine(source, target) {
 // 根据导航ID获取业务ID(自增ID)
 // BUG: 如果两种存在相同的naviID, 那么这里会出现bug
 export function getIdByNaviId(naviId, cellMap) {
+  if (isNull(cellMap)) {
+    console.error(`[RMS]: 'cellMap' loss`);
+    return null;
+  }
   const item = pickBy(cellMap, (value) => value.naviId === naviId);
   if (item) {
     return Object.values(item)[0]?.id;
@@ -390,11 +394,21 @@ export function getIdByNaviId(naviId, cellMap) {
   return null;
 }
 
+// 根据业务ID获取导航ID
+export function getNaviIdById(id, cellMap) {
+  if (isNull(cellMap)) {
+    console.error(`[RMS]: 'cellMap' loss`);
+    return null;
+  }
+  return cellMap[id]?.naviId;
+}
+
 // 将充电桩数据转换成后台数据结构
 export function convertChargerToDTO(charger, cellMap) {
   // 这个charger数据是表单数据，避免直接修改值，所以这里clone
   const _charger = cloneDeep(charger);
   _charger.chargingCells = _charger.chargingCells.map((item) => {
+    // 这里的cellId是导航ID，需要转换成业务ID
     item.cellId = getIdByNaviId(item.cellId, cellMap);
     if (Array.isArray(item.supportTypes)) {
       item.supportTypes = convertSupportTypesToDTO(item.supportTypes);

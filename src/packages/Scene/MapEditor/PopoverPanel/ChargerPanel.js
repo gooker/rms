@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Col, Empty } from 'antd';
 import { LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { convertChargerToView, getCurrentLogicAreaData } from '@/utils/mapUtil';
+import { convertChargerToView, getCurrentLogicAreaData, getNaviIdById } from '@/utils/mapUtil';
 import { formatMessage, getRandomString, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import ChargerForm from './ChargerForm';
@@ -27,7 +27,7 @@ const ChargerPanel = (props) => {
     const _record = cloneDeep(record);
     _record.chargingCells = _record.chargingCells.map((item) => ({
       ...item,
-      cellId: cellMap[record.stopCellId]?.naviId,
+      cellId: getNaviIdById(item.cellId, cellMap),
     }));
     setEditing(_record);
     setFormVisible(true);
