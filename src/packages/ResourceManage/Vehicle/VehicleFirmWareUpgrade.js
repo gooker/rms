@@ -52,6 +52,11 @@ const VehicleUpgrade = () => {
       align: 'center',
     },
     {
+      title: <FormattedMessage id="firmdware.version" />,
+      dataIndex: 'softVersion',
+      align: 'center',
+    },
+    {
       title: <FormattedMessage id="vehicle.id" />,
       dataIndex: 'vehicleId',
       align: 'center',
@@ -116,7 +121,8 @@ const VehicleUpgrade = () => {
                   {vehicleFileTaskType === 'UPLOAD' ? (
                     <FormattedMessage id={'firmdware.inDownloading'} />
                   ) : (
-                    <FormattedMessage id={'firmdware.restarting'} />
+                    <></>
+                    // <FormattedMessage id={'firmdware.restarting'} />
                   )}
                 </span>
               </>
@@ -127,7 +133,8 @@ const VehicleUpgrade = () => {
                 {vehicleFileTaskType === 'UPLOAD' ? (
                   <FormattedMessage id={'firmdware.downloadFail'} />
                 ) : (
-                  <FormattedMessage id={'firmdware.upgradeFail'} />
+                  <></>
+                  // <FormattedMessage id={'firmdware.upgradeFail'} />
                 )}
               </Tag>
             );
@@ -143,13 +150,13 @@ const VehicleUpgrade = () => {
                 </Typography.Link>
               );
             }
-            if (record.vehicleFileTaskType === 'UPGRADE') {
-              return (
-                <Tag color="#87d068">
-                  <FormattedMessage id="firmdware.upgrade.success" />
-                </Tag>
-              );
-            }
+            // if (record.vehicleFileTaskType === 'UPGRADE') {
+            //   return (
+            //     <Tag color="#87d068">
+            //       <FormattedMessage id="firmdware.upgrade.success" />
+            //     </Tag>
+            //   );
+            // }
           }
         }
       },
@@ -189,6 +196,7 @@ const VehicleUpgrade = () => {
             ...vehicleInfo,
             ...vehicleWorkStatusDTO,
             ...currentTask[0],
+            softVersion: vehicle?.others?.softVersion,
           });
         }
       });

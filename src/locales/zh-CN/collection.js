@@ -34,6 +34,7 @@ export default {
   'firmdware.fileName': '固件',
   'firmdware.managerment': '固件管理',
   'firmdware.upload': '上传固件',
+  'firmdware.version': '固件版本号',
 
   'firmdware.button.mainten': '维护',
   'firmdware.button.cancelMainten': '取消维护',

@@ -199,7 +199,7 @@ const ExecuteQuickTaskModal = (props) => {
                     name={['customAction', nodeType, 'loadAngle']}
                     label={formatMessage({ id: 'resource.load.direction' })}
                     initialValue={loadAngle.value}
-                    rules={[{ required: preParams.config.isRequired }]}
+                    rules={[{ required: preParams?.config?.isRequired }]}
                   >
                     <InputNumber addonAfter='°' />
                   </Form.Item>,

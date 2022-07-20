@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import moment from 'moment';
 import { Button, Card, Checkbox, Col, Form, InputNumber, message, Row, TimePicker } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { formatMessage, isStrictNull, dealResponse } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { saveIdleHoursStrategy, fetchIdleHourChargeStrategy } from '@/services/resourceService';
@@ -152,7 +152,7 @@ const IdleChargingStrategy = (props) => {
                       <Col span={3} style={{ textAlign: 'center' }}>
                         <Button
                           type="danger"
-                          icon={<PlusOutlined />}
+                          icon={<MinusOutlined />}
                           onClick={() => remove(name)}
                         />
                       </Col>

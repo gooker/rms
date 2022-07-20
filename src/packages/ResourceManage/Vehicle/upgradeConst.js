@@ -2,9 +2,9 @@ export const VehicleUpgradeState = {
   downloading: 'firmdware.inDownloading', // 下载中 上传固件到小车
   downloadFail: 'firmdware.downloadFail', // 失败 1
   ready: 'firmdware.download.restartEffective', // 成功  显示 重启生效
-  upgrading: 'firmdware.restarting', //重启中
-  upgradeSuccess: 'firmdware.upgrade.success', // 重启成功 1
-  upgradeFail: 'firmdware.upgradeFail', //失败 1
+  // upgrading: 'firmdware.restarting', //重启中
+  // upgradeSuccess: 'firmdware.upgrade.success', // 重启成功 1
+  // upgradeFail: 'firmdware.upgradeFail', //失败 1
 };
 
 //0：成功，1：升级中或下载中或上传中，2：失败
