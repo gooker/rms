@@ -197,8 +197,8 @@ export default class BaseMap extends React.PureComponent {
       const targetCell = this.idCellMap.get(target);
       if (isNull(sourceCell) || isNull(targetCell)) return;
 
-      // 只有显示物理坐标和直线类型线条才会显示直线
-      if (coordinateType === CoordinateType.LAND || type === LineType.StraightPath) {
+      // 绘制直线
+      if (type === LineType.StraightPath) {
         const distance = getDistance(sourceCell, targetCell);
         // 因为关系线只是连接两个点位，所以无论正向还是反向都可以共用一条线。所以绘制线条时优先检测reverse
         const lineMapKey = `${source}-${target}`;
@@ -238,42 +238,79 @@ export default class BaseMap extends React.PureComponent {
         this.idArrowMap.set(arrowMapKey, arrow);
       }
 
-      // 绘制曲线(贝塞尔和圆弧)
-      const navigationType = sourceCell.navigationType;
-      if (coordinateType === CoordinateType.NAVI && type === LineType.BezierPath) {
-        const { control1, control2 } = lineData;
+      // 绘制贝塞尔曲线
+      if (type === LineType.BezierPath) {
+        const navigationType = sourceCell.navigationType;
+        const { control1, control2, ncontrol1, ncontrol2 } = lineData;
         const lineMapKey = `${source}-${target}`;
-        const transformedCP1 = transformXYByParams(
-          control1,
-          navigationType,
-          transform[navigationType],
-        );
-        const transformedCP2 = transformXYByParams(
-          control2,
-          navigationType,
-          transform[navigationType],
-        );
+
+        let transformedCP1, transformedCP2;
+        let sourceX, sourceY, targetX, targetY;
+        if (this.cellCoordinateType === CoordinateType.NAVI) {
+          // Control Cell
+          transformedCP1 = transformXYByParams(
+            ncontrol1,
+            navigationType,
+            transform[navigationType],
+          );
+          transformedCP2 = transformXYByParams(
+            ncontrol2,
+            navigationType,
+            transform[navigationType],
+          );
+
+          // Source Cell
+          const result1 = transformXYByParams(
+            {
+              x: sourceCell.coordinate.nx,
+              y: sourceCell.coordinate.ny,
+            },
+            navigationType,
+            transform[navigationType],
+          );
+          sourceX = result1.x;
+          sourceY = result1.y;
+
+          // Target Cell
+          const result2 = transformXYByParams(
+            {
+              x: targetCell.coordinate.nx,
+              y: targetCell.coordinate.ny,
+            },
+            navigationType,
+            transform[navigationType],
+          );
+          targetX = result2.x;
+          targetY = result2.y;
+        } else {
+          // TIPS: 因为物理点位 "显示" 的时候需要翻转到左手，所以这里y取反
+          transformedCP1 = { x: control1.x, y: -control1.y };
+          transformedCP2 = { x: control2.x, y: -control2.y };
+
+          sourceX = sourceCell.coordinate.x;
+          sourceY = -sourceCell.coordinate.y;
+          targetX = targetCell.coordinate.x;
+          targetY = -targetCell.coordinate.y;
+        }
 
         const bezier = new SmoothGraphics();
         bezier.lineStyle(3, 0xffffff);
-        bezier.moveTo(sourceCell.x, sourceCell.y);
+        bezier.moveTo(sourceX, sourceY);
         bezier.bezierCurveTo(
           transformedCP1.x,
           transformedCP1.y,
           transformedCP2.x,
           transformedCP2.y,
-          targetCell.x,
-          targetCell.y,
+          targetX,
+          targetY,
         );
         this.pixiUtils.viewportAddChild(bezier);
         this.idLineMap.set(lineMapKey, bezier);
-
-        // TODO: 绘制箭头
       }
 
-      // TODO: 绘制圆弧
-      if (coordinateType === CoordinateType.NAVI && type === LineType.ArcPath) {
-        //
+      // 绘制圆弧
+      if (type === LineType.ArcPath) {
+        // TODO:
       }
     });
   }

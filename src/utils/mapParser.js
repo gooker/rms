@@ -5,7 +5,7 @@ import { message } from 'antd';
 import { isNull } from '@/utils/util';
 import { getAngle, getCellMapId, getDistance } from '@/utils/mapUtil';
 import { CellEntity, LogicArea, MapEntity, RelationEntity, RouteMap } from '@/entities';
-import { NavigationType } from '@/config/config';
+import { LineType, NavigationType } from '@/config/config';
 import packageJSON from '../../package.json';
 import { transformXYByParams } from '@/utils/mapTransformer';
 
@@ -132,12 +132,11 @@ export function extractFromNewMap(mapData) {
  */
 export function SEER(mapData, existIds, options) {
   const ids = [...existIds];
+  const tempIdCellMap = {};
   const instanceNameIdMap = {};
+  const result = { cells: [], relations: [] };
 
-  const defaultRelations = [];
-  const result = { cells: [], relations: [{ DEFAULT: defaultRelations }] };
   const { advancedPointList, advancedCurveList } = mapData;
-
   const advancedPointMap = {};
   if (Array.isArray(advancedPointList)) {
     advancedPointList.forEach((item) => {
@@ -150,9 +149,10 @@ export function SEER(mapData, existIds, options) {
     const id = getCellMapId(ids);
     ids.push(id);
 
+    // 导航点坐标
     const cellPos = {
-      x: Math.round(pos.x * 1000),
-      y: Math.round(pos.y * 1000),
+      x: Math.trunc(pos.x * 1000),
+      y: Math.trunc(pos.y * 1000),
     };
     const { x, y } = transformXYByParams(cellPos, NavigationType.SEER_SLAM, options.transform);
     const cellMapItem = new CellEntity({
@@ -161,13 +161,17 @@ export function SEER(mapData, existIds, options) {
       navigationType: NavigationType.SEER_SLAM,
       x,
       y,
-      nx: Math.round(pos.x * 1000),
-      ny: -Math.round(pos.y * 1000),
+      nx: cellPos.x,
+      ny: -cellPos.y,
       logicId: options.currentLogicArea,
       additional: { dir: !isNull(dir) ? Math.round(dir * 1000) / 1000 : undefined, ignoreDir },
     });
+    // 用来缓存并决定是否新建点位
     instanceNameIdMap[instanceName] = id;
-    result.cells.push(cellMapItem);
+    // 标记id与点位的关系，用于快速计算angle和nangle
+    tempIdCellMap[id] = cellMapItem;
+    // 填充返回值用
+    result.cells.push(cellMapItem); //
     return id;
   }
 
@@ -175,6 +179,7 @@ export function SEER(mapData, existIds, options) {
   if (Array.isArray(advancedCurveList)) {
     advancedCurveList.forEach((advancedCurve) => {
       const { className, startPos, endPos, controlPos1, controlPos2 } = advancedCurve;
+
       let source, target;
       if (isNull(instanceNameIdMap[startPos.instanceName])) {
         source = createCellEntity({ ...advancedPointMap[startPos.instanceName], ...startPos });
@@ -188,21 +193,49 @@ export function SEER(mapData, existIds, options) {
         target = instanceNameIdMap[endPos.instanceName];
       }
 
-      const relationItem = new RelationEntity({
-        type: className,
-        source,
-        target,
-        angle: getAngle(startPos.pos, endPos.pos),
-        distance: getDistance(
-          { x: startPos.pos.x * 1000, y: startPos.pos.y * 1000 },
-          { x: endPos.pos.x * 1000, y: endPos.pos.y * 1000 },
-        ),
-        control1: { x: controlPos1.x * 1000, y: controlPos1.y * 1000 },
-        control2: { x: controlPos2.x * 1000, y: controlPos2.y * 1000 },
-      });
-      relationItem.angle = Math.round(relationItem.angle);
-      relationItem.distance = Math.round(relationItem.distance);
-      defaultRelations.push(relationItem);
+      const relationItem = new RelationEntity({ type: className, source, target });
+
+      // control1
+      relationItem.control1 = transformXYByParams(
+        { x: controlPos1.x * 1000, y: controlPos1.y * 1000 },
+        NavigationType.SEER_SLAM,
+        options.transform,
+      );
+      relationItem.ncontrol1 = { x: controlPos1.x * 1000, y: -controlPos1.y * 1000 };
+
+      // control2
+      relationItem.control2 = transformXYByParams(
+        { x: controlPos2.x * 1000, y: controlPos2.y * 1000 },
+        NavigationType.SEER_SLAM,
+        options.transform,
+      );
+      relationItem.ncontrol2 = { x: controlPos2.x * 1000, y: -controlPos2.y * 1000 };
+
+      // 只有直线才需要计算角度和距离
+      if (className === LineType.StraightPath) {
+        // angle
+        const angle = getAngle(
+          { x: tempIdCellMap[source].x, y: tempIdCellMap[source].y },
+          { x: tempIdCellMap[target].x, y: tempIdCellMap[target].y },
+        );
+        relationItem.angle = Math.trunc(angle);
+
+        // nangle
+        const nangle = getAngle(
+          { x: tempIdCellMap[source].nx, y: tempIdCellMap[source].ny },
+          { x: tempIdCellMap[target].nx, y: tempIdCellMap[target].ny },
+        );
+        relationItem.nangle = Math.trunc(nangle);
+
+        // distance
+        const distance = getDistance(
+          { x: tempIdCellMap[source].x, y: tempIdCellMap[source].y },
+          { x: tempIdCellMap[target].x, y: tempIdCellMap[target].y },
+        );
+        relationItem.distance = Math.trunc(distance);
+      }
+
+      result.relations.push(relationItem);
     });
   } else {
     throw new Error('"advancedCurveList"字段缺失');
