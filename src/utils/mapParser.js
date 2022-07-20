@@ -1,11 +1,15 @@
-/* eslint-disable no-console */
+/**
+ * 用于将不同厂商的地图数据转换为RMS可识别的结构
+ */
 import { message } from 'antd';
 import { isNull } from '@/utils/util';
 import { getAngle, getCellMapId, getDistance } from '@/utils/mapUtil';
 import { CellEntity, LogicArea, MapEntity, RelationEntity, RouteMap } from '@/entities';
 import { NavigationType } from '@/config/config';
 import packageJSON from '../../package.json';
+import { transformXYByParams } from '@/utils/mapTransformer';
 
+// 获取地图名称
 export function getMapName(mapData, navigationCellType) {
   switch (navigationCellType) {
     case NavigationType.M_QRCODE:
@@ -17,6 +21,7 @@ export function getMapName(mapData, navigationCellType) {
   }
 }
 
+// 判断是否是牧星的旧版本地图结构
 export function isOldMushinyMap(mapData) {
   const { cellMap } = mapData;
   const firstKey = Object.keys(cellMap)[0];
@@ -116,7 +121,7 @@ export function extractFromNewMap(mapData) {
   return result;
 }
 
-// *********************** parser *********************** //
+/*********************** 仙工地图转换器 ***********************/
 /**
  * 仙工地图数据转化工具
  * 1. 第一版只需要关注物理坐标，即线条只关注关系，不关注具体形式，比如: 直线、贝塞尔、圆弧
@@ -144,14 +149,20 @@ export function SEER(mapData, existIds, options) {
     const { instanceName, pos, dir, ignoreDir } = advancedPoint;
     const id = getCellMapId(ids);
     ids.push(id);
+
+    const cellPos = {
+      x: Math.round(pos.x * 1000),
+      y: Math.round(pos.y * 1000),
+    };
+    const { x, y } = transformXYByParams(cellPos, NavigationType.SEER_SLAM, options.transform);
     const cellMapItem = new CellEntity({
       id,
       naviId: instanceName,
       navigationType: NavigationType.SEER_SLAM,
-      x: Math.round(pos.x * 1000),
-      y: Math.round(pos.y * 1000),
+      x,
+      y,
       nx: Math.round(pos.x * 1000),
-      ny: Math.round(pos.y * 1000),
+      ny: -Math.round(pos.y * 1000),
       logicId: options.currentLogicArea,
       additional: { dir: !isNull(dir) ? Math.round(dir * 1000) / 1000 : undefined, ignoreDir },
     });
@@ -220,6 +231,7 @@ export function SEER(mapData, existIds, options) {
   return result;
 }
 
+/*********************** 新版牧星地图转换器 ***********************/
 /**
  * 新版牧星地图数据转化工具
  * @param mapData {{}}

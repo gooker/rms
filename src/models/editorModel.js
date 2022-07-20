@@ -319,11 +319,7 @@ export default {
 
         // 4. 保存
         const response = yield call(saveMap, mapData);
-        if (dealResponse(response)) {
-          message.error(formatMessage({ id: 'app.message.operateFailed' }));
-        } else {
-          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-
+        if (!dealResponse(response, true)) {
           // 此时判断是上传还是新建地图
           if (isNull(payload)) {
             if (isNull(currentMap.id)) {

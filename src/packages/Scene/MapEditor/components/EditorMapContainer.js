@@ -23,7 +23,7 @@ const EditorMapContainer = (props) => {
     preRouteMap,
     mapRotation,
     leftActiveCategory,
-    shownNavigationCellType,
+    shownNavigationType,
     shownCellCoordinateType,
   } = props;
 
@@ -52,8 +52,9 @@ const EditorMapContainer = (props) => {
     // 清空相关数据
     mapContext.clearMapStage();
     mapContext.clearEditorMapData();
+    mapContext.refresh();
 
-    if (currentMap && shownCellCoordinateType && shownNavigationCellType.length > 0) {
+    if (currentMap && shownCellCoordinateType && shownNavigationType.length > 0) {
       // 先记录当前点位使用的坐标类型(物理还是导航)
       mapContext.cellCoordinateType = shownCellCoordinateType;
       renderMap();
@@ -75,8 +76,8 @@ const EditorMapContainer = (props) => {
     mapContext,
     mapRotation,
     currentLogicArea,
+    shownNavigationType,
     shownCellCoordinateType,
-    shownNavigationCellType,
   ]);
 
   useEffect(() => {
@@ -136,7 +137,7 @@ const EditorMapContainer = (props) => {
   function renderMap() {
     // 无论显示导航坐标还是物理坐标，最终结果都是要转换到左手
     const cellsToRender = Object.values(currentMap.cellMap)
-      .filter((item) => shownNavigationCellType.includes(item.navigationType))
+      .filter((item) => shownNavigationType.includes(item.navigationType))
       .map((item) => {
         if (shownCellCoordinateType === CoordinateType.NAVI) {
           const { x, y } = transformXYByParams({ x: item.nx, y: item.ny }, item.navigationType);
@@ -201,7 +202,7 @@ const EditorMapContainer = (props) => {
       mapContext.renderIntersection(intersectionList);
     }
 
-    const { chargerList, workstationList, commonList } = currentLogicAreaData;
+    const { chargerList, commonList } = currentLogicAreaData;
     // 充电桩
     if (Array.isArray(chargerList) && chargerList.length > 0) {
       mapContext.renderChargers(chargerList, null, currentMap.cellMap);
@@ -378,6 +379,6 @@ export default connect(({ editor, editorView }) => {
     mapRotation: editorView.mapRotation,
     shortcutToolVisible: editorView.shortcutToolVisible,
     shownCellCoordinateType: editorView.shownCellCoordinateType,
-    shownNavigationCellType: editorView.shownNavigationCellType,
+    shownNavigationType: editorView.shownNavigationType,
   };
 })(memo(EditorMapContainer));

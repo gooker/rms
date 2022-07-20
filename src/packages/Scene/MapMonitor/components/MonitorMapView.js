@@ -3,9 +3,16 @@ import { message } from 'antd';
 import { find } from 'lodash';
 import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
-import { NavigationType, NavigationTypeView, VehicleType } from '@/config/config';
+import { CoordinateType, NavigationType, NavigationTypeView, VehicleType } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
-import { dealResponse, formatMessage, getToteLayoutBaseParam, isEqual, isNull, isStrictNull } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  getToteLayoutBaseParam,
+  isEqual,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import {
   ElementType,
   EStopStateColor,
@@ -22,6 +29,7 @@ import {
   convertToteLayoutData,
   getElevatorMapCellId,
   getLockCellBounds,
+  getOppositeAngle,
   getTextureFromResources,
   hasLatentPod,
   unifyVehicleState,
@@ -407,43 +415,45 @@ class MonitorMapView extends BaseMap {
   };
 
   // ************************ 小车 & 货架相关 **********************
-  updateVehicleCommonState = (vehicle, vehicleState, vehicleEntity, vehicleType) => {
-    const { x, y, uniqueId, battery, mainTain, manualMode, errorLevel } = vehicleState;
-    const {
-      navigationType = NavigationType.M_QRCODE,
-      vehicleStatus,
-      currentCellId,
-      currentDirection,
-    } = vehicleState;
+  updateVehicleCommonState = (vehicle, vehicleState, vehicleEntity) => {
+    const { x, y, nx, ny, logicId, currentCellId, currentDirection } = vehicleState;
+    const { uniqueId, battery, mainTain, manualMode } = vehicleState;
+    const { navigationType, vehicleStatus, errorLevel } = vehicleState;
 
-    // 1. 如果小车数据【vehicle.c】与 currentCellId 不一致说小车当前在电梯中；
-    // 2. 此时需要对比 currentCellId 对应的点位位置与 x,y 是否一样; 一样表示在当前逻辑区，不一样表示当前小车不在这个逻辑区需要隐藏
-    // 3. 但是有个隐藏bug，如果楼层间的电梯都处于同一个点位那么这个逻辑就会失效，就得要求后台在小车消息中加sectionId
-    const cellEntity = this.idCellMap.get(currentCellId);
-    if (cellEntity) {
-      if (vehicle !== currentCellId) {
-        if (cellEntity.x !== x || cellEntity.y !== y) {
-          this.pixiUtils.viewportRemoveChild(vehicleEntity);
-          vehicleEntity.__gui__on__map = false;
-          return;
-        }
-      }
-      if (!vehicleEntity.__gui__on__map) {
-        vehicleEntity.__gui__on__map = true;
+    // 首先判断车辆可见
+    if (this.currentLogicArea === logicId) {
+      if (vehicleEntity.__visible__on__map === false) {
+        vehicleEntity.__visible__on__map = true;
         this.pixiUtils.viewportAddChild(vehicleEntity);
       }
     } else {
-      // 如果找不到点位，那就说明现在小车在别的逻辑区
-      this.pixiUtils.viewportRemoveChild(vehicleEntity);
-      vehicleEntity.__gui__on__map = false;
+      if (vehicleEntity.__visible__on__map === true) {
+        vehicleEntity.__visible__on__map = false;
+        this.pixiUtils.viewportRemoveChild(vehicleEntity);
+      }
       return;
     }
 
-    // 更新位置
-    const pixiCoordinate = transformXYByParams({ x, y }, navigationType);
+    /**
+     * 更新车辆位置
+     * 1. 需要考虑当前展示的是导航点位还物理点位
+     * 2. x,y是物理坐标
+     * 3. nx, ny是导航坐标
+     */
+    let pixiCoordinate;
+    if (this.cellCoordinateType === CoordinateType.NAVI) {
+      pixiCoordinate = transformXYByParams({ x: nx, y: ny }, navigationType);
+    } else {
+      pixiCoordinate = { x, y };
+    }
     vehicleEntity.x = pixiCoordinate.x;
     vehicleEntity.y = pixiCoordinate.y;
     vehicleEntity.currentCellId = currentCellId;
+
+    // 更新小车方向
+    if (!isNull(currentDirection)) {
+      vehicleEntity.angle = convertAngleToPixiAngle(currentDirection);
+    }
 
     // 更新小车状态
     if (vehicleStatus && vehicleEntity.state !== vehicleStatus) {
@@ -453,11 +463,6 @@ class MonitorMapView extends BaseMap {
     // 手动模式
     if (manualMode !== vehicleEntity.manualMode) {
       vehicleEntity.updateManuallyMode(manualMode);
-    }
-
-    // 更新小车方向
-    if (!isNull(currentDirection)) {
-      vehicleEntity.angle = convertAngleToPixiAngle(currentDirection);
     }
 
     // 刷新行驶路线
@@ -489,35 +494,60 @@ class MonitorMapView extends BaseMap {
     // 这里需要一个检查，因为在页面存在车的情况下刷新页面，socket信息可能比小车列表数据来得快，所以update**Vehicle就会创建一台车[offline]
     // 但是一旦小车列表数据到了后会再次渲染出相同的小车, 所以这里需要检查当前id的车是否存在。如果小车存在就更新，如果小车不存在且点位存在就新建小车
     let latentVehicle = this.idVehicleMap.get(latentVehicleData.uniqueId);
-    const cellEntity = this.idCellMap.get(latentVehicleData.currentCellId);
     if (latentVehicle) {
       this.updateLatentVehicle([latentVehicleData]);
       return latentVehicle;
     }
     latentVehicle = new LatentVehicle({
+      x: latentVehicleData.x,
+      y: latentVehicleData.y,
       id: latentVehicleData.vehicleId,
-      x: latentVehicleData.x || cellEntity?.x,
-      y: latentVehicleData.y || cellEntity?.y,
       uniqueId: latentVehicleData.uniqueId,
+      cellId: latentVehicleData.currentCellId,
+      angle: convertAngleToPixiAngle(latentVehicleData.currentDirection),
       vehicleType: latentVehicleData.vehicleType,
       vehicleIcon: latentVehicleData.vehicleIcon,
       battery: latentVehicleData.battery || 0,
-      errorLevel: latentVehicleData.errorLevel || 0,
       state: latentVehicleData.vehicleStatus ?? VehicleState.offline,
       mainTain: latentVehicleData.mainTain,
       manualMode: latentVehicleData.manualMode,
-      cellId: latentVehicleData.currentCellId,
-      angle: convertAngleToPixiAngle(latentVehicleData.currentDirection),
+      errorLevel: latentVehicleData.errorLevel || 0,
       select: this.select,
     });
-    cellEntity && this.pixiUtils.viewportAddChild(latentVehicle);
+
+    // 判断地图可见
+    const __visible__on__map = latentVehicleData.logicId === this.currentLogicArea;
+    latentVehicle.__visible__on__map = __visible__on__map;
+    if (__visible__on__map) {
+      this.pixiUtils.viewportAddChild(latentVehicle);
+    }
     this.idVehicleMap.set(latentVehicleData.uniqueId, latentVehicle);
     return latentVehicle;
   };
 
   renderLatentVehicle = (latentVehicleList) => {
     if (Array.isArray(latentVehicleList)) {
-      latentVehicleList.forEach((latentVehicleData) => {
+      const _latentVehicleList = latentVehicleList.map((item) => {
+        const { vehicle, vehicleId, vehicleType, vehicleInfo, vehicleWorkStatusDTO } = item;
+        return {
+          x: vehicleInfo.x,
+          y: vehicleInfo.y,
+          nx: vehicleInfo.nx,
+          ny: vehicleInfo.ny,
+          id: vehicleId,
+          uniqueId: vehicleInfo.id,
+          cellId: vehicleInfo.currentCellId,
+          angle: vehicleInfo.direction,
+          vehicleType,
+          vehicleIcon: null,
+          battery: vehicleInfo.battery,
+          state: vehicleWorkStatusDTO.vehicleStatus,
+          mainTain: vehicle.maintain,
+          manualMode: vehicle.manualMode,
+          errorLevel: null,
+        };
+      });
+      _latentVehicleList.forEach((latentVehicleData) => {
         const latentVehicle = this.idVehicleMap.get(latentVehicleData.uniqueId);
         if (isNull(latentVehicle)) {
           this.addLatentVehicle(latentVehicleData);
@@ -532,6 +562,8 @@ class MonitorMapView extends BaseMap {
       const {
         x,
         y,
+        nx,
+        ny,
         loadId,
         loadDirection,
         vehicleId,
@@ -559,8 +591,8 @@ class MonitorMapView extends BaseMap {
       if (isNull(latentVehicle)) {
         // 新增小车: 登陆小车的第一条信息没有【状态】值, 就默认【离线】
         latentVehicle = this.addLatentVehicle({
-          x,
-          y,
+          x: this.cellCoordinateType === CoordinateType.LAND ? x : nx,
+          y: this.cellCoordinateType === CoordinateType.LAND ? y : ny,
           vehicleId,
           uniqueId,
           vehicleType,

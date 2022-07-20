@@ -47,9 +47,8 @@ function initState(context) {
 export default class BaseMap extends React.PureComponent {
   constructor(props) {
     super(props);
-    // 核心业务逻辑参数
     this.cellCoordinateType = null; // 当前点位使用的坐标类型
-
+    this.currentLogicArea = null;
     initState(this);
   }
 
@@ -298,7 +297,7 @@ export default class BaseMap extends React.PureComponent {
 
       // 取chargingCells第一个充电点计算充电桩图标位置 -> BUG: 可能有bug
       if (chargingCells.length > 0) {
-        // TIPS:这里的cellId已经经过转换，目前就是业务ID
+        // TIPS: 这里的cellId是业务ID
         const { cellId, nangle, distance } = chargingCells[0];
         if (isNull(cellId)) return;
         const cellData = cellMap[cellId];

@@ -1040,14 +1040,20 @@ export function getCurrentload(data) {
 }
 
 export function unifyVehicleState(vehicle) {
-  // 对小车点位进行转换，如果接受到的电梯替换点就转换成地图原始点位
+  /**
+   * 1. "c"是点位的业务ID
+   * 2. 对小车点位进行转换，如果接受到的电梯替换点就转换成地图原始点位
+   */
   let currentCellId = vehicle.c ?? vehicle.currentCellId;
   currentCellId = getElevatorMapCellId(currentCellId);
 
   return {
     x: vehicle.x,
     y: vehicle.y,
+    nx: vehicle.nx,
+    ny: vehicle.ny,
     currentCellId,
+    logicId: vehicle.lg ?? vehicle.logicId,
     navigationType: vehicle.bd ?? vehicle.navigationType,
     uniqueId: vehicle.rId,
     vehicleType: vehicle.rT,

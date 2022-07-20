@@ -4,9 +4,29 @@ import { connect } from '@/utils/RmsDva';
 import { FooterHeight } from '@/packages/Scene/MapMonitor/enums';
 import MapRatioSlider from '@/packages/Scene/components/MapRatioSlider';
 import OperationType from '@/packages/Scene/MapMonitor/components/OperationType';
+import MapShownModeSelector from '@/packages/Scene/components/MapShownModeSelector';
 
 const MonitorFooter = (props) => {
-  const { mapRatio, mapMinRatio, onSliderChange } = props;
+  const {
+    dispatch,
+    mapRatio,
+    mapMinRatio,
+    onSliderChange,
+    shownNavigationType,
+    shownCellCoordinateType,
+  } = props;
+
+  function onCellCoordinateTypeChanged(type) {
+    dispatch({ type: 'editorView/updateShownCellCoordinateType', payload: type });
+  }
+
+  function onNavigationTypeChanged(type) {
+    dispatch({
+      type: 'editorView/updateShownNavigationType',
+      payload: type,
+    });
+  }
+
   return (
     <Row
       justify={'space-between'}
@@ -14,9 +34,17 @@ const MonitorFooter = (props) => {
     >
       <MapRatioSlider mapRatio={mapRatio} mapMinRatio={mapMinRatio} onChange={onSliderChange} />
       <OperationType />
+      <MapShownModeSelector
+        onCellCoordinateTypeChanged={onCellCoordinateTypeChanged}
+        onNavigationTypeChanged={onNavigationTypeChanged}
+        shownCellCoordinateType={shownCellCoordinateType}
+        shownNavigationType={shownNavigationType}
+      />
     </Row>
   );
 };
-export default connect(({ monitor }) => ({
+export default connect(({ monitor, monitorView }) => ({
   mapMinRatio: monitor.mapMinRatio,
+  shownNavigationType: monitorView.shownNavigationType,
+  shownCellCoordinateType: monitorView.shownCellCoordinateType,
 }))(memo(MonitorFooter));

@@ -1,19 +1,23 @@
 import React, { memo } from 'react';
 import { Dropdown, Menu } from 'antd';
 import { CheckOutlined, UpOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import styles from './sceneComponentStyle.module.less';
 import { CoordinateType, NavigationTypeView } from '@/config/config';
+import styles from './sceneComponentStyle.module.less';
 
 const MapShownModeSelector = (props) => {
-  const { dispatch, shownNavigationCellType, shownCellCoordinateType } = props;
+  const {
+    shownNavigationType,
+    shownCellCoordinateType,
+    onNavigationTypeChanged,
+    onCellCoordinateTypeChanged,
+  } = props;
 
   const menu = (
-    <Menu selectedKeys={shownNavigationCellType} onClick={updateShownType}>
+    <Menu selectedKeys={shownNavigationType} onClick={updateShownType}>
       {NavigationTypeView.map((item) => (
         <Menu.Item key={item.code}>
-          {shownNavigationCellType.includes(item.code) && <CheckOutlined />}
+          {shownNavigationType.includes(item.code) && <CheckOutlined />}
           <span style={{ marginLeft: 8 }}>{item.name}</span>
         </Menu.Item>
       ))}
@@ -32,20 +36,17 @@ const MapShownModeSelector = (props) => {
   );
 
   function updateShownCellCoordinateType({ key }) {
-    dispatch({ type: 'editorView/updateShownCellCoordinateType', payload: key });
+    onCellCoordinateTypeChanged(key);
   }
 
   function updateShownType({ key }) {
-    let _shownNavigationCellType = [...shownNavigationCellType];
+    let _shownNavigationCellType = [...shownNavigationType];
     if (_shownNavigationCellType.includes(key)) {
       _shownNavigationCellType = _shownNavigationCellType.filter((item) => item !== key);
     } else {
       _shownNavigationCellType.push(key);
     }
-    dispatch({
-      type: 'editorView/updateShownNavigationCellType',
-      payload: _shownNavigationCellType,
-    });
+    onNavigationTypeChanged(_shownNavigationCellType);
   }
 
   return (
@@ -65,7 +66,7 @@ const MapShownModeSelector = (props) => {
         <span className={styles.navigationCellTypeSelectorContent}>
           <FormattedMessage id={'editor.navigationType'} />
           <span style={{ color: '#1890ff', marginLeft: 3, fontWeight: 600 }}>
-            ({shownNavigationCellType.length})
+            ({shownNavigationType.length})
           </span>
           <UpOutlined style={{ marginLeft: 5 }} />
         </span>
@@ -73,7 +74,4 @@ const MapShownModeSelector = (props) => {
     </div>
   );
 };
-export default connect(({ editorView }) => ({
-  shownNavigationCellType: editorView.shownNavigationCellType,
-  shownCellCoordinateType: editorView.shownCellCoordinateType,
-}))(memo(MapShownModeSelector));
+export default memo(MapShownModeSelector);
