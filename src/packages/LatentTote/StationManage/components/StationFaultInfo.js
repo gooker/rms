@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Row, Col } from 'antd';
-import { formatMessage, dealResponse, convertToUserTimezone } from '@/utils/util';
+import { Col, Row } from 'antd';
+import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchLatentToteFaultStations } from '@/services/latentToteService';
 import TableWithPages from '@/components/TableWithPages';
@@ -147,7 +147,7 @@ const StationFaultInfo = (props) => {
             current: page.currentPage,
             pageSize: page.size,
             total: page.totalElements || 0,
-            showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+            showTotal: (total) => formatMessage({ id: 'app.template.tableRecord' }, { count: total }),
           }}
           onChange={handleTableChange}
           expandable={{

@@ -329,22 +329,17 @@ export default class BaseMap extends React.PureComponent {
 
   renderChargers = (chargerList, onClick, cellMap) => {
     chargerList.forEach((chargerData, index) => {
-      const { NAVI } = CoordinateType;
       const { code, name, chargingCells = [] } = chargerData;
 
       // 取chargingCells第一个充电点计算充电桩图标位置 -> BUG: 可能有bug
       if (chargingCells.length > 0) {
         // TIPS: 这里的cellId是业务ID
+        // TIPS: 当前不管是导航点位和物理点位，最终显示的方式都是在左手，所以每次渲染都用nangle
         const { cellId, nangle, distance } = chargingCells[0];
         if (isNull(cellId)) return;
         const cellData = cellMap[cellId];
-        let viewAngle = this.cellCoordinateType === NAVI ? nangle : getOppositeAngle(nangle);
         const [xKey, yKey] = getKeyByCoordinateType(this.cellCoordinateType);
-        const source = getCoordinator(
-          { x: cellData[xKey], y: cellData[yKey] },
-          viewAngle,
-          distance,
-        );
+        const source = getCoordinator({ x: cellData[xKey], y: cellData[yKey] }, nangle, distance);
         const [viewX, viewY] = getCoordinateBy2Types(
           source,
           cellData.navigationType,
@@ -356,7 +351,7 @@ export default class BaseMap extends React.PureComponent {
           x: viewX,
           y: viewY,
           name,
-          angle: convertAngleToPixiAngle(viewAngle),
+          angle: convertAngleToPixiAngle(nangle),
           $$formData: { flag: index + 1, ...chargerData },
           // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
           select: typeof onClick === 'function' ? onClick : this.select,

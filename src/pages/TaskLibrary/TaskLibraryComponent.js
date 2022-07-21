@@ -3,11 +3,7 @@ import { connect } from '@/utils/RmsDva';
 import { Badge, Button, Divider, message, Table, Tooltip } from 'antd';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import {
-  fetchAllVehicleList,
-  fetchBatchCancelTask,
-  fetchVehicleTaskList,
-} from '@/services/commonService';
+import { fetchAllVehicleList, fetchBatchCancelTask, fetchVehicleTaskList } from '@/services/commonService';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import RmsConfirm from '@/components/RmsConfirm';
 import TaskSearch from '../../packages/SmartTask/components/TaskManagementSearch';
@@ -246,7 +242,7 @@ class TaskLibraryComponent extends Component {
               pageSize: page.size,
               total: page.totalElements || 0,
               showTotal: (total) =>
-                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+                formatMessage({ id: 'app.template.tableRecord' }, { count: total }),
             }}
             onChange={this.handleTableChange}
           />

@@ -1080,6 +1080,7 @@ export default {
     // ********************************* 功能操作 ********************************* //
     *updateFunction({ payload }, { select }) {
       const { currentMap } = yield select(({ editor }) => editor);
+      const { shownCellCoordinateType } = yield select(({ editorView }) => editorView);
       const { scope, type, data } = payload;
 
       let scopeData = currentMap;
@@ -1108,8 +1109,15 @@ export default {
       let viewReturn;
 
       if (type === 'chargerList') {
-        // 需要将停止点由导航ID替换为业务ID,当然地图渲染也是基于业务ID
-        currentFunction = convertChargerToDTO(currentFunction, currentMap.cellMap);
+        /**
+         * 1. 需要将停止点由导航ID替换为业务ID,当然地图渲染也是基于业务ID
+         * 2. 将direction数据转换成 angle 和 nangle数据
+         */
+        currentFunction = convertChargerToDTO(
+          currentFunction,
+          currentMap.cellMap,
+          shownCellCoordinateType,
+        );
         viewReturn = currentFunction;
       }
       if (type === 'commonList') {

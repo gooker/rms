@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Col, Empty } from 'antd';
 import { LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { convertChargerToView, getCurrentLogicAreaData, getNaviIdById } from '@/utils/mapUtil';
+import { convertChargerToView, getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { formatMessage, getRandomString, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import ChargerForm from './ChargerForm';
@@ -11,11 +11,10 @@ import FunctionListItem from '../components/FunctionListItem';
 import LabelComponent from '@/components/LabelComponent';
 import commonStyles from '@/common.module.less';
 import Dictionary from '@/utils/Dictionary';
-import { cloneDeep } from 'lodash';
 
 const Colors = Dictionary().color;
 const ChargerPanel = (props) => {
-  const { dispatch, height, cellMap, mapContext, chargerList } = props;
+  const { dispatch, height, cellMap, mapContext, chargerList, shownCellCoordinateType } = props;
 
   const [addFlag, setAddFlag] = useState(-1);
   const [formVisible, setFormVisible] = useState(null);
@@ -23,13 +22,7 @@ const ChargerPanel = (props) => {
   const [editing, setEditing] = useState(null);
 
   function edit(index, record) {
-    // 此处record.chargingCells中的cellId是业务ID，需要转换成导航ID
-    const _record = cloneDeep(record);
-    _record.chargingCells = _record.chargingCells.map((item) => ({
-      ...item,
-      cellId: getNaviIdById(item.cellId, cellMap),
-    }));
-    setEditing(_record);
+    setEditing(record);
     setFormVisible(true);
     setAddFlag(index);
   }
@@ -124,7 +117,10 @@ const ChargerPanel = (props) => {
       {/* 列表区 */}
       <div>
         {formVisible ? (
-          <ChargerForm charger={convertChargerToView(editing, cellMap)} flag={addFlag} />
+          <ChargerForm
+            charger={convertChargerToView(editing, cellMap, shownCellCoordinateType)}
+            flag={addFlag}
+          />
         ) : multiFormVisible ? (
           <ChargerMultiForm
             back={() => {
@@ -171,11 +167,16 @@ const ChargerPanel = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => {
+export default connect(({ editor, editorView }) => {
   const { mapContext, currentMap } = editor;
 
   const currentLogicAreaData = getCurrentLogicAreaData();
   const chargerList = currentLogicAreaData?.chargerList ?? [];
 
-  return { mapContext, cellMap: currentMap.cellMap, chargerList };
+  return {
+    mapContext,
+    cellMap: currentMap.cellMap,
+    chargerList,
+    shownCellCoordinateType: editorView.shownCellCoordinateType,
+  };
 })(memo(ChargerPanel));

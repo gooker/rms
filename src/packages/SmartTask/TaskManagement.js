@@ -202,7 +202,7 @@ class TaskManagement extends Component {
               pageSize: pagination.size,
               total: pagination.totalElements || 0,
               showTotal: (total) =>
-                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+                formatMessage({ id: 'app.template.tableRecord' }, { count: total }),
             }}
             onChange={this.handleTableChange}
           />

@@ -39,15 +39,15 @@ const LoadIframeComponent = (props) => {
   }, []);
 
   return (
-    <div className={commonStyle.commonPageStyle}>
+    <div className={commonStyle.commonPageStyleNoPadding}>
       <iframe
         seamless
         title={currentData.name}
         src={currentData?.url}
         name={`${currentData.name}?${new Date().getTime()}`}
         id={`${currentData.name}${currentData.key}newTestLog`}
-        width="100%"
-        height="100%"
+        width='100%'
+        height='100%'
         style={{ width: '100%', border: 'medium none', margin: 0, padding: 0 }}
       />
     </div>

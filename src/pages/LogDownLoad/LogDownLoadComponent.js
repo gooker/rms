@@ -233,7 +233,7 @@ const LogDownLoadComponent = (props) => {
   }
 
   function renderTotalTip(total) {
-    return formatMessage({ id: 'app.common.tableRecord' }, { count: total });
+    return formatMessage({ id: 'app.template.tableRecord' }, { count: total });
   }
 
   return (

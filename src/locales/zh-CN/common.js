@@ -19,6 +19,10 @@ export default {
   'app.module.SSO': 'SSO',
   'app.module.Carry': '无人搬运',
 
+  // 模板
+  'app.template.required': '请选择{name}',
+  'app.template.tableRecord': '共计 {count} 条记录',
+
   // 通用表单数据
   'app.form.target': '目标',
   'app.form.hardwareId': '硬件ID',
@@ -28,7 +32,6 @@ export default {
   'app.form.code.duplicate': '编码重复',
   'app.form.id.duplicate': 'ID重复',
   'app.form.name.duplicate': '名称重复',
-  'app.form.required.template': '请选择{name}',
 
   // 通用页面标识内容
   'app.common.fullScreen': '进入全屏',
@@ -43,7 +46,6 @@ export default {
   'app.common.startTime': '开始时间',
   'app.common.endTime': '结束时间',
   'app.common.timeout': '超时时间',
-  'app.common.tableRecord': '共计 {count} 条记录',
   'app.common.type': '类型',
   'app.common.status': '状态',
   'app.common.position': '位置',
@@ -84,7 +86,7 @@ export default {
   'app.common.priority': '优先级',
   'app.common.param': '参数',
   'app.common.targetCell': '目标点',
-  'app.common.visible': '可见',
+  'app.common.visible': '显示',
   'app.common.hidden': '隐藏',
   'app.common.notAvailable': '暂无',
   'app.common.loading': '加载中...',

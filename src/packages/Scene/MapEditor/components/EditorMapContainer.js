@@ -12,6 +12,7 @@ import EditorFooter from '@/packages/Scene/MapEditor/components/EditorFooter';
 import { FooterHeight, HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from '../editorEnums';
 import styles from '../editorLayout.module.less';
 import { CoordinateType } from '@/config/config';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const CLAMP_VALUE = 500;
 const EditorMapContainer = (props) => {
@@ -362,6 +363,18 @@ const EditorMapContainer = (props) => {
       <EditorMask />
 
       {shortcutToolVisible && <EditorShortcutTool />}
+
+      {/* 强化展示当前显示的模式 */}
+      <div className={styles.highlightCellCoordinateType}>
+        <span>当前点位模式：</span>
+        <span>
+          {shownCellCoordinateType === CoordinateType.LAND ? (
+            <FormattedMessage id='app.map.landCell' />
+          ) : (
+            <FormattedMessage id='app.map.naviCell' />
+          )}
+        </span>
+      </div>
     </div>
   );
 };

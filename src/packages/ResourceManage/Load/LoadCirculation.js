@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -131,7 +131,7 @@ const LoadCirculation = (props) => {
           current: page.currentPage,
           pageSize: page.size,
           total: page.totalElements || 0,
-          showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+          showTotal: (total) => formatMessage({ id: 'app.template.tableRecord' }, { count: total }),
         }}
         onChange={handleTableChange}
       />

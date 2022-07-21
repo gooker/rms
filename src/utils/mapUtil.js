@@ -404,7 +404,7 @@ export function getNaviIdById(id, cellMap) {
 }
 
 // 将充电桩数据转换成后台数据结构
-export function convertChargerToDTO(charger, cellMap) {
+export function convertChargerToDTO(charger, cellMap, cellCoordinateType) {
   // 这个charger数据是表单数据，避免直接修改值，所以这里clone
   const _charger = cloneDeep(charger);
   _charger.chargingCells = _charger.chargingCells.map((item) => {
@@ -415,6 +415,16 @@ export function convertChargerToDTO(charger, cellMap) {
     } else {
       item.supportTypes = [];
     }
+
+    // direction --> angle & nangle
+    if (cellCoordinateType === CoordinateType.NAVI) {
+      item.angle = getOppositeAngle(item.direction);
+      item.nangle = item.direction;
+    } else {
+      item.nangle = item.direction;
+      item.nangle = getOppositeAngle(item.direction);
+    }
+    delete item.direction;
     return item;
   });
   return _charger;
@@ -427,20 +437,23 @@ export function convertStationToDTO(station, cellMap) {
 }
 
 // 将充电桩后台数据转换成前端数据
-export function convertChargerToView(charger, cellMap) {
+export function convertChargerToView(charger, cellMap, cellCoordinateType) {
   if (isStrictNull(charger)) return null;
+
   // TIPS: 这里的cellId是业务ID，要转成导航ID
-  const chargingCells = charger.chargingCells.map(({ cellId, distance, nangle, supportTypes }) => {
-    const _supportTypes = supportTypes.map(({ adapterType, vehicleTypes }) =>
-      vehicleTypes.map((item) => `${adapterType}@${item}`),
-    );
-    return {
-      cellId: cellMap[cellId]?.naviId,
-      distance,
-      nangle,
-      supportTypes: _supportTypes.flat(),
-    };
-  });
+  const chargingCells = charger.chargingCells.map(
+    ({ cellId, distance, angle, nangle, supportTypes }) => {
+      const _supportTypes = supportTypes.map(({ adapterType, vehicleTypes }) =>
+        vehicleTypes.map((item) => `${adapterType}@${item}`),
+      );
+      return {
+        cellId: getNaviIdById(cellId, cellMap),
+        distance,
+        direction: cellCoordinateType === CoordinateType.NAVI ? nangle : angle,
+        supportTypes: _supportTypes.flat(),
+      };
+    },
+  );
   return { ...charger, chargingCells };
 }
 
@@ -1064,6 +1077,7 @@ export function unifyVehicleState(vehicle) {
     manualMode: vehicle.mly ?? vehicle.manualMode,
     vehicleStatus: explainVehicleStatus(vehicle.s) ?? vehicle.vehicleStatus,
     currentDirection: vehicle.rD ?? vehicle.currentDirection,
+    ncurrentDirection: vehicle.nRd ?? vehicle.currentDirection,
     loadId: vehicle.l ? getCurrentload(vehicle.l)?.loadId : vehicle.loadId,
     loadDirection: vehicle.l ? getCurrentload(vehicle.l)?.loadDirection : vehicle.loadDirection,
     longSide: vehicle.lS,

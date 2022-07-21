@@ -31,7 +31,7 @@ const TableWithPages = (props) => {
         pagination={{
           responsive: true,
           defaultPageSize: 10,
-          showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+          showTotal: (total) => formatMessage({ id: 'app.template.tableRecord' }, { count: total }),
         }}
         {...newProps}
       />

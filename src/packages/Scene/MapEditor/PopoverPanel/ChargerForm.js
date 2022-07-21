@@ -61,7 +61,7 @@ const ChargerForm = (props) => {
     if (charger) {
       return charger.chargingCells;
     } else {
-      return [{ cellId: null, nangle: null, supportTypes: [] }];
+      return [{ cellId: null, direction: null, supportTypes: [] }];
     }
   }
 
@@ -118,11 +118,11 @@ const ChargerForm = (props) => {
                     <ButtonInput data={selectCellIds[0]} btnDisabled={selectCellIds.length !== 1} />
                   </Form.Item>
 
-                  {/* 导航角度 */}
+                  {/* 方向 */}
                   <Form.Item
                     {...restField}
                     {...formItemLayout2}
-                    name={[name, 'nangle']}
+                    name={[name, 'direction']}
                     label={formatMessage({ id: 'app.common.angle' })}
                     rules={[{ required: true }]}
                   >

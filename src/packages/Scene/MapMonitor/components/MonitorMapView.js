@@ -5,14 +5,7 @@ import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { CoordinateType, NavigationType, NavigationTypeView, VehicleType } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
-import {
-  dealResponse,
-  formatMessage,
-  getToteLayoutBaseParam,
-  isEqual,
-  isNull,
-  isStrictNull,
-} from '@/utils/util';
+import { dealResponse, formatMessage, getToteLayoutBaseParam, isEqual, isNull, isStrictNull } from '@/utils/util';
 import {
   ElementType,
   EStopStateColor,
@@ -416,8 +409,8 @@ class MonitorMapView extends BaseMap {
 
   // ************************ 小车 & 货架相关 **********************
   updateVehicleCommonState = (vehicle, vehicleState, vehicleEntity) => {
-    const { x, y, nx, ny, logicId, currentCellId, currentDirection } = vehicleState;
-    const { uniqueId, battery, mainTain, manualMode } = vehicleState;
+    const { x, y, nx, ny, currentCellId, currentDirection, ncurrentDirection } = vehicleState;
+    const { logicId, uniqueId, battery, mainTain, manualMode } = vehicleState;
     const { navigationType, vehicleStatus, errorLevel } = vehicleState;
 
     // 首先判断车辆可见
@@ -450,9 +443,18 @@ class MonitorMapView extends BaseMap {
     vehicleEntity.y = pixiCoordinate.y;
     vehicleEntity.currentCellId = currentCellId;
 
-    // 更新小车方向
-    if (!isNull(currentDirection)) {
-      vehicleEntity.angle = convertAngleToPixiAngle(currentDirection);
+    /**
+     * 更新小车方向
+     * currentDirection 物理方向
+     * ncurrentDirection 导航方向
+     * 因为展示物理点位时候需要转换成左手，所以currentDirection需要getOppositeAngle一下
+     */
+    if (!isNull(currentDirection) && !isNull(ncurrentDirection)) {
+      if (this.cellCoordinateType === CoordinateType.NAVI) {
+        vehicleEntity.angle = convertAngleToPixiAngle(ncurrentDirection);
+      } else {
+        vehicleEntity.angle = convertAngleToPixiAngle(getOppositeAngle(currentDirection));
+      }
     }
 
     // 更新小车状态
@@ -854,6 +856,7 @@ class MonitorMapView extends BaseMap {
         vehicleStatus,
         currentCellId,
         currentDirection,
+        ncurrentDirection,
         errorLevel,
         uniqueId,
         vehicleType,
