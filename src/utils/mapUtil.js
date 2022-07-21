@@ -4,9 +4,10 @@ import * as XLSX from 'xlsx';
 import { DashLine } from 'pixi-dashed-line';
 import { cloneDeep, find, groupBy, orderBy, pickBy, sortBy } from 'lodash';
 import { CoordinateType, LineType, NavigationType } from '@/config/config';
-import { CellSize, MapSelectableSpriteType, VehicleState, zIndex } from '@/config/consts';
+import { MapSelectableSpriteType, VehicleState, zIndex } from '@/config/consts';
 import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
 import { CellEntity, LogicArea } from '@/entities';
+import { convertLandAngle2Pixi, mushinyConvertLandAngle2Navi } from '@/utils/mapTransformer';
 import json from '../../package.json';
 
 // 根据行列数批量生成点位
@@ -37,43 +38,13 @@ export function getDistance(pos, pos2) {
   return Math.round(Math.sqrt((pos.x - pos2.x) ** 2 + (pos.y - pos2.y) ** 2));
 }
 
-// 以数学坐标系为基准的角度
+// 获取物理角度
 export function getAngle(source, target) {
   const angle = Math.atan2(target.y - source.y, target.x - source.x) * (180 / Math.PI);
   if (angle > 0) {
     return 360 - angle;
   }
   return -angle;
-}
-
-/**
- * 现在元素角度显示按照数学坐标系转换
- * 这个方法就是将数学坐标系角度转换成pixi地图的角度
- * 比如: 地图数据里线条朝右是0度，那么地图显示就必须是90度
- */
-export function convertAngleToPixiAngle(mathAngle) {
-  if (!isStrictNull(mathAngle) && typeof mathAngle === 'number') {
-    let pixi;
-    if (mathAngle >= 360) {
-      mathAngle = mathAngle - 360;
-    }
-    if (mathAngle >= 0 && mathAngle <= 90) {
-      pixi = 90 - mathAngle;
-    } else {
-      pixi = 450 - mathAngle;
-    }
-    return pixi;
-  }
-  return null;
-}
-
-// 左右手角度转换
-export function getOppositeAngle(angle) {
-  let _angle = 360 - angle;
-  if (_angle === 360) {
-    return 0;
-  }
-  return _angle;
 }
 
 export function getCoordinator(source, angle, r) {
@@ -91,70 +62,22 @@ export function getKeyByCoordinateType(coordinateType) {
 }
 
 export function getLineJson(source, target, cost, type) {
-  // 计算基于物理坐标的angle
-  const angle = getAngle(
-    { x: source.coordinate.x, y: source.coordinate.y },
-    { x: target.coordinate.x, y: target.coordinate.y },
-  );
-  // 计算基于导航坐标的nAngle
-  const nAngle = getAngle(
+  // 只要先算出物理角度，然后转换成导航角度即可；且计算物理角度必须基于导航坐标
+  let angle = getAngle(
     { x: source.coordinate.nx, y: source.coordinate.ny },
     { x: target.coordinate.nx, y: target.coordinate.ny },
   );
+  angle = Math.trunc(angle);
+
   return {
     type: type || LineType.StraightPath,
     cost,
-    nangle: Math.trunc(nAngle),
-    angle: Math.trunc(angle),
+    angle,
+    nangle: convertLandAngle2Pixi(angle),
     source: source.id,
     target: target.id,
     distance: getDistance(source, target),
   };
-}
-
-// 判断是否有对头线
-function getHasOppositeDirection(relations, source, target) {
-  let result = false;
-  for (let index = 0; index < relations.length; index++) {
-    const element = relations[index];
-    if (element.source === target && element.target === source) {
-      result = true;
-      break;
-    }
-  }
-  return result;
-}
-
-// 如果是斜线，要考虑锚点在点位角上
-function getLineCorner(relations, beginCell, endCell, angle) {
-  let x1;
-  let y1;
-
-  switch (true) {
-    case angle > 0 && angle < 90: {
-      x1 = beginCell.x + CellSize.width / 2;
-      y1 = beginCell.y - CellSize.height / 2;
-      break;
-    }
-    case angle > 90 && angle < 180: {
-      x1 = beginCell.x + CellSize.width / 2;
-      y1 = beginCell.y + CellSize.height / 2;
-      break;
-    }
-    case angle > 180 && angle < 270: {
-      x1 = beginCell.x - CellSize.width / 2;
-      y1 = beginCell.y + CellSize.height / 2;
-      break;
-    }
-    case angle > 270 && angle < 360: {
-      x1 = beginCell.x - CellSize.width / 2;
-      y1 = beginCell.y - CellSize.height / 2;
-      break;
-    }
-    default:
-      break;
-  }
-  return { x1, y1 };
 }
 
 const CAP_WIDTH = 50;
@@ -415,16 +338,7 @@ export function convertChargerToDTO(charger, cellMap, cellCoordinateType) {
     } else {
       item.supportTypes = [];
     }
-
-    // direction --> angle & nangle
-    if (cellCoordinateType === CoordinateType.NAVI) {
-      item.angle = getOppositeAngle(item.direction);
-      item.nangle = item.direction;
-    } else {
-      item.nangle = item.direction;
-      item.nangle = getOppositeAngle(item.direction);
-    }
-    delete item.direction;
+    item.nangle = mushinyConvertLandAngle2Navi(item.angle);
     return item;
   });
   return _charger;
@@ -488,21 +402,6 @@ export function convertElevatorToView(elevatorList) {
           });
         }
       }
-    }
-  });
-  return result;
-}
-// ************************ 地图部分数据转换 - end ************************ //
-
-export function generateLogicCellMap(record, innerCellMap) {
-  const result = { ...record };
-  Object.keys(innerCellMap).forEach((key) => {
-    if (result[innerCellMap[key]] !== null) {
-      result[key] = {
-        ...result[innerCellMap[key]],
-        id: key,
-      };
-      delete result[innerCellMap[key]];
     }
   });
   return result;

@@ -53,7 +53,7 @@ const ChargerMultiForm = (props) => {
         <Input />
       </Form.Item>
       {/* 角度 */}
-      <Form.Item name={'nangle'} label={<FormattedMessage id='app.common.angle' />}>
+      <Form.Item name={'angle'} label={<FormattedMessage id='app.common.angle' />}>
         <AngleSelector
           disabled
           width={'100%'}

@@ -38,7 +38,7 @@ const StationPanel = (props) => {
 
   function getListData() {
     return commonList.map((item, index) => {
-      const { code, name, stopCellId, nangle } = item;
+      const { code, name, stopCellId, angle, nangle } = item;
 
       const naviID = cellMap[stopCellId]?.naviId ?? (
         <span style={{ color: Colors.red }}>
@@ -61,7 +61,11 @@ const StationPanel = (props) => {
             value: naviID,
           },
           {
-            label: <FormattedMessage id={'app.common.angle'} />,
+            label: <FormattedMessage id={'app.map.landAngle'} />,
+            value: angle,
+          },
+          {
+            label: <FormattedMessage id={'app.map.naviAngle'} />,
             value: nangle,
           },
         ],

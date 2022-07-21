@@ -31,6 +31,8 @@ export default {
   'app.map.navigationCell': '导航点',
   'app.map.landCoordinator': '物理坐标',
   'app.map.naviCoordinator': '导航坐标',
+  'app.map.landAngle': '物理角度',
+  'app.map.naviAngle': '导航角度',
 
   'app.map.landCell': '物理点位',
   'app.map.naviCell': '导航点位',

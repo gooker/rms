@@ -118,11 +118,11 @@ const ChargerForm = (props) => {
                     <ButtonInput data={selectCellIds[0]} btnDisabled={selectCellIds.length !== 1} />
                   </Form.Item>
 
-                  {/* 方向 */}
+                  {/* 物理角度 */}
                   <Form.Item
                     {...restField}
                     {...formItemLayout2}
-                    name={[name, 'direction']}
+                    name={[name, 'angle']}
                     label={formatMessage({ id: 'app.common.angle' })}
                     rules={[{ required: true }]}
                   >

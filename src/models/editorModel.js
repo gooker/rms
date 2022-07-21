@@ -11,7 +11,6 @@ import {
   convertStationToDTO,
   generateCellIds,
   generateCellMapByRowsAndCols,
-  generateChargerXY,
   getAngle,
   getCellMapId,
   getCurrentLogicAreaData,
@@ -34,7 +33,7 @@ import {
 import { activeMap } from '@/services/commonService';
 import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { MapSelectableSpriteType } from '@/config/consts';
-import { reverseTransformXYByParams } from '@/utils/mapTransformer';
+import { convertLandAngle2Pixi, reverseTransformXYByParams } from '@/utils/mapTransformer';
 import { LineType, NavigationType, NavigationTypeView, ProgramingItemType } from '@/config/config';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
@@ -284,15 +283,6 @@ export default {
         for (let index = 0; index < logicAreaList.length; index++) {
           const loopLogicAreaData = logicAreaList[index];
 
-          // 充电桩重新计算坐标
-          const chargerList = loopLogicAreaData?.chargerList || [];
-          const chargerVMs = chargerList.map((charger) => generateChargerXY(charger, cellMap));
-          for (let chargerIndex = 0; chargerIndex < chargerList.length; chargerIndex++) {
-            chargerList[chargerIndex].x = chargerVMs[chargerIndex].x;
-            chargerList[chargerIndex].y = chargerVMs[chargerIndex].y;
-          }
-          loopLogicAreaData.chargerList = chargerList;
-
           // 优先级线条
           const logicRouteMap = loopLogicAreaData.routeMap;
           Object.keys(logicRouteMap).forEach((routeMapKey) => {
@@ -303,13 +293,6 @@ export default {
                 .filter((relation) => {
                   const { source, target } = relation;
                   return !isNull(cellMap[source]) && !isNull(cellMap[target]);
-                })
-                .map((relation) => {
-                  // 重新计算线条角度
-                  const _relation = { ...relation };
-                  const { source, target } = _relation;
-                  _relation.angle = getAngle(cellMap[source], cellMap[target]);
-                  return _relation;
                 });
             } else {
               loopRouteMapData.relations = [];
@@ -1170,7 +1153,7 @@ export default {
     // 批量添加充电桩
     *addChargerInBatches({ payload }, { select }) {
       const { currentMap } = yield select(({ editor }) => editor);
-      const { cellIds, name, nangle, distance, priority, supportTypes } = payload;
+      const { cellIds, name, angle, distance, priority, supportTypes } = payload;
       const scopeData = getCurrentLogicAreaData();
       const functionData = scopeData.chargerList || [];
       const tempCharger = cellIds
@@ -1178,7 +1161,7 @@ export default {
           code: `charger_${getRandomString(10)}`,
           name: `${name}-${getRandomString(10)}`,
           priority,
-          chargingCells: [{ cellId, nangle, distance, supportTypes }],
+          chargingCells: [{ cellId, nangle: convertLandAngle2Pixi(angle), distance, supportTypes }],
         }))
         .map((item) => convertChargerToDTO(item, currentMap.cellMap));
       scopeData.chargerList = [...functionData, ...tempCharger];

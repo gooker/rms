@@ -136,9 +136,9 @@ const StationForm = (props) => {
           />
         </Form.Item>
 
-        {/* 站点角度 */}
+        {/* 站点物理角度 */}
         <Form.Item
-          name={'nangle'}
+          name={'angle'}
           initialValue={station?.angle ?? 0}
           label={formatMessage({ id: 'app.common.angle' })}
         >

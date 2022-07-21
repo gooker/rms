@@ -2,19 +2,16 @@ import React from 'react';
 import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import {
-  convertAngleToPixiAngle,
   drawRelationLine,
-  getAngle,
   getArrowDistance,
   getCoordinator,
   getDistance,
   getKeyByCoordinateType,
-  getOppositeAngle,
   getTextureFromResources,
 } from '@/utils/mapUtil';
 import { BitText, Charger, Dump, DumpBasket, Elevator, Intersection, Station } from '@/entities';
 import { isNull } from '@/utils/util';
-import { getCoordinateBy2Types, transformXYByParams } from '@/utils/mapTransformer';
+import { convertLandAngle2Pixi, getCoordinateBy2Types, transformXYByParams } from '@/utils/mapTransformer';
 import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
 import CostArrow from '@/entities/CostArrow';
@@ -192,7 +189,7 @@ export default class BaseMap extends React.PureComponent {
    */
   renderCostLines(relationsToRender, coordinateType, transform) {
     relationsToRender.forEach((lineData) => {
-      const { type, cost, source, target } = lineData;
+      const { type, cost, source, target, nangle } = lineData;
       const sourceCell = this.idCellMap.get(source);
       const targetCell = this.idCellMap.get(target);
       if (isNull(sourceCell) || isNull(targetCell)) return;
@@ -223,14 +220,12 @@ export default class BaseMap extends React.PureComponent {
           this.idArrowMap.delete(arrowMapKey);
         }
         const offset = getArrowDistance(distance);
-        // 重新计算角度: 地图数据保存的nAngle角度是基于原始导航点位计算的，对于地图显示而言可能不准确
-        const angle = getAngle(sourceCell, targetCell);
-        const arrowPosition = getCoordinator(sourceCell, angle, offset);
+        const arrowPosition = getCoordinator(sourceCell, nangle, offset);
         const arrow = new CostArrow({
           ...arrowPosition,
           id: arrowMapKey,
           cost,
-          angle: convertAngleToPixiAngle(angle),
+          angle: nangle,
           select: this.select,
         });
         arrow.visible = this.getArrowShownValue(arrow);
@@ -351,7 +346,7 @@ export default class BaseMap extends React.PureComponent {
           x: viewX,
           y: viewY,
           name,
-          angle: convertAngleToPixiAngle(nangle),
+          angle: nangle,
           $$formData: { flag: index + 1, ...chargerData },
           // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
           select: typeof onClick === 'function' ? onClick : this.select,
@@ -387,20 +382,14 @@ export default class BaseMap extends React.PureComponent {
     if (firstChargingCell) {
       const { cellId, nangle, distance } = firstChargingCell;
       const cellData = cellMap[cellId];
-      let viewAngle;
-      if (this.cellCoordinateType === CoordinateType.NAVI) {
-        viewAngle = nangle;
-      } else {
-        viewAngle = getOppositeAngle(nangle);
-      }
       const [xKey, yKey] = getKeyByCoordinateType(this.cellCoordinateType);
       const source = { x: cellData[xKey], y: cellData[yKey] };
-      const { x: viewX, y: viewY } = getCoordinator(source, viewAngle, distance);
+      const { x: viewX, y: viewY } = getCoordinator(source, nangle, distance);
       const chargerEntity = this.chargerMap.get(code);
       chargerEntity.x = viewX;
       chargerEntity.y = viewY;
       chargerEntity.addName(name);
-      chargerEntity.angle = convertAngleToPixiAngle(viewAngle);
+      chargerEntity.angle = nangle;
 
       // 1. 删除旧的关系线
       let lines = this.relationshipLines.get(code);
@@ -451,10 +440,9 @@ export default class BaseMap extends React.PureComponent {
    * @param cellMap
    */
   renderStation = (stationList, callback = null, cellMap) => {
-    const { NAVI } = CoordinateType;
     stationList.forEach((station) => {
-      // 此时这里的stopCellId是业务ID
-      const { name, code, nangle, offset, stopCellId } = station;
+      // 此时这里的stopCellId是业务ID; angle是物理角度
+      const { name, code, angle, offset, stopCellId } = station;
       const { icon, iconAngle, iconWidth, iconHeight } = station;
 
       const cellData = cellMap[stopCellId];
@@ -466,9 +454,9 @@ export default class BaseMap extends React.PureComponent {
         return;
       }
 
-      let viewAngle = this.cellCoordinateType === NAVI ? nangle : getOppositeAngle(nangle);
+      const pixiAngle = convertLandAngle2Pixi(angle);
       const [xKey, yKey] = getKeyByCoordinateType(this.cellCoordinateType);
-      const source = getCoordinator({ x: cellData[xKey], y: cellData[yKey] }, viewAngle, offset);
+      const source = getCoordinator({ x: cellData[xKey], y: cellData[yKey] }, pixiAngle, offset);
       const [viewX, viewY] = getCoordinateBy2Types(
         source,
         cellData.navigationType,
@@ -478,9 +466,9 @@ export default class BaseMap extends React.PureComponent {
         x: viewX,
         y: viewY,
         name,
-        angle: convertAngleToPixiAngle(viewAngle), // 相对于停止点的导航角度
+        angle: pixiAngle, // 相对于停止点的导航角度
         icon,
-        iconAngle: convertAngleToPixiAngle(iconAngle),
+        iconAngle: convertLandAngle2Pixi(iconAngle),
         iconWidth,
         iconHeight,
         stopId: stopCellId, // TODO: 未来可能会有多个停止点，比如潜伏料箱场景
@@ -499,7 +487,6 @@ export default class BaseMap extends React.PureComponent {
   };
 
   updateStation = (station, cellMap) => {
-    const { NAVI } = CoordinateType;
     // 此时这里的stopCellId是业务ID
     const { name, code, nangle, offset, stopCellId } = station;
     const { icon, iconAngle, iconWidth, iconHeight } = station;
@@ -513,9 +500,8 @@ export default class BaseMap extends React.PureComponent {
     const stationSprite = this.commonFunctionMap.get(code);
 
     // 站点图标调整：位置、角度、图标
-    let viewAngle = this.cellCoordinateType === NAVI ? nangle : getOppositeAngle(nangle);
     const [xKey, yKey] = getKeyByCoordinateType(this.cellCoordinateType);
-    const source = getCoordinator({ x: cellData[xKey], y: cellData[yKey] }, viewAngle, offset);
+    const source = getCoordinator({ x: cellData[xKey], y: cellData[yKey] }, nangle, offset);
     const [viewX, viewY] = getCoordinateBy2Types(
       source,
       cellData.navigationType,
@@ -524,13 +510,8 @@ export default class BaseMap extends React.PureComponent {
     stationSprite.x = viewX;
     stationSprite.y = viewY;
     stationSprite.addName(name);
-    stationSprite.angle = convertAngleToPixiAngle(viewAngle);
-    stationSprite.updateStationIcon(
-      icon,
-      iconWidth,
-      iconHeight,
-      convertAngleToPixiAngle(iconAngle),
-    );
+    stationSprite.angle = nangle;
+    stationSprite.updateStationIcon(icon, iconWidth, iconHeight, convertLandAngle2Pixi(iconAngle));
 
     /******** 关系线 ********/
     const relationshipLine = this.relationshipLines.get(code);

@@ -87,3 +87,44 @@ export function getCoordinateBy2Types(source, navigationType, cellCoordinateType
   }
   return [viewX, viewY];
 }
+
+/*********************** 通用转换方法 ********************/
+// 将物理角度转换为PIXI角度
+export function convertLandAngle2Pixi(landAngle) {
+  let pixiAngle;
+  if (landAngle >= 360) {
+    landAngle = landAngle - 360;
+  }
+  if (landAngle >= 0 && landAngle <= 90) {
+    pixiAngle = 90 - landAngle;
+  } else {
+    pixiAngle = 450 - landAngle;
+  }
+  return pixiAngle;
+}
+
+/*********************** 牧星转换方法 ********************/
+// 物理角度转换成导航角度
+// TIPS:因为牧星车的的坐标系与PIXI坐标系相同，所以这里直接引用convertLandAngle2Pixi方法
+export function mushinyConvertLandAngle2Navi(landAngle) {
+  return convertLandAngle2Pixi(landAngle);
+}
+
+// 牧星导航角度转换成物理角度
+function correctAngle(angle) {
+  let res = angle;
+  if (res < 0) {
+    res = res + 360;
+  }
+  if (res >= 360) {
+    res = res - 360;
+  }
+  if (res < 0 || res >= 360) {
+    return correctAngle(res);
+  }
+  return res;
+}
+
+export function mushinyConvertNaviAngle2Land(naviAngle) {
+  return correctAngle(90 - naviAngle);
+}

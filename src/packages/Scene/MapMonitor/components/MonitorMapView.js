@@ -18,11 +18,9 @@ import {
   zIndex,
 } from '@/config/consts';
 import {
-  convertAngleToPixiAngle,
   convertToteLayoutData,
   getElevatorMapCellId,
   getLockCellBounds,
-  getOppositeAngle,
   getTextureFromResources,
   hasLatentPod,
   unifyVehicleState,
@@ -44,7 +42,7 @@ import {
 } from '@/entities';
 import BaseMap from '@/components/BaseMap';
 import { fetchVehicleInfo } from '@/services/commonService';
-import { transformXYByParams } from '@/utils/mapTransformer';
+import { convertLandAngle2Pixi, mushinyConvertLandAngle2Navi, transformXYByParams } from '@/utils/mapTransformer';
 import { loadMonitorExtraTextures } from '@/utils/textures';
 
 class MonitorMapView extends BaseMap {
@@ -409,7 +407,7 @@ class MonitorMapView extends BaseMap {
 
   // ************************ 小车 & 货架相关 **********************
   updateVehicleCommonState = (vehicle, vehicleState, vehicleEntity) => {
-    const { x, y, nx, ny, currentCellId, currentDirection, ncurrentDirection } = vehicleState;
+    const { x, y, nx, ny, currentCellId, currentDirection } = vehicleState;
     const { logicId, uniqueId, battery, mainTain, manualMode } = vehicleState;
     const { navigationType, vehicleStatus, errorLevel } = vehicleState;
 
@@ -429,9 +427,7 @@ class MonitorMapView extends BaseMap {
 
     /**
      * 更新车辆位置
-     * 1. 需要考虑当前展示的是导航点位还物理点位
-     * 2. x,y是物理坐标
-     * 3. nx, ny是导航坐标
+     *
      */
     let pixiCoordinate;
     if (this.cellCoordinateType === CoordinateType.NAVI) {
@@ -445,16 +441,11 @@ class MonitorMapView extends BaseMap {
 
     /**
      * 更新小车方向
-     * currentDirection 物理方向
-     * ncurrentDirection 导航方向
-     * 因为展示物理点位时候需要转换成左手，所以currentDirection需要getOppositeAngle一下
+     * currentDirection是物理方向
      */
-    if (!isNull(currentDirection) && !isNull(ncurrentDirection)) {
-      if (this.cellCoordinateType === CoordinateType.NAVI) {
-        vehicleEntity.angle = convertAngleToPixiAngle(ncurrentDirection);
-      } else {
-        vehicleEntity.angle = convertAngleToPixiAngle(getOppositeAngle(currentDirection));
-      }
+    if (!isNull(currentDirection)) {
+      // Bug: 这里目前只针对牧星车，后续处理气他车型时候需要用不同的转换方法
+      vehicleEntity.angle = mushinyConvertLandAngle2Navi(currentDirection);
     }
 
     // 更新小车状态
@@ -506,7 +497,7 @@ class MonitorMapView extends BaseMap {
       id: latentVehicleData.vehicleId,
       uniqueId: latentVehicleData.uniqueId,
       cellId: latentVehicleData.currentCellId,
-      angle: convertAngleToPixiAngle(latentVehicleData.currentDirection),
+      angle: mushinyConvertLandAngle2Navi(latentVehicleData.currentDirection),
       vehicleType: latentVehicleData.vehicleType,
       vehicleIcon: latentVehicleData.vehicleIcon,
       battery: latentVehicleData.battery || 0,
@@ -684,7 +675,7 @@ class MonitorMapView extends BaseMap {
           ...latentPod,
           width: latentPod.w,
           height: latentPod.h,
-          angle: convertAngleToPixiAngle(latentPod.angle ?? 90),
+          angle: convertLandAngle2Pixi(latentPod.angle ?? 0),
         });
       });
       this.refresh();
@@ -703,7 +694,7 @@ class MonitorMapView extends BaseMap {
    */
   refreshLatentPod = (loadStatus) => {
     const { vId: vehicleUniqueId, cellId: currentCellId, loadId, angle, w, h } = loadStatus;
-    const loadAngle = convertAngleToPixiAngle(angle) ?? 90; // 默认0°方向(PIXI的90°)
+    const loadAngle = convertLandAngle2Pixi(angle) ?? 0;
     const width = w || LatentPodSize.width;
     const height = h || LatentPodSize.height;
 
@@ -804,7 +795,7 @@ class MonitorMapView extends BaseMap {
       vehicleType: toteVehicleData.vehicleType,
       vehicleIcon: toteVehicleData.vehicleIcon,
       cellId: toteVehicleData.currentCellId,
-      angle: convertAngleToPixiAngle(toteVehicleData.currentDirection),
+      angle: mushinyConvertLandAngle2Navi(toteVehicleData.currentDirection),
       shelfs: toteVehicleData.shelfs || 0,
       battery: toteVehicleData.battery || 0,
       errorLevel: toteVehicleData.errorLevel || 0,
@@ -969,7 +960,7 @@ class MonitorMapView extends BaseMap {
             const totePod = new TotePod({
               x,
               y,
-              angle: convertAngleToPixiAngle(angle),
+              angle: convertLandAngle2Pixi(angle),
               side: 'L',
               checkTote: this.props.checkTote,
               ...bin,
@@ -1001,7 +992,7 @@ class MonitorMapView extends BaseMap {
             const totePod = new TotePod({
               x,
               y,
-              angle: convertAngleToPixiAngle(angle),
+              angle: convertLandAngle2Pixi(angle),
               side: 'R',
               checkTote: this.props.checkTote,
               ...bin,
@@ -1048,7 +1039,7 @@ class MonitorMapView extends BaseMap {
       mainTain: sorterVehicleData.mainTain,
       manualMode: sorterVehicleData.manualMode,
       cellId: sorterVehicleData.currentCellId,
-      angle: convertAngleToPixiAngle(sorterVehicleData.currentDirection),
+      angle: mushinyConvertLandAngle2Navi(sorterVehicleData.currentDirection),
       active: true,
       select: typeof callback === 'function' ? callback : this.select,
       simpleCheckVehicle,
@@ -1181,7 +1172,7 @@ class MonitorMapView extends BaseMap {
         width,
         height,
         openAngle,
-        angle: convertAngleToPixiAngle(angle),
+        angle: convertLandAngle2Pixi(angle),
         radius: dimension.radius,
         vehicleId: find(allVehicles, { uniqueId: lockData.vehicleId })?.vehicleId,
         uniqueId: vehicleId,
@@ -1257,7 +1248,7 @@ class MonitorMapView extends BaseMap {
       ...dimension,
       width,
       height,
-      angle: convertAngleToPixiAngle(angle),
+      angle: convertLandAngle2Pixi(angle),
       uniqueId: lockData.vehicleId,
       vehicleId: find(allVehicles, { uniqueId: lockData.vehicleId })?.vehicleId,
     };
