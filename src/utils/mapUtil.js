@@ -7,7 +7,7 @@ import { CoordinateType, LineType, NavigationType } from '@/config/config';
 import { MapSelectableSpriteType, VehicleState, zIndex } from '@/config/consts';
 import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
 import { CellEntity, LogicArea } from '@/entities';
-import { convertLandAngle2Pixi, mushinyConvertLandAngle2Navi } from '@/utils/mapTransformer';
+import { convertLandAngle2Pixi } from '@/utils/mapTransformer';
 import json from '../../package.json';
 
 // 根据行列数批量生成点位
@@ -27,7 +27,7 @@ export function generateCellMapByRowsAndCols(
     for (let col = 0; col < cols; col++) {
       let innerX = firstPosition.x;
       innerX += col * distanceX;
-      cells.push(new CellEntity({ id, x: innerX, y: innerY }));
+      cells.push(new CellEntity({ id, nx: innerX, ny: innerY }));
       id += 1;
     }
   }
@@ -187,9 +187,8 @@ export function moveCell(cell, angle, distance) {
 export function generateCellIds(cellMap, requiredCount) {
   // 获取已存在的牧星点位导航ID
   const mushinyCells = pickBy(cellMap, { navigationType: NavigationType.M_QRCODE });
-  const existNaviIds = Object.values(mushinyCells)
-    .map(({ naviId }) => naviId)
-    .map((item) => parseInt(item));
+  // 牧星的id和naviId是==的
+  const existNaviIds = Object.values(mushinyCells).map(({ id }) => id);
 
   const naviId = [];
   let value = 1;
@@ -327,7 +326,7 @@ export function getNaviIdById(id, cellMap) {
 }
 
 // 将充电桩数据转换成后台数据结构
-export function convertChargerToDTO(charger, cellMap, cellCoordinateType) {
+export function convertChargerToDTO(charger, cellMap) {
   // 这个charger数据是表单数据，避免直接修改值，所以这里clone
   const _charger = cloneDeep(charger);
   _charger.chargingCells = _charger.chargingCells.map((item) => {
@@ -338,7 +337,7 @@ export function convertChargerToDTO(charger, cellMap, cellCoordinateType) {
     } else {
       item.supportTypes = [];
     }
-    item.nangle = mushinyConvertLandAngle2Navi(item.angle);
+    item.nangle = convertLandAngle2Pixi(item.angle);
     return item;
   });
   return _charger;
@@ -346,12 +345,14 @@ export function convertChargerToDTO(charger, cellMap, cellCoordinateType) {
 
 export function convertStationToDTO(station, cellMap) {
   const _station = cloneDeep(station);
+  _station.nangle = convertLandAngle2Pixi(_station.angle);
+  // 这里的stopCellId是导航ID，需要转换成业务ID
   _station.stopCellId = getIdByNaviId(_station.stopCellId, cellMap);
   return _station;
 }
 
 // 将充电桩后台数据转换成前端数据
-export function convertChargerToView(charger, cellMap, cellCoordinateType) {
+export function convertChargerToView(charger, cellMap) {
   if (isStrictNull(charger)) return null;
 
   // TIPS: 这里的cellId是业务ID，要转成导航ID
@@ -363,7 +364,7 @@ export function convertChargerToView(charger, cellMap, cellCoordinateType) {
       return {
         cellId: getNaviIdById(cellId, cellMap),
         distance,
-        direction: cellCoordinateType === CoordinateType.NAVI ? nangle : angle,
+        angle,
         supportTypes: _supportTypes.flat(),
       };
     },

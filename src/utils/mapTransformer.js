@@ -7,12 +7,10 @@ import { CoordinateType, NavigationTypeView } from '@/config/config';
  */
 
 /**
- * 将指定的点位(导航点位或者物理点位)根据参数转换成左手坐标系的具体坐标(只用于PIXI展示)
- * 1. 坐标转换(统一转换为右手坐标系(因为transformation-matrix是基于右手坐标系), 此时生成的坐标是最终在点位上显示的坐标)
- * 2. 角度转换
+ * 1. 角度转换
  * 2. 缩放转换
- * 4. 偏移转换
- * @tip 页面操作输入的补偿角度和旋转角度，默认顺时针为正，此时需要取反
+ * 3. 偏移转换
+ * @tip 页面操作输入的补偿角度和旋转角度，默认顺时针为正(转换逆时针为正)，此时需要取反
  * @3rd-util https://github.com/chrvadala/transformation-matrix#readme
  */
 // 获取转换参数默认值(navigationCellType就是brand)
@@ -24,54 +22,6 @@ function getDefaultTransformParams(navigationType) {
     compensationOffset: { x: 0, y: 0 },
     compensationAngle: 0,
   };
-}
-
-export function transformXYByParams(coordinate, navigationCellType, inputTransformParams) {
-  const transformParams = inputTransformParams || getDefaultTransformParams(navigationCellType);
-  const { coordinationType, zoom, compensationOffset, compensationAngle } = transformParams;
-
-  const matrixParams = [];
-  if (coordinationType === 'L') {
-    matrixParams.push(flipX());
-    matrixParams.push(rotateDEG(compensationAngle));
-    matrixParams.push(scale(zoom));
-    matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
-    matrixParams.push(flipX());
-  } else {
-    matrixParams.push(rotateDEG(-compensationAngle));
-    matrixParams.push(scale(zoom));
-    matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
-  }
-
-  const matrix = compose(...matrixParams);
-  const matrixResult = applyToPoint(matrix, coordinate);
-  const x = Math.round(matrixResult.x);
-  const y = Math.round(matrixResult.y);
-  return { x, y };
-}
-
-export function reverseTransformXYByParams(coordinate, navigationCellType, inputTransformParams) {
-  const transformParams = inputTransformParams || getDefaultTransformParams(navigationCellType);
-  const { coordinationType, zoom, compensationOffset, compensationAngle } = transformParams;
-
-  const matrixParams = [];
-  if (coordinationType === 'L') {
-    matrixParams.push(flipX());
-    matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
-    matrixParams.push(scale(zoom));
-    matrixParams.push(rotateDEG(compensationAngle));
-    matrixParams.push(flipX());
-  } else {
-    matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
-    matrixParams.push(scale(zoom));
-    matrixParams.push(rotateDEG(-compensationAngle));
-  }
-
-  const matrix = compose(...matrixParams);
-  const matrixResult = applyToPoint(matrix, coordinate);
-  const x = Math.round(matrixResult.x);
-  const y = Math.round(matrixResult.y);
-  return { x, y };
 }
 
 // 根据当前点位坐标类型和导航点类型获取转换后的坐标
@@ -89,6 +39,40 @@ export function getCoordinateBy2Types(source, navigationType, cellCoordinateType
 }
 
 /*********************** 通用转换方法 ********************/
+// 根据地图转换参数，将坐标转换成期望坐标(结果)
+export function transformXYByParams(coordinate, navigationCellType, inputTransformParams) {
+  const transformParams = inputTransformParams || getDefaultTransformParams(navigationCellType);
+  const { zoom, compensationOffset, compensationAngle } = transformParams;
+
+  const matrixParams = [];
+  matrixParams.push(rotateDEG(compensationAngle));
+  matrixParams.push(scale(zoom));
+  matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
+
+  const matrix = compose(...matrixParams);
+  const matrixResult = applyToPoint(matrix, coordinate);
+  const x = Math.round(matrixResult.x);
+  const y = Math.round(matrixResult.y);
+  return { x, y };
+}
+
+// 根据地图转换参数，将(结果)转换回原始坐标
+export function reverseTransformXYByParams(coordinate, navigationCellType, inputTransformParams) {
+  const transformParams = inputTransformParams || getDefaultTransformParams(navigationCellType);
+  const { zoom, compensationOffset, compensationAngle } = transformParams;
+
+  const matrixParams = [];
+  matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
+  matrixParams.push(scale(zoom));
+  matrixParams.push(rotateDEG(-compensationAngle));
+
+  const matrix = compose(...matrixParams);
+  const matrixResult = applyToPoint(matrix, coordinate);
+  const x = Math.round(matrixResult.x);
+  const y = Math.round(matrixResult.y);
+  return { x, y };
+}
+
 // 将物理角度转换为PIXI角度
 export function convertLandAngle2Pixi(landAngle) {
   let pixiAngle;
@@ -103,7 +87,33 @@ export function convertLandAngle2Pixi(landAngle) {
   return pixiAngle;
 }
 
+/**
+ * 将导航坐标转换为物理坐标
+ * 牧星导航坐标系与物理坐标系的关系是基于 "y=x" 函数图像对称 --> 计算顺序为: flipX -> rotate(90)
+ * 默认该方法与convertLandCoordinate2Navi方法转换的坐标都是经过地图参数转换过的，例如: 旋转、平移等
+ */
+export function convertNaviCoordinate2Land(coordinate) {
+  const matrixParams = [];
+  matrixParams.push(flipX());
+  matrixParams.push(rotateDEG(90));
+  const matrix = compose(...matrixParams);
+  const matrixResult = applyToPoint(matrix, coordinate);
+  const x = Math.round(matrixResult.x);
+  const y = Math.round(matrixResult.y);
+  return { x, y };
+}
+
+// 将物理坐标转换为导航坐标
+export function convertLandCoordinate2Navi(coordinate) {
+  const matrixParams = [];
+  matrixParams.push(rotateDEG(-90));
+  matrixParams.push(flipX());
+  const matrix = compose(...matrixParams);
+  return applyToPoint(matrix, coordinate);
+}
+
 /*********************** 牧星转换方法 ********************/
+
 // 物理角度转换成导航角度
 // TIPS:因为牧星车的的坐标系与PIXI坐标系相同，所以这里直接引用convertLandAngle2Pixi方法
 export function mushinyConvertLandAngle2Navi(landAngle) {
@@ -111,20 +121,20 @@ export function mushinyConvertLandAngle2Navi(landAngle) {
 }
 
 // 牧星导航角度转换成物理角度
-function correctAngle(angle) {
-  let res = angle;
-  if (res < 0) {
-    res = res + 360;
-  }
-  if (res >= 360) {
-    res = res - 360;
-  }
-  if (res < 0 || res >= 360) {
-    return correctAngle(res);
-  }
-  return res;
-}
-
 export function mushinyConvertNaviAngle2Land(naviAngle) {
+  function correctAngle(angle) {
+    let res = angle;
+    if (res < 0) {
+      res = res + 360;
+    }
+    if (res >= 360) {
+      res = res - 360;
+    }
+    if (res < 0 || res >= 360) {
+      return correctAngle(res);
+    }
+    return res;
+  }
+
   return correctAngle(90 - naviAngle);
 }

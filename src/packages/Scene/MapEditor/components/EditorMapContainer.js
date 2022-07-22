@@ -7,7 +7,7 @@ import EditorShortcutTool from './EditorShortcutTool';
 import { EditorMapSizeKey, ZoneMarkerType } from '@/config/consts';
 import EventManager from '@/utils/EventManager';
 import { getRandomString, isNull } from '@/utils/util';
-import { transformXYByParams } from '@/utils/mapTransformer';
+import { convertLandCoordinate2Navi, transformXYByParams } from '@/utils/mapTransformer';
 import EditorFooter from '@/packages/Scene/MapEditor/components/EditorFooter';
 import { FooterHeight, HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from '../editorEnums';
 import styles from '../editorLayout.module.less';
@@ -136,11 +136,11 @@ const EditorMapContainer = (props) => {
   }
 
   function renderMap() {
-    // 无论显示导航坐标还是物理坐标，最终结果都是要转换到左手
     const cellsToRender = Object.values(currentMap.cellMap)
       .filter((item) => shownNavigationType.includes(item.navigationType))
       .map((item) => {
         if (shownCellCoordinateType === CoordinateType.NAVI) {
+          // 除了牧星点，别的厂商导入的地图的导航坐标都是直接从该厂商的导航点坐标转换而来，没有经过任何旋转等(假如有旋转等参数，而且必须不能转换，因为这个数据后台需要用)
           const { x, y } = transformXYByParams({ x: item.nx, y: item.ny }, item.navigationType);
           return {
             ...item,
@@ -150,10 +150,10 @@ const EditorMapContainer = (props) => {
             coordinate: { x: item.x, y: item.y, nx: item.nx, ny: item.ny },
           };
         } else {
-          // 显示物理坐标只需要转成左手就行
+          // TIPS: 地图展示永远是展示导航位置，即使是物理也要转成导航
           return {
             ...item,
-            y: -item.y,
+            ...convertLandCoordinate2Navi(item),
             coordinateType: shownCellCoordinateType,
             coordinate: { x: item.x, y: item.y, nx: item.nx, ny: item.ny },
           };

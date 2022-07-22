@@ -42,7 +42,12 @@ import {
 } from '@/entities';
 import BaseMap from '@/components/BaseMap';
 import { fetchVehicleInfo } from '@/services/commonService';
-import { convertLandAngle2Pixi, mushinyConvertLandAngle2Navi, transformXYByParams } from '@/utils/mapTransformer';
+import {
+  convertLandAngle2Pixi,
+  convertLandCoordinate2Navi,
+  mushinyConvertLandAngle2Navi,
+  transformXYByParams,
+} from '@/utils/mapTransformer';
 import { loadMonitorExtraTextures } from '@/utils/textures';
 
 class MonitorMapView extends BaseMap {
@@ -408,8 +413,8 @@ class MonitorMapView extends BaseMap {
   // ************************ 小车 & 货架相关 **********************
   updateVehicleCommonState = (vehicle, vehicleState, vehicleEntity) => {
     const { x, y, nx, ny, currentCellId, currentDirection } = vehicleState;
-    const { logicId, uniqueId, battery, mainTain, manualMode } = vehicleState;
-    const { navigationType, vehicleStatus, errorLevel } = vehicleState;
+    const { uniqueId, battery, mainTain, manualMode } = vehicleState;
+    const { logicId, navigationType, vehicleStatus, errorLevel } = vehicleState;
 
     // 首先判断车辆可见
     if (this.currentLogicArea === logicId) {
@@ -444,8 +449,8 @@ class MonitorMapView extends BaseMap {
      * currentDirection是物理方向
      */
     if (!isNull(currentDirection)) {
-      // Bug: 这里目前只针对牧星车，后续处理气他车型时候需要用不同的转换方法
-      vehicleEntity.angle = mushinyConvertLandAngle2Navi(currentDirection);
+      // currentDirection 是物理角度，所以只需要转成pixi角度即可
+      vehicleEntity.angle = convertLandAngle2Pixi(currentDirection);
     }
 
     // 更新小车状态
@@ -1147,12 +1152,10 @@ class MonitorMapView extends BaseMap {
         vehicleId,
         boxType,
         lockLevel,
-        openAngle,
-        geoModel: { angle, dimension, position },
+        openAngle, // openAngle 是物理角度
+        geoModel: { angle, dimension, position }, // angle是物理角度，position是物理坐标
       } = lockData;
-      // TODO: 锁格数据需要包含小车的导航类型
-      const navigationType = NavigationType.M_QRCODE;
-      const currentPosition = transformXYByParams(position, navigationType);
+      const currentPosition = convertLandCoordinate2Navi(position);
       const { width, height } = getLockCellBounds(dimension);
       // 校验锁格数据，尤其是宽高
       if (!height || !width) {
@@ -1171,7 +1174,7 @@ class MonitorMapView extends BaseMap {
         boxType,
         width,
         height,
-        openAngle,
+        openAngle: convertLandAngle2Pixi(openAngle),
         angle: convertLandAngle2Pixi(angle),
         radius: dimension.radius,
         vehicleId: find(allVehicles, { uniqueId: lockData.vehicleId })?.vehicleId,

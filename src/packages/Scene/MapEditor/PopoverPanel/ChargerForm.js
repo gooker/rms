@@ -61,7 +61,7 @@ const ChargerForm = (props) => {
     if (charger) {
       return charger.chargingCells;
     } else {
-      return [{ cellId: null, direction: null, supportTypes: [] }];
+      return [{ cellId: null, angle: null, supportTypes: [] }];
     }
   }
 

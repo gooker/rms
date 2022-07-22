@@ -33,7 +33,7 @@ import {
 import { activeMap } from '@/services/commonService';
 import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { MapSelectableSpriteType } from '@/config/consts';
-import { convertLandAngle2Pixi, reverseTransformXYByParams } from '@/utils/mapTransformer';
+import { convertNaviCoordinate2Land, reverseTransformXYByParams } from '@/utils/mapTransformer';
 import { LineType, NavigationType, NavigationTypeView, ProgramingItemType } from '@/config/config';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
@@ -518,6 +518,7 @@ export default {
       let additionalCells = [];
       if (addWay === 'absolute') {
         const { rows, cols, autoGenCellIdStart, x, y, distanceX, distanceY } = payload;
+        // 生成的坐标是导航点坐标
         additionalCells = generateCellMapByRowsAndCols(
           rows,
           cols,
@@ -526,12 +527,13 @@ export default {
           distanceX,
           distanceY,
         );
+        // 转换并添加物理坐标数据
+        // TIPS: 因为牧星点位不存在任何旋转等，所以可以直接转成物理坐标
+        additionalCells = additionalCells.map((item) => ({
+          ...item,
+          ...convertNaviCoordinate2Land({ x: item.nx, y: item.ny }),
+        }));
       } else {
-        /**
-         * 偏移功能需要注意:
-         * 因为地图显示方式的左手坐标系
-         * 所以如果点位所对应的地图是右手坐标系, 那么左右偏移没有影响， 但是上下偏移则在计算的时候是相反的
-         */
         if (isNull(configNavigationCellType)) {
           message.error(`无法识别的导航点类型: ${navigationCellType}`);
           return;
@@ -566,10 +568,8 @@ export default {
       const result = [];
       const newCellMap = { ...cellMap };
       additionalCells.forEach((cell) => {
-        const { x, y } = cell;
-        const newCellData = { ...cell, x: x, y: -y, nx: x, ny: y };
-        newCellMap[cell.id] = newCellData;
-        result.push(newCellData);
+        newCellMap[cell.id] = { ...cell };
+        result.push(cell);
       });
       currentMap.cellMap = newCellMap;
       return { centerMap, additionalCells: result };
@@ -1092,15 +1092,8 @@ export default {
       let viewReturn;
 
       if (type === 'chargerList') {
-        /**
-         * 1. 需要将停止点由导航ID替换为业务ID,当然地图渲染也是基于业务ID
-         * 2. 将direction数据转换成 angle 和 nangle数据
-         */
-        currentFunction = convertChargerToDTO(
-          currentFunction,
-          currentMap.cellMap,
-          shownCellCoordinateType,
-        );
+        // 需要将停止点由导航ID替换为业务ID,当然地图渲染也是基于业务ID
+        currentFunction = convertChargerToDTO(currentFunction, currentMap.cellMap);
         viewReturn = currentFunction;
       }
       if (type === 'commonList') {
@@ -1159,9 +1152,9 @@ export default {
       const tempCharger = cellIds
         .map((cellId) => ({
           code: `charger_${getRandomString(10)}`,
-          name: `${name}-${getRandomString(10)}`,
+          name: `${name}-${getRandomString(4)}`,
           priority,
-          chargingCells: [{ cellId, nangle: convertLandAngle2Pixi(angle), distance, supportTypes }],
+          chargingCells: [{ cellId, angle, distance, supportTypes }],
         }))
         .map((item) => convertChargerToDTO(item, currentMap.cellMap));
       scopeData.chargerList = [...functionData, ...tempCharger];

@@ -14,7 +14,7 @@ import Dictionary from '@/utils/Dictionary';
 
 const Colors = Dictionary().color;
 const ChargerPanel = (props) => {
-  const { dispatch, height, cellMap, mapContext, chargerList, shownCellCoordinateType } = props;
+  const { dispatch, height, cellMap, mapContext, chargerList } = props;
 
   const [addFlag, setAddFlag] = useState(-1);
   const [formVisible, setFormVisible] = useState(null);
@@ -117,10 +117,7 @@ const ChargerPanel = (props) => {
       {/* 列表区 */}
       <div>
         {formVisible ? (
-          <ChargerForm
-            charger={convertChargerToView(editing, cellMap, shownCellCoordinateType)}
-            flag={addFlag}
-          />
+          <ChargerForm charger={convertChargerToView(editing, cellMap)} flag={addFlag} />
         ) : multiFormVisible ? (
           <ChargerMultiForm
             back={() => {
@@ -177,6 +174,5 @@ export default connect(({ editor, editorView }) => {
     mapContext,
     cellMap: currentMap.cellMap,
     chargerList,
-    shownCellCoordinateType: editorView.shownCellCoordinateType,
   };
 })(memo(ChargerPanel));

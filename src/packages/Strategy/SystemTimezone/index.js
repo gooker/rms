@@ -16,7 +16,9 @@ class SystemTimezone extends Component {
 
   getData = async () => {
     const timeZone = await fetchSystemParamByKey('client_timezone_id');
-    this.setState({ timeZone });
+    if (!dealResponse(timeZone)) {
+      this.setState({ timeZone });
+    }
   };
 
   submit = () => {

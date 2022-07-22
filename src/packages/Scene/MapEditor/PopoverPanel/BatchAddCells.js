@@ -8,7 +8,6 @@ import { MapSelectableSpriteType } from '@/config/consts';
 import { NavigationType, NavigationTypeView } from '@/config/config';
 import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
 import styles from '../../popoverPanel.module.less';
-import { getKeyByCoordinateType } from '@/utils/mapUtil';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(9, 15);
 
@@ -27,11 +26,11 @@ const BatchAddCells = (props) => {
         if (isPlainObject(result)) {
           const { centerMap, additionalCells } = result;
           const payload = additionalCells.map((item) => {
-            const [xKey, yKey] = getKeyByCoordinateType(shownCellCoordinateType);
+            // 原则上不同的shownCellCoordinateType需要拿不同类型的坐标来渲染点位(最终要转成对应的导航坐标)，但是牧星点位比较特殊，就直接拿导航坐标
             return {
               ...item,
-              x: item[xKey],
-              y: item[yKey],
+              x: item.nx,
+              y: item.ny,
               coordinateType: shownCellCoordinateType,
               coordinate: { x: item.x, y: item.y, nx: item.nx, ny: item.ny },
             };
