@@ -6,9 +6,9 @@ import styles from '@/packages/Scene/popoverPanel.module.less';
 import { connect } from '@/utils/RmsDva';
 import { NavigationType, NavigationTypeView } from '@/config/config';
 
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(8, 16);
 const AddNavigation = (props) => {
-  const { dispatch, mapContext } = props;
+  const { dispatch, mapContext, shownCellCoordinateType } = props;
   const [formRef] = Form.useForm();
   const [type, setType] = useState(NavigationTypeView[0].code);
 
@@ -17,7 +17,14 @@ const AddNavigation = (props) => {
       dispatch({ type: 'editor/addNavigation', payload: values }).then((result) => {
         if (result) {
           formRef.resetFields();
-          mapContext.updateCells({ type: 'add', payload: [result] });
+          const cellToRender = {
+            ...result,
+            x: result.nx,
+            y: result.ny,
+            coordinateType: shownCellCoordinateType,
+            coordinate: { x: result.x, y: result.y, nx: result.nx, ny: result.ny },
+          };
+          mapContext.updateCells({ type: 'add', payload: [cellToRender] });
         }
       });
     });
@@ -43,18 +50,13 @@ const AddNavigation = (props) => {
             ))}
           </Select>
         </Form.Item>
-
-        {/* 牧星点位不要code, code就是Number ID*/}
-        {type !== NavigationType.M_QRCODE && (
-          <Form.Item
-            name={'code'}
-            label={formatMessage({ id: 'app.common.code' })}
-            rules={[{ required: true }]}
-          >
-            <Input style={{ width: 133 }} />
-          </Form.Item>
-        )}
-
+        <Form.Item
+          name={'code'}
+          label={formatMessage({ id: 'app.common.code' })}
+          rules={[{ required: true }]}
+        >
+          <Input style={{ width: 133 }} />
+        </Form.Item>
         <Form.Item
           name={'x'}
           label={formatMessage({ id: 'editor.cell.abscissa' })}
@@ -78,6 +80,7 @@ const AddNavigation = (props) => {
     </div>
   );
 };
-export default connect(({ editor, global }) => ({
+export default connect(({ editor, editorView }) => ({
   mapContext: editor.mapContext,
+  shownCellCoordinateType: editorView.shownCellCoordinateType,
 }))(memo(AddNavigation));

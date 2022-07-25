@@ -61,8 +61,8 @@ export default {
 
   // 点位操作
   'editor.cell.code': '地址码',
-  'editor.cell.abscissa': '横坐标',
-  'editor.cell.ordinate': '纵坐标',
+  'editor.cell.abscissa': '导航横坐标',
+  'editor.cell.ordinate': '导航纵坐标',
   'editor.cell.addNavigation': '添加导航点',
   'editor.cell.batchAdd': '批量添加',
   'editor.cell.delete': '删除点位',

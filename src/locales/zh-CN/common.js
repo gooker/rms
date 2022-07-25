@@ -32,6 +32,7 @@ export default {
   'app.form.code.duplicate': '编码重复',
   'app.form.id.duplicate': 'ID重复',
   'app.form.name.duplicate': '名称重复',
+  'app.form.allAsDefault': '默认全部',
 
   // 通用页面标识内容
   'app.common.fullScreen': '进入全屏',
@@ -135,6 +136,7 @@ export default {
   'app.button.confirm': '确定',
   'app.button.refresh': '刷新',
   'app.button.execute': '执行',
+  'app.button.selectAll': '全部',
 
   'app.button.config': '配置',
 

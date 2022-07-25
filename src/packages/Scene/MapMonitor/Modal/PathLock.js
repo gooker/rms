@@ -220,7 +220,7 @@ const PathLock = (props) => {
               </Col>
               <Col span={6}>
                 <Button size='small' onClick={selectAllVehicles}>
-                  <FormattedMessage id='monitor.view.selectAllVehicles' />
+                  <FormattedMessage id='app.button.selectAll' />
                 </Button>
               </Col>
             </Row>

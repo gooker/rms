@@ -98,7 +98,6 @@ export default {
   'monitor.operate.actionType.CONVEYOR.put': '送至滚筒站',
   'monitor.operate.goodsCode': '货物编码',
 
-  'monitor.view.selectAllVehicles': '全部',
   'monitor.view.taskPath': '任务路径',
   'monitor.view.taskPath.fullPath': '全路径',
   'monitor.view.taskPath.targetLine': '目标线',

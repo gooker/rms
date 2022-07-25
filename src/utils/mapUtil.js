@@ -546,8 +546,7 @@ export function getCurrentRouteMapData(namespace = 'editor') {
   return null;
 }
 
-export function syncLineState(cellIds, newCellMap, result) {
-  const { shownCellCoordinateType } = window.$$state().editorView;
+export function syncLineState(cellIds, cellMap, result) {
   const currentRouteMapData = getCurrentRouteMapData();
   let relations = [...(currentRouteMapData.relations || [])];
 
@@ -576,21 +575,16 @@ export function syncLineState(cellIds, newCellMap, result) {
     }
   });
 
-  // 将点位数据转化成getLineJson可用的数据结构
+  // 重新计算箭头数据
   function convert(_cell) {
     const cell = { ..._cell };
-    const [xKey, yKey] = getKeyByCoordinateType(shownCellCoordinateType);
     cell.coordinate = { x: cell.x, y: cell.y, nx: cell.nx, ny: cell.ny };
-    cell.x = cell[xKey];
-    cell.y = cell[yKey];
     return cell;
   }
-
-  // 重新计算 Distance
   relationsWillUpdate = relationsWillUpdate.map((relation) => {
     const { source, target, cost, type } = relation;
-    const sourceCell = convert(newCellMap[source]);
-    const targetCell = convert(newCellMap[target]);
+    const sourceCell = convert(cellMap[source]);
+    const targetCell = convert(cellMap[target]);
     return getLineJson(sourceCell, targetCell, cost, type);
   });
 
@@ -1231,4 +1225,9 @@ export function getLockCellBounds(dimension) {
   let width = right + left;
   let height = rear + front;
   return { width, height };
+}
+
+export function getCellByNaviId(cellMap, naviId) {
+  let pickResult = pickBy(cellMap, (item) => item.naviId === naviId);
+  return Object.values(pickResult)[0];
 }

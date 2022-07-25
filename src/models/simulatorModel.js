@@ -26,6 +26,7 @@ export default {
         yield put({ type: 'saveSimulatorVehicleList', payload: transformVehicleList(allVehicles) });
       }
     },
+
     * fetchDeletedSimulatorVehicle({ payload, then }, { call }) {
       const { vehicleIds } = payload;
       const currentLogicAreaData = getCurrentLogicAreaData('monitor');

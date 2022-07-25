@@ -83,6 +83,7 @@ class EditorMapView extends BaseMap {
 
   // ************************ 点位相关 **********************
   // 该方法不会进行任何转换，所以传进来的数据必须包含已转换好的xy
+  // {x,y,coordinateType,coordinate:{}}
   renderCells = (payload) => {
     payload.forEach((item) => {
       const cell = new Cell({
@@ -157,7 +158,6 @@ class EditorMapView extends BaseMap {
         }
       });
     }
-
     // 移动点位
     if (type === 'move') {
       Object.values(payload).forEach((cellPayload) => {
@@ -174,23 +174,19 @@ class EditorMapView extends BaseMap {
         }
       });
     }
-
-    // *************** 以下待调整 *************** //
     // 调整码间距
     if (type === 'adjustSpace') {
-      Object.keys(payload)
-        .map((item) => parseInt(item))
-        .forEach((cellId) => {
-          const { type: field, coord } = payload[cellId];
-          const cellEntity = this.idCellMap.get(cellId);
-          if (cellEntity) {
-            if (field === 'x') {
-              cellEntity.updateCoordination(coord, cellEntity.y);
-            } else {
-              cellEntity.updateCoordination(cellEntity.x, coord);
-            }
-          }
-        });
+      payload.forEach((cellData) => {
+        const cellEntity = this.idCellMap.get(cellData.id);
+        if (cellEntity) {
+          cellEntity.updateCoordination(cellData.nx, cellData.ny, {
+            x: cellData.x,
+            y: cellData.y,
+            nx: cellData.nx,
+            ny: cellData.ny,
+          });
+        }
+      });
     }
 
     this.refresh();

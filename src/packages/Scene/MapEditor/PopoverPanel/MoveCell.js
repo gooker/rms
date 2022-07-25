@@ -2,13 +2,13 @@ import React, { memo, useEffect } from 'react';
 import { Button, Form, InputNumber, message } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
-import FormattedMessage from '@/components/FormattedMessage';
-import styles from '../../popoverPanel.module.less';
-import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
-import ButtonInput from '@/components/ButtonInput';
-import { MapSelectableSpriteType } from '@/config/consts';
 import { getNavigationTypes } from '@/utils/mapUtil';
+import ButtonInput from '@/components/ButtonInput';
+import FormattedMessage from '@/components/FormattedMessage';
+import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
 import { NavigationType } from '@/config/config';
+import { MapSelectableSpriteType } from '@/config/consts';
+import styles from '../../popoverPanel.module.less';
 
 const MoveCell = (props) => {
   const { dispatch, selectCellIds, mapContext } = props;
@@ -20,31 +20,35 @@ const MoveCell = (props) => {
   }, [selectCellIds]);
 
   function submit() {
-    formRef.validateFields().then((value) => {
-      const navigationTypes = getNavigationTypes();
-      // 只能针对牧星点位
-      if (navigationTypes.length === 1 && navigationTypes[0] === NavigationType.M_QRCODE) {
-        dispatch({
-          type: 'editor/moveCells',
-          payload: value,
-        }).then((result) => {
-          const { cell, line } = result;
-          mapContext.updateCells({ type: 'move', payload: cell });
+    formRef
+      .validateFields()
+      .then((value) => {
+        const navigationTypes = getNavigationTypes();
+        // 只能针对牧星点位
+        if (navigationTypes.length === 1 && navigationTypes[0] === NavigationType.M_QRCODE) {
+          dispatch({
+            type: 'editor/moveCells',
+            payload: value,
+          }).then((result) => {
+            const { cell, line } = result;
+            mapContext.updateCells({ type: 'move', payload: cell });
 
-          const removePayload = { lines: [], arrows: [] };
-          line.delete.forEach(({ source, target }) => {
-            removePayload.arrows.push(`${source}-${target}`);
-            removePayload.arrows.push(`${target}-${source}`);
-            removePayload.lines.push(`${source}-${target}`);
-            removePayload.lines.push(`${target}-${source}`);
+            const removePayload = { lines: [], arrows: [] };
+            line.delete.forEach(({ source, target }) => {
+              removePayload.arrows.push(`${source}-${target}`);
+              removePayload.arrows.push(`${target}-${source}`);
+              removePayload.lines.push(`${source}-${target}`);
+              removePayload.lines.push(`${target}-${source}`);
+            });
+            mapContext.updateLines({ type: 'remove', payload: removePayload });
+            mapContext.updateLines({ type: 'add', payload: line.add });
           });
-          mapContext.updateLines({ type: 'remove', payload: removePayload });
-          mapContext.updateLines({ type: 'add', payload: line.add });
-        });
-      } else {
-        message.warn(formatMessage({ id: 'app.message.onlyMQRMove' }));
-      }
-    });
+        } else {
+          message.warn(formatMessage({ id: 'app.message.onlyMQRMove' }));
+        }
+      })
+      .catch(() => {
+      });
   }
 
   function validator(_, value) {
@@ -103,11 +107,10 @@ const MoveCell = (props) => {
     </div>
   );
 };
-export default connect(({ editor, editorView }) => {
+export default connect(({ editor }) => {
   const { selections, mapContext } = editor;
   const selectCellIds = selections
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
-    .map(({ id }) => id);
-
+    .map(({ naviId }) => naviId);
   return { selectCellIds, mapContext };
 })(memo(MoveCell));
