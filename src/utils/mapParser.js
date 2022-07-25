@@ -1,13 +1,22 @@
 /**
- * 用于将不同厂商的地图数据转换为RMS可识别的结构
+ * 1. 用于将不同厂商的地图数据转换为RMS可识别的结构
+ * 2. 原则：物理坐标往 "VDA5050" 默认坐标系靠；导航坐标PIXI坐标系靠
+ * 3. 其他厂商(下称A) "导航" & "物理" 互转流程
+ *    3.1 若A为右手坐标系
+ *      3.1.1 原坐标作为物理坐标，但是需要进行一次transform(加入存在旋转等操作)
+ *      3.1.2 原坐标转换成导航坐标，这里不需要transform，只需要坐标类型转换
+ *
+ *    3.2 若A是左手坐标系
+ *      3.2.1 原坐标作为导航坐标，这里不需要transform
+ *      3.2.2 原坐标转换成物理坐标，但是需要先进行一次transform(加入存在旋转等操作)，再转换到物理坐标
  */
 import { message } from 'antd';
 import { isNull } from '@/utils/util';
 import { getAngle, getCellMapId, getDistance } from '@/utils/mapUtil';
+import { convertSeerOriginPos2LandAndNavi } from '@/utils/mapTransformer';
 import { CellEntity, LogicArea, MapEntity, RelationEntity, RouteMap } from '@/entities';
 import { LineType, NavigationType } from '@/config/config';
 import packageJSON from '../../package.json';
-import { transformXYByParams } from '@/utils/mapTransformer';
 
 // 获取地图名称
 export function getMapName(mapData, navigationCellType) {
@@ -148,21 +157,14 @@ export function SEER(mapData, existIds, options) {
     const { instanceName, pos, dir, ignoreDir } = advancedPoint;
     const id = getCellMapId(ids);
     ids.push(id);
-
-    // 导航点坐标
-    const cellPos = {
-      x: Math.trunc(pos.x * 1000),
-      y: Math.trunc(pos.y * 1000),
-    };
-    const { x, y } = transformXYByParams(cellPos, NavigationType.SEER_SLAM, options.transform);
+    // 将原始点位转换成对应的物理坐标和导航坐标
+    const coordinate = convertSeerOriginPos2LandAndNavi(pos, options.transform);
+    // 生成点位数据对象
     const cellMapItem = new CellEntity({
       id,
       naviId: instanceName,
       navigationType: NavigationType.SEER_SLAM,
-      x,
-      y,
-      nx: cellPos.x,
-      ny: -cellPos.y,
+      ...coordinate,
       logicId: options.currentLogicArea,
       additional: { dir: !isNull(dir) ? Math.round(dir * 1000) / 1000 : undefined, ignoreDir },
     });
@@ -196,22 +198,23 @@ export function SEER(mapData, existIds, options) {
       const relationItem = new RelationEntity({ type: className, source, target });
 
       // control1
-      relationItem.control1 = transformXYByParams(
-        { x: controlPos1.x * 1000, y: controlPos1.y * 1000 },
-        NavigationType.SEER_SLAM,
-        options.transform,
-      );
-      relationItem.ncontrol1 = { x: controlPos1.x * 1000, y: -controlPos1.y * 1000 };
+      const control1 = convertSeerOriginPos2LandAndNavi(controlPos1, options.transform);
+      relationItem.control1 = { x: control1.x, y: control1.y };
+      relationItem.ncontrol1 = { x: control1.nx, y: control1.ny };
 
       // control2
-      relationItem.control2 = transformXYByParams(
-        { x: controlPos2.x * 1000, y: controlPos2.y * 1000 },
-        NavigationType.SEER_SLAM,
-        options.transform,
-      );
-      relationItem.ncontrol2 = { x: controlPos2.x * 1000, y: -controlPos2.y * 1000 };
+      const control2 = convertSeerOriginPos2LandAndNavi(controlPos2, options.transform);
+      relationItem.control2 = { x: control2.x, y: control2.y };
+      relationItem.ncontrol2 = { x: control2.nx, y: control2.ny };
 
-      // 只有直线才需要计算角度和距离
+      // distance
+      const distance = getDistance(
+        { x: tempIdCellMap[source].x, y: tempIdCellMap[source].y },
+        { x: tempIdCellMap[target].x, y: tempIdCellMap[target].y },
+      );
+      relationItem.distance = Math.trunc(distance);
+
+      // 只有直线才需要计算角度
       if (className === LineType.StraightPath) {
         // angle
         const angle = getAngle(
@@ -226,13 +229,6 @@ export function SEER(mapData, existIds, options) {
           { x: tempIdCellMap[target].nx, y: tempIdCellMap[target].ny },
         );
         relationItem.nangle = Math.trunc(nangle);
-
-        // distance
-        const distance = getDistance(
-          { x: tempIdCellMap[source].x, y: tempIdCellMap[source].y },
-          { x: tempIdCellMap[target].x, y: tempIdCellMap[target].y },
-        );
-        relationItem.distance = Math.trunc(distance);
       }
 
       result.relations.push(relationItem);

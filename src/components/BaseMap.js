@@ -11,7 +11,12 @@ import {
 } from '@/utils/mapUtil';
 import { BitText, Charger, Dump, DumpBasket, Elevator, Intersection, Station } from '@/entities';
 import { isNull } from '@/utils/util';
-import { convertLandAngle2Pixi, getCoordinateBy2Types, transformXYByParams } from '@/utils/mapTransformer';
+import {
+  convertLandAngle2Pixi,
+  convertLandCoordinate2Navi,
+  getCoordinateBy2Types,
+  transformXYByParams,
+} from '@/utils/mapTransformer';
 import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
 import CostArrow from '@/entities/CostArrow';
@@ -25,8 +30,8 @@ function initState(context) {
   context.xyCellMap = new Map(); // {x_y:[Cell]} // 主要用于处理点击某个点位，查看该坐标下有几个点位
   context.idNaviMap = new Map();
 
-  context.idLineMap = new Map(); // {sourceCellId-targetCellId: graphics}
   context.idArrowMap = new Map(); // {sourceCellId-targetCellId:arrow}
+  context.idLineMap = new Map(); // {sourceCellId-targetCellId: graphics}
 
   context.workStationMap = new Map(); // {stopCellId: [Entity]}
   context.elevatorMap = new Map(); // {[x${x}y${y}]: [Entity]}
@@ -133,12 +138,13 @@ export default class BaseMap extends React.PureComponent {
 
   // 清空并销毁所有优先级线条
   destroyAllLines = () => {
-    Object.values(this.idArrowMap).forEach((lineMap) => {
-      lineMap.forEach((line) => {
-        line.parent && line.parent.removeChild(line);
-        line.destroy({ children: true });
-      });
-      lineMap.clear();
+    this.idArrowMap.forEach((arrow) => {
+      arrow.parent && arrow.parent.removeChild(arrow);
+      arrow.destroy({ children: true });
+    });
+    this.idLineMap.forEach((line) => {
+      line.parent && line.parent.removeChild(line);
+      line.destroy();
     });
   };
 
@@ -279,14 +285,17 @@ export default class BaseMap extends React.PureComponent {
           targetX = result2.x;
           targetY = result2.y;
         } else {
-          // TIPS: 因为物理点位 "显示" 的时候需要翻转到左手，所以这里y取反
-          transformedCP1 = { x: control1.x, y: -control1.y };
-          transformedCP2 = { x: control2.x, y: -control2.y };
+          // 物理点位模式下依然要显示成导航位置，所以画贝塞尔的控制点在这里也需要转换
+          transformedCP1 = convertLandCoordinate2Navi(control1);
+          transformedCP2 = convertLandCoordinate2Navi(control2);
 
-          sourceX = sourceCell.coordinate.x;
-          sourceY = -sourceCell.coordinate.y;
-          targetX = targetCell.coordinate.x;
-          targetY = -targetCell.coordinate.y;
+          const source = convertLandCoordinate2Navi(sourceCell.coordinate);
+          sourceX = source.x;
+          sourceY = source.y;
+
+          const target = convertLandCoordinate2Navi(targetCell.coordinate);
+          targetX = target.x;
+          targetY = target.y;
         }
 
         const bezier = new SmoothGraphics();

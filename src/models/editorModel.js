@@ -842,7 +842,7 @@ export default {
       }
     },
 
-    insertLabel({ payload }, { select }) {
+    insertLabel({ payload }) {
       const currentLogicAreaData = getCurrentLogicAreaData();
       let labels = currentLogicAreaData.labels || [];
       labels = [...labels, payload];
@@ -1063,7 +1063,6 @@ export default {
     // ********************************* 功能操作 ********************************* //
     *updateFunction({ payload }, { select }) {
       const { currentMap } = yield select(({ editor }) => editor);
-      const { shownCellCoordinateType } = yield select(({ editorView }) => editorView);
       const { scope, type, data } = payload;
 
       let scopeData = currentMap;

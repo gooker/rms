@@ -1,18 +1,21 @@
 import { applyToPoint, compose, flipX, rotateDEG, scale, translate } from 'transformation-matrix';
-import { CoordinateType, NavigationTypeView } from '@/config/config';
+import { CoordinateType, NavigationType, NavigationTypeView } from '@/config/config';
 
 /**
- * 右手坐标系
- * rotate || rotateDEG: 数学标准坐标系逆时针旋转
+ * 地图转换参数输入规则
+ * 1. 旋转：顺时针为正，例如：需要顺时针旋转5度，则输入5
+ * 2. 平移：右上为正，左下为负
  */
 
 /**
+ * 转换顺序
  * 1. 角度转换
  * 2. 缩放转换
  * 3. 偏移转换
- * @tip 页面操作输入的补偿角度和旋转角度，默认顺时针为正(转换逆时针为正)，此时需要取反
+ * TIPS: 页面操作输入的补偿角度和旋转角度，默认顺时针为正；因为转换逻辑中逆时针为正，所以转换时需要取反
  * @3rd-util https://github.com/chrvadala/transformation-matrix#readme
  */
+
 // 获取转换参数默认值(navigationCellType就是brand)
 function getDefaultTransformParams(navigationType) {
   return {
@@ -50,10 +53,8 @@ export function transformXYByParams(coordinate, navigationCellType, inputTransfo
   matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
 
   const matrix = compose(...matrixParams);
-  const matrixResult = applyToPoint(matrix, coordinate);
-  const x = Math.round(matrixResult.x);
-  const y = Math.round(matrixResult.y);
-  return { x, y };
+  const { x, y } = applyToPoint(matrix, coordinate);
+  return { x: Math.trunc(x), y: Math.trunc(y) };
 }
 
 // 根据地图转换参数，将(结果)转换回原始坐标
@@ -109,11 +110,11 @@ export function convertLandCoordinate2Navi(coordinate) {
   matrixParams.push(rotateDEG(-90));
   matrixParams.push(flipX());
   const matrix = compose(...matrixParams);
-  return applyToPoint(matrix, coordinate);
+  const { x, y } = applyToPoint(matrix, coordinate);
+  return { x: Math.trunc(x), y: Math.trunc(y) };
 }
 
 /*********************** 牧星转换方法 ********************/
-
 // 物理角度转换成导航角度
 // TIPS:因为牧星车的的坐标系与PIXI坐标系相同，所以这里直接引用convertLandAngle2Pixi方法
 export function mushinyConvertLandAngle2Navi(landAngle) {
@@ -137,4 +138,24 @@ export function mushinyConvertNaviAngle2Land(naviAngle) {
   }
 
   return correctAngle(90 - naviAngle);
+}
+
+/*********************** 仙工转换方法 ********************/
+export function convertSeerOriginPos2LandAndNavi(pos, transformParam) {
+  const originCoordinate = {
+    x: pos.x * 1000,
+    y: pos.y * 1000,
+  };
+
+  // 物理坐标
+  const landCoordinate = transformXYByParams(
+    originCoordinate,
+    NavigationType.SEER_SLAM,
+    transformParam,
+  );
+
+  /********* 转换成导航坐标 *************/
+  const naviCoordinate = convertLandCoordinate2Navi(originCoordinate);
+
+  return { x: landCoordinate.x, y: landCoordinate.y, nx: naviCoordinate.x, ny: naviCoordinate.y };
 }
