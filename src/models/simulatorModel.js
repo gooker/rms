@@ -3,7 +3,6 @@ import {
   fetchSimulatorVehicleConfig,
   fetchUpdateVehicleConfig,
 } from '@/services/monitorService';
-import { findVehicle } from '@/services/resourceService';
 import { dealResponse, formatMessage, transformVehicleList } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { fetchAllVehicleList } from '@/services/commonService';
@@ -27,11 +26,6 @@ export default {
         yield put({ type: 'saveSimulatorVehicleList', payload: transformVehicleList(allVehicles) });
       }
     },
-    * fetchAddSimulatorVehicle({ payload }, { call }) {
-      const response = yield call(findVehicle, payload);
-      return !dealResponse(response, true);
-    },
-
     * fetchDeletedSimulatorVehicle({ payload, then }, { call }) {
       const { vehicleIds } = payload;
       const currentLogicAreaData = getCurrentLogicAreaData('monitor');

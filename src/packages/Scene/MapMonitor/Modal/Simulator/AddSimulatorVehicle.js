@@ -1,40 +1,42 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, Checkbox, Divider, Form, InputNumber, message, Row } from 'antd';
+import { Button, Checkbox, Divider, Form, InputNumber, Row } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { addSimulationVehicles } from '@/services/monitorService';
 import FormattedMessage from '@/components/FormattedMessage';
-import { VehicleSubTypeMap } from '@/config/consts';
 import styles from '../../monitorLayout.module.less';
-import { PlusOutlined } from '@ant-design/icons';
+import { findVehicle } from '@/services/resourceService';
+import AngleSelector from '@/components/AngleSelector';
 
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
-const { formItemLayout: formItemLayout2 } = getFormLayout(8, 16);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(8, 16);
+const { formItemLayout: formItemLayout2, formItemLayoutNoLabel: formItemLayoutNoLabel2 } =
+  getFormLayout(8, 16);
 
 function AddSimulatorVehicle(props) {
-  const { vehicleType, submit, logicId, onCancel, vehicleAdapter } = props;
-  const [executing, setExecuting] = useState(false);
-  const [isIncrement, setIsIncrement] = useState(false); // 用于标记批量添加小车时候是否是增量添加
-  const [selectedSubType, setSelectedSubType] = useState('Normal');
-  const [subTypes, setSubTypes] = useState([]);
+  const { logicId, onCancel } = props;
+  const [vehicleAdapter, vehicleType] = props.vehicleType.split('@');
+
   const [formRef] = Form.useForm();
   const [formRef2] = Form.useForm();
-
-  useEffect(() => {
-    const subTypeEnum = VehicleSubTypeMap[vehicleType];
-    if (subTypeEnum) {
-      setSubTypes(subTypeEnum);
-    }
-  }, []);
+  const [executing, setExecuting] = useState(false);
+  const [isIncrement, setIsIncrement] = useState(false); // 用于标记批量添加小车时候是否是增量添加
 
   function addVehicle() {
     formRef
       .validateFields()
-      .then((value) => {
+      .then(async (value) => {
         setExecuting(true);
-        const params = { vehicleAdapter, isSimulator: true, vehicleStatusDTO: { ...value } };
-        submit && submit(params);
+        const params = {
+          vehicleAdapter,
+          isSimulator: true,
+          vehicleStatusDTO: { ...value, vehicleType },
+        };
+        const response = await findVehicle(params);
+        if (!dealResponse(response, true)) {
+          onCancel();
+        }
         setExecuting(false);
       })
       .catch(() => {});
@@ -49,15 +51,11 @@ function AddSimulatorVehicle(props) {
           vehicleType,
           vehicleSize: values.vehicleSize,
           addFlag: isIncrement,
-          vehicleModel: selectedSubType,
           currentDirection: values?.batchcurrentDirection,
         };
         addSimulationVehicles(params).then((res) => {
-          if (dealResponse(res)) {
-            message.error(formatMessage({ id: 'monitor.simulator.addAMR.failed' }));
-          } else {
-            message.success(formatMessage({ id: 'monitor.simulator.addAMR.success' }));
-            onCancel(false);
+          if (!dealResponse(res, true)) {
+            onCancel();
           }
         });
       })
@@ -66,42 +64,12 @@ function AddSimulatorVehicle(props) {
 
   return (
     <div style={{ marginTop: 20 }}>
-      {/* <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.vehicleType' })}>
-        <Select disabled value={vehicleType} style={{ width: '130px' }}>
-          {vehicleTypes.map((record) => (
-            <Select.Option value={record} key={record}>
-              {record}
-            </Select.Option>
-          ))}
-        </Select>
-      </Form.Item>
-
-      {subTypes && subTypes.length > 0 && (
-        <Form.Item
-          {...formItemLayout}
-          label={formatMessage({ id: 'monitor.simulator.AMRSubType' })}
-        >
-          <Select
-            value={selectedSubType}
-            onChange={(value) => {
-              setSelectedSubType(value);
-            }}
-            style={{ width: '130px' }}
-          >
-            {subTypes.map((item) => (
-              <Select.Option value={item.value} key={item.value}>
-                <FormattedMessage id={item.label} />
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-      )} */}
-
-      <Form form={formRef} {...formItemLayout} labelWrap>
+      <Form labelWrap form={formRef} {...formItemLayout}>
         <div className={styles.rightSimulator}>
-          <Divider orientation="left" style={{ margin: '12px 0' }}>
-            <FormattedMessage id="monitor.simulator.addAMR" />
+          <Divider orientation='left' style={{ margin: '12px 0' }}>
+            <FormattedMessage id='monitor.simulator.addAMR' />
           </Divider>
+
           <Form.Item
             name={'vehicleId'}
             label={formatMessage({ id: 'vehicle.id' })}
@@ -124,7 +92,7 @@ function AddSimulatorVehicle(props) {
             label={formatMessage({ id: 'app.direction' })}
             rules={[{ required: true }]}
           >
-            <InputNumber min={0} max={359} />
+            <AngleSelector allowInput={false} beforeWidth={90} />
           </Form.Item>
 
           <Form.Item {...formItemLayoutNoLabel}>
@@ -136,10 +104,10 @@ function AddSimulatorVehicle(props) {
       </Form>
 
       {/* 批量添加 */}
-      <Form form={formRef2} {...formItemLayout2} labelWrap>
+      <Form labelWrap form={formRef2} {...formItemLayout2}>
         <div className={styles.rightSimulator}>
-          <Divider orientation="left" style={{ margin: '12px 0' }}>
-            <FormattedMessage id="monitor.operation.batchAdd" />
+          <Divider orientation='left' style={{ margin: '12px 0' }}>
+            <FormattedMessage id='monitor.operation.batchAdd' />
           </Divider>
           <Form.Item
             required
@@ -170,9 +138,9 @@ function AddSimulatorVehicle(props) {
           >
             <InputNumber min={0} max={359} />
           </Form.Item>
-          <Form.Item {...formItemLayoutNoLabel}>
+          <Form.Item {...formItemLayoutNoLabel2}>
             <Button onClick={batchAddVehicle}>
-              <PlusOutlined /> <FormattedMessage id="app.button.add" />
+              <PlusOutlined /> <FormattedMessage id='app.button.add' />
             </Button>
           </Form.Item>
         </div>

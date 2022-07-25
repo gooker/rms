@@ -16,7 +16,7 @@ import SimulatorError from '../Modal/Simulator/SimulatorError';
 import AddSimulatorVehicle from '../Modal/Simulator/AddSimulatorVehicle';
 import ClearPodsAndBatchAdd from '../Modal/Simulator/ClearPodsAndBatchAdd';
 import SimulatorConfigPanel from '../Modal/Simulator/SimulatorConfigPanel';
-import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import styles from '@/packages/Scene/popoverPanel.module.less';
 import simulatorStyle from './simulator.module.less';
 import commonStyles from '@/common.module.less';
@@ -31,22 +31,22 @@ const SimulatorPanel = (props) => {
     simulatorHistory,
     simulatorVehicleList,
     currentLogicArea,
-    vehicleTypes,
     allAdaptors,
   } = props;
 
-  const [currentVehicleType, setCurrentVehicleType] = useState(null);
-  const [vehicleAdapter, setVehicleAdapter] = useState(null); // 适配器
-  const [simulatorConfiguration, setSimulatorConfiguration] = useState(null); // 模拟器配置信息
-  const [configurationVisible, setConfigurationVisible] = useState(false); // 配置
-  const [addVisit, setAddVisit] = useState(false); // 添加模拟器
-  const [addPodVisible, setAddPodVisible] = useState(false); // 添加货架
-  const [errorVisible, setErrorVisible] = useState(false); // 模拟错误
+  // 选中的车辆类型
+  const [vehicleType, setVehicleType] = useState(null);
+  // 模拟器配置信息
+  const [simulatorConfiguration, setSimulatorConfiguration] = useState(null);
+  // 参数配置
+  const [configurationVisible, setConfigurationVisible] = useState(false);
+  // 添加模拟车
+  const [addVisit, setAddVisit] = useState(false);
+  // 添加货架
+  const [addPodVisible, setAddPodVisible] = useState(false);
+  // 模拟错误
+  const [errorVisible, setErrorVisible] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-
-  useEffect(() => {
-    setVehicleAdapter(Object.values(allAdaptors)?.[0]?.adapterType?.id);
-  }, []);
 
   useEffect(() => {
     if (!addVisit) {
@@ -155,6 +155,21 @@ const SimulatorPanel = (props) => {
     setErrorVisible(false);
   }
 
+  function getVehicleTypeOptions() {
+    return Object.values(allAdaptors).map(({ adapterType }) => {
+      const { code, name, vehicleTypes } = adapterType;
+      return (
+        <Select.OptGroup key={code} label={name}>
+          {vehicleTypes.map((item, index) => (
+            <Select.Option key={index} value={`${code}@${item.code}`}>
+              {item.name}
+            </Select.Option>
+          ))}
+        </Select.OptGroup>
+      );
+    });
+  }
+
   return (
     <div style={{ width: 330 }} className={commonStyles.categoryPanel}>
       {renderContent()}
@@ -179,17 +194,10 @@ const SimulatorPanel = (props) => {
           <div style={{ marginTop: 20 }}>
             {addVisit && (
               <AddSimulatorVehicle
-                vehicleTypes={vehicleTypes}
-                vehicleAdapter={vehicleAdapter}
-                submit={(value) => {
-                  dispatch({
-                    type: 'simulator/fetchAddSimulatorVehicle',
-                    payload: { ...value },
-                  }).then(() => {
-                    setAddVisit(false);
-                  });
+                vehicleType={vehicleType}
+                onCancel={() => {
+                  setAddVisit(false);
                 }}
-                onCancel={setAddVisit}
               />
             )}
             {addPodVisible && <ClearPodsAndBatchAdd dispatch={dispatch} />}
@@ -225,38 +233,31 @@ const SimulatorPanel = (props) => {
               </div>
             </div>
 
-            {/* allType && 配置 */}
+            {/* 车辆类型选择 & 新增  */}
             <div style={{ marginTop: 10 }} className={styles.panelBlockBase}>
               <div style={{ padding: '0 0 0px 5px' }}>
                 <span
                   style={{ marginRight: 10, fontWeight: 600, fontSize: 15 }}
                   className={commonStyles.popoverFontColor}
                 >
-                  <FormattedMessage id="app.configInfo.header.adapter" />:
+                  <FormattedMessage id='app.vehicleType' />:
                 </span>
                 <Select
                   size={size}
                   style={{ width: '60%' }}
-                  value={vehicleAdapter}
+                  value={vehicleType}
                   onChange={(value) => {
-                    setVehicleAdapter(value);
+                    setVehicleType(value);
                   }}
                 >
-                  {Object.values(allAdaptors).map(({ adapterType }) => {
-                    const { id, name } = adapterType;
-                    return (
-                      <Select.Option key={id} value={id}>
-                        {name}
-                      </Select.Option>
-                    );
-                  })}
+                  {getVehicleTypeOptions()}
                 </Select>
                 <SettingOutlined
                   style={{ color: '#fff', fontSize: 17, marginLeft: 10 }}
                   onClick={() => {
                     dispatch({
                       type: 'simulator/fetchSimulatorGetVehicleConfig',
-                      payload: currentVehicleType,
+                      payload: null,
                     }).then((result) => {
                       if (result) {
                         setSimulatorConfiguration(result);
@@ -270,6 +271,7 @@ const SimulatorPanel = (props) => {
               {/* 小车添加 & 刷新 */}
               <div style={{ marginTop: 10 }} className={styles.panelBlockBase}>
                 <Button
+                  disabled={isNull(vehicleType)}
                   size={size}
                   onClick={() => {
                     setAddVisit(true);
@@ -278,19 +280,10 @@ const SimulatorPanel = (props) => {
                   <FormattedMessage id="app.button.add" />
                   <FormattedMessage id={'app.vehicle'} />
                 </Button>
-                <Button
-                  size={size}
-                  onClick={() => {
-                    setAddPodVisible(true);
-                  }}
-                  style={{ marginLeft: '5px' }}
-                >
-                  <FormattedMessage id="monitor.simulator.action.batchAddPods" />
-                </Button>
               </div>
             </div>
 
-            {/* 小车操作 */}
+            {/* 车辆操作 */}
             <div style={{ marginTop: 10 }} className={styles.panelBlockBase}>
               <Button
                 style={{ marginRight: '5px', marginBottom: '5px' }}
@@ -431,7 +424,6 @@ const SimulatorPanel = (props) => {
 export default connect(({ global, simulator, loading, monitor }) => ({
   loading: loading.effects['simulator/init'],
   allAdaptors: global.allAdaptors,
-  vehicleTypes: global.allVehicleTypes,
   currentLogicArea: monitor.currentLogicArea,
   simulatorHistory: simulator.simulatorHistory,
   simulatorVehicleList: simulator.simulatorVehicleList,

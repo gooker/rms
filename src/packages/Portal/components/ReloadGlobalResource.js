@@ -4,10 +4,15 @@ import { ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { fetchGlobalExtraData } from '@/utils/init';
 import styles from './Header.module.less';
+import { formatMessage } from '@/utils/util';
 
 const ReloadGlobalResource = ({ globalFetching }) => {
   return (
-    <Tooltip title={'刷新全局资源'} color={'#ffffff'} overlayInnerStyle={{ color: '#000000' }}>
+    <Tooltip
+      title={formatMessage({ id: 'app.header.refreshGlobal' })}
+      color={'#ffffff'}
+      overlayInnerStyle={{ color: '#000000' }}
+    >
       <span className={styles.action}>
         <ReloadOutlined onClick={fetchGlobalExtraData} spin={globalFetching} />
       </span>

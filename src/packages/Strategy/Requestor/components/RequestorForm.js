@@ -22,7 +22,7 @@ const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(3, 21);
  */
 
 @connect(({ global }) => ({
-  allVehicleTypes: global.allVehicleTypes,
+  allVehicleTypes: [],
 }))
 class RequestForm extends React.Component {
   formRef = React.createRef();

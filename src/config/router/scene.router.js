@@ -4,14 +4,14 @@ export default [
   {
     path: `/${AppCode.Scene}/map/editor`,
     name: 'editor',
-    icon: 'map',
+    icon: 'editor',
     component: '/Scene/MapEditor/index',
     authority: ['ADMIN', 'SUPERMANAGER'],
   },
   {
     path: `/${AppCode.Scene}/map/monitor`,
     name: 'monitor',
-    icon: 'map',
+    icon: 'monitor',
     component: '/Scene/MapMonitor/index',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },

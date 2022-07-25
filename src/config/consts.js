@@ -253,38 +253,6 @@ export const EmergencyStopMode = [
   { label: 'editor.emergency.LockPath', value: 'LockPath' },
 ];
 
-// 小车子类型
-export const VehicleSubTypeMap = {
-  LatentLifting: [
-    {
-      label: 'monitor.simulator.subType.normal',
-      value: 'Normal',
-    },
-    {
-      label: 'monitor.simulator.subType.infrared',
-      value: 'Infrared',
-    },
-    {
-      label: 'monitor.simulator.subType.frock',
-      value: 'Frock',
-    },
-    {
-      label: 'monitor.simulator.subType.tote',
-      value: 'Tote',
-    },
-  ],
-  Tote: [
-    {
-      label: 'monitor.simulator.subType.normal',
-      value: 'Normal',
-    },
-    {
-      label: 'monitor.simulator.subType.infrared',
-      value: 'Infrared',
-    },
-  ],
-};
-
 // 纸张尺寸
 export const PaperSize = [
   { label: 'A0', value: 'A0' },

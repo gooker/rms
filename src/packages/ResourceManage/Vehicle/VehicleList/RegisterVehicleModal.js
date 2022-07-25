@@ -42,11 +42,11 @@ const RegisterVehicleModal = (props) => {
         >
           <Select>
             {Object.values(allAdaptors).map(({ adapterType }) => {
-              const { id, name, vehicleTypes } = adapterType;
+              const { code, name, vehicleTypes } = adapterType;
               return (
-                <Select.OptGroup key={id} label={name}>
+                <Select.OptGroup key={code} label={name}>
                   {vehicleTypes.map((item, index) => (
-                    <Select.Option key={index} value={`${id}@${item.code}`}>
+                    <Select.Option key={index} value={`${code}@${item.code}`}>
                       {item.name}
                     </Select.Option>
                   ))}

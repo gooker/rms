@@ -124,12 +124,6 @@ export default {
         textureLoaded: payload,
       };
     },
-    saveAllVehicleTypes(state, { payload }) {
-      return {
-        ...state,
-        allVehicleTypes: payload,
-      };
-    },
     changeFullScreen(state, { payload }) {
       return {
         ...state,

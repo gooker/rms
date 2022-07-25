@@ -56,6 +56,8 @@ export default {
   'app.header.option.switchEnvSuccess': '环境切换成功',
   'app.header.option.switchSectionSuccess': 'Section切换成功',
   'app.header.option.switchLanguageSuccess': '语言切换成功',
+  'app.header.refreshGlobal': '刷新全局资源',
+  'app.header.timezoneDetail': '时区详情',
 
   'app.selectLang.editMode': '编辑模式',
 

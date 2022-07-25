@@ -17,6 +17,7 @@ import UserCenter from './UserCenter';
 import SelectSection from './SelectSection';
 import SelectLang from './SelectLang';
 import styles from './Header.module.less';
+import HeaderTimezone from '@/packages/Portal/components/HeaderTimezone';
 
 @withRouter
 @connect(({ global, user }) => ({
@@ -113,6 +114,9 @@ class Header extends React.Component {
 
           {/* 刷新基础数据 */}
           <ReloadGlobalResource />
+
+          {/* 展示时区详情信息 */}
+          <HeaderTimezone />
 
           {/* 环境切换 */}
           <SelectEnvironment />
