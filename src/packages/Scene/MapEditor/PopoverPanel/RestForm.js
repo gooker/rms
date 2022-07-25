@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
-import { Form, Select, InputNumber } from 'antd';
+import { Form, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
+import { formatMessage, getFormLayout } from '@/utils/util';
 import { MapSelectableSpriteType } from '@/config/consts';
 import SuperMultiSelect from '@/packages/Scene/components/SuperMultiSelect';
 import { convertSupportTypesToDTO } from '@/utils/mapUtil';
@@ -101,7 +101,7 @@ export default connect(({ global, editor }) => {
 
   const selectCellIds = selections
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
-    .map(({ id }) => id);
+    .map(({ naviId }) => naviId);
 
   return {
     mapContext,

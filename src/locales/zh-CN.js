@@ -25,6 +25,7 @@ import alert from './zh-CN/alarm';
 import latentTotStorage from './zh-CN/Resource/latentToteStorage';
 import resource from './zh-CN/Resource/resource';
 import vehicle from './zh-CN/vehicle';
+import message from './zh-CN/message';
 
 export default {
   ...map,
@@ -54,4 +55,5 @@ export default {
   ...latentTotStorage,
   ...resource,
   ...vehicle,
+  ...message,
 };

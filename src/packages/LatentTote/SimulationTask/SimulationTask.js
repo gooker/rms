@@ -1,20 +1,17 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Tooltip, Tag, Row, Col, Button, Card, Badge } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import {
-  deleteSimulationTasks,
-  fetchAllSimulationTasks,
-  updateSimulationTask,
-} from '@/services/latentToteService';
+import React, { memo, useEffect, useState } from 'react';
+import { Badge, Button, Card, Col, Row, Tag, Tooltip } from 'antd';
+import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { deleteSimulationTasks, fetchAllSimulationTasks, updateSimulationTask } from '@/services/latentToteService';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import LabelComponent from '@/components/LabelComponent';
 import RmsConfirm from '@/components/RmsConfirm';
-import { formatMessage, isStrictNull, dealResponse, convertToUserTimezone } from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import SimulationTaskComponent from './SimulationTaskComponent';
 import commonStyles from '@/common.module.less';
 import style from './simulationTask.module.less';
+
 const callTypeOption = {
   Auto: '#87d068',
   Appoint: '#2db7f5',
@@ -473,7 +470,7 @@ const SimulationTask = (props) => {
               <Row className={style.workStationCallParms} key={i}>
                 {expandColumns.map(({ title, dataIndex, render }, index) => (
                   <Col key={index} flex="auto">
-                    <LabelComponent label={title} color={'#625f5f'}>
+                    <LabelComponent label={title} labelColor={'#625f5f'}>
                       {typeof render === 'function'
                         ? render(item[dataIndex], item)
                         : item[dataIndex]}

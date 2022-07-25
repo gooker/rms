@@ -60,7 +60,7 @@ export default class PixiBuilder {
   };
 
   viewportAddChild = (child) => {
-    this.viewport.addChild(child);
+    return this.viewport.addChild(child);
   };
 
   viewportRemoveChild = (child) => {

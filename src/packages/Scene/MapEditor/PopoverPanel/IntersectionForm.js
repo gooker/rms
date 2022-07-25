@@ -140,7 +140,7 @@ export default connect(({ editor }) => {
 
   const selectCellIds = selections
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
-    .map(({ id }) => id);
+    .map(({ naviId }) => naviId);
 
   const currentLogicAreaData = getCurrentLogicAreaData();
   const dumpStations = currentLogicAreaData?.dumpStations ?? [];

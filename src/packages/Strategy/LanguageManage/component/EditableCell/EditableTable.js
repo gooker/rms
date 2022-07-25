@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo } from 'react';
 import { Table } from 'antd';
 import EditableCell from './EditableCell';
 import { formatMessage } from '@/utils/util';
@@ -48,7 +48,7 @@ const EditableTable = (props) => {
         pagination={{
           ...pagination,
           showTotal: (total) =>
-            `${formatMessage({ id: 'app.common.tableRecord' }, { count: total })}`,
+            `${formatMessage({ id: 'app.template.tableRecord' }, { count: total })}`,
         }}
       />
     </div>

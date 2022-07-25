@@ -3,19 +3,26 @@ import { debounce, throttle } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import EventManager from '@/utils/EventManager';
 import { getRandomString, isNull } from '@/utils/util';
-import { renderWorkStationList } from '@/utils/mapUtil';
-import { coordinateTransformer } from '@/utils/coordinateTransformer';
-import { MonitorMapSizeKey, ZoneMarkerType } from '@/config/consts';
+import { convertLandCoordinate2Navi, transformXYByParams } from '@/utils/mapTransformer';
+import { EditorMapSizeKey, MonitorMapSizeKey, ZoneMarkerType } from '@/config/consts';
 import MonitorMapView from './MonitorMapView';
 import MonitorMask from '@/packages/Scene/MapMonitor/components/MonitorMask';
 import MonitorFooter from '@/packages/Scene/MapMonitor/components/MonitorFooter';
 import { FooterHeight, HeaderHeight, RightToolBarWidth } from '../enums';
 import commonStyles from '@/common.module.less';
+import { CoordinateType } from '@/config/config';
 
 const CLAMP_VALUE = 500;
 const MonitorMapContainer = (props) => {
   const { dispatch, mapContext, currentLogicArea, currentRouteMap, preRouteMap } = props;
-  const { mapRatio, mapMinRatio, currentMap, monitorLoad, shownNavigationCellType } = props;
+  const {
+    mapRatio,
+    currentMap,
+    monitorLoad,
+    mapMinRatio,
+    shownNavigationType,
+    shownCellCoordinateType,
+  } = props;
 
   useEffect(() => {
     const functionId = getRandomString(8);
@@ -49,7 +56,10 @@ const MonitorMapContainer = (props) => {
     mapContext.clearMonitorLoad();
     mapContext.refresh();
 
-    if (currentMap) {
+    if (currentMap && shownCellCoordinateType && shownNavigationType.length > 0) {
+      // 先记录当前点位使用的坐标类型(物理还是导航)
+      mapContext.cellCoordinateType = shownCellCoordinateType;
+      mapContext.currentLogicArea = currentLogicArea;
       renderMap();
       renderLogicArea();
       renderRouteMap();
@@ -59,44 +69,13 @@ const MonitorMapContainer = (props) => {
 
       // 监听地图缩放比例
       viewport.off('zoomed');
-      viewport.on(
-        'zoomed',
-        debounce(function () {
-          dispatch({ type: 'monitor/saveMapRatio', payload: this.scale.x });
-        }, 100),
-      );
+      viewport.on('zoomed', zoomedCallback());
 
       // 添加事件处理地图跑出Screen
       viewport.off('moved');
-      viewport.on(
-        'moved',
-        throttle(function () {
-          const { x, y, width, height } = JSON.parse(
-            window.sessionStorage.getItem(MonitorMapSizeKey),
-          );
-          const topLimit = y + (height - CLAMP_VALUE);
-          if (this.top >= topLimit) {
-            this.top = topLimit;
-          }
-
-          const bottomLimit = y + CLAMP_VALUE;
-          if (this.bottom <= bottomLimit) {
-            this.bottom = bottomLimit;
-          }
-
-          const leftLimit = x + (width - CLAMP_VALUE);
-          if (this.left >= leftLimit) {
-            this.left = leftLimit;
-          }
-
-          const rightLimit = x + CLAMP_VALUE;
-          if (this.right <= rightLimit) {
-            this.right = rightLimit;
-          }
-        }, 200),
-      );
+      viewport.on('moved', avoidOffScreen());
     }
-  }, [currentMap, currentLogicArea, mapContext]);
+  }, [currentMap, currentLogicArea, mapContext, shownCellCoordinateType, shownNavigationType]);
 
   useEffect(() => {
     if (currentMap && !isNull(mapContext)) {
@@ -104,16 +83,61 @@ const MonitorMapContainer = (props) => {
     }
   }, [currentRouteMap, mapContext]);
 
+  function avoidOffScreen() {
+    return throttle(function() {
+      const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem(EditorMapSizeKey));
+      const topLimit = y + (height - CLAMP_VALUE);
+      if (this.top >= topLimit) {
+        this.top = topLimit;
+      }
+
+      const bottomLimit = y + CLAMP_VALUE;
+      if (this.bottom <= bottomLimit) {
+        this.bottom = bottomLimit;
+      }
+
+      const leftLimit = x + (width - CLAMP_VALUE);
+      if (this.left >= leftLimit) {
+        this.left = leftLimit;
+      }
+
+      const rightLimit = x + CLAMP_VALUE;
+      if (this.right <= rightLimit) {
+        this.right = rightLimit;
+      }
+    }, 200);
+  }
+
+  function zoomedCallback() {
+    return debounce(function() {
+      dispatch({ type: 'editor/saveMapRatio', payload: this.scale.x });
+    }, 100);
+  }
+
   function renderMap() {
     const cellsToRender = Object.values(currentMap.cellMap)
-      .filter((item) => shownNavigationCellType.includes(item.navigationType))
-      .map((item) =>
-        coordinateTransformer(
-          item,
-          item.navigationType,
-          currentMap.transform?.[item.navigationType],
-        ),
-      );
+      .filter((item) => shownNavigationType.includes(item.navigationType))
+      .map((item) => {
+        if (shownCellCoordinateType === CoordinateType.NAVI) {
+          // 除了牧星点，别的厂商导入的地图的导航坐标都是直接从该厂商的导航点坐标转换而来，没有经过任何旋转等(假如有旋转等参数，而且必须不能转换，因为这个数据后台需要用)
+          const { x, y } = transformXYByParams({ x: item.nx, y: item.ny }, item.navigationType);
+          return {
+            ...item,
+            x,
+            y,
+            coordinateType: shownCellCoordinateType,
+            coordinate: { x: item.x, y: item.y, nx: item.nx, ny: item.ny },
+          };
+        } else {
+          // TIPS: 地图展示永远是展示导航位置，即使是物理也要转成导航
+          return {
+            ...item,
+            ...convertLandCoordinate2Navi(item),
+            coordinateType: shownCellCoordinateType,
+            coordinate: { x: item.x, y: item.y, nx: item.nx, ny: item.ny },
+          };
+        }
+      });
     mapContext.renderCells(cellsToRender);
   }
 
@@ -165,21 +189,16 @@ const MonitorMapContainer = (props) => {
       mapContext.renderIntersection(intersectionList);
     }
 
-    const { workstationList, chargerList, commonList } = currentLogicAreaData;
+    const { chargerList, commonList } = currentLogicAreaData;
     // 充电桩
-    if (Array.isArray(chargerList)) {
-      mapContext.renderChargers(chargerList);
-    }
-    // 工作站
-    if (Array.isArray(workstationList)) {
-      const workStationListData = renderWorkStationList(workstationList, currentMap.cellMap);
-      workStationListData.forEach((workStation) => {
-        mapContext.addWorkStation(workStation, null);
-      });
+    if (Array.isArray(chargerList) && chargerList.length > 0) {
+      mapContext.renderChargers(chargerList, () => {
+      }, currentMap.cellMap);
     }
     // 通用站点
     if (Array.isArray(commonList)) {
-      mapContext.renderCommonFunction(commonList);
+      mapContext.renderStation(commonList, () => {
+      }, currentMap.cellMap);
     }
 
     const { dumpStations, zoneMarker, labels, emergencyStopFixedList } = currentLogicAreaData;
@@ -187,7 +206,6 @@ const MonitorMapContainer = (props) => {
     if (Array.isArray(dumpStations)) {
       mapContext.renderDumpFunction(dumpStations);
     }
-
     // 背景(线框&图片)
     if (Array.isArray(zoneMarker)) {
       zoneMarker.forEach((zoneMarkerItem) => {
@@ -208,14 +226,12 @@ const MonitorMapContainer = (props) => {
         }
       });
     }
-
     // 文字标记
     if (Array.isArray(labels)) {
       labels.forEach((item) => {
         mapContext.renderLabel(item, false);
       });
     }
-
     // 紧急停止区
     if (Array.isArray(emergencyStopFixedList)) {
       mapContext.renderEmergencyStopArea(emergencyStopFixedList);
@@ -357,6 +373,7 @@ export default connect(({ monitor, monitorView }) => {
     mapRatio,
     mapMinRatio,
     monitorLoad,
-    shownNavigationCellType: monitorView.shownNavigationCellType,
+    shownNavigationType: monitorView.shownNavigationType,
+    shownCellCoordinateType: monitorView.shownCellCoordinateType,
   };
 })(memo(MonitorMapContainer));

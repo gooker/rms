@@ -13,6 +13,7 @@ import {
   SEER,
 } from '@/utils/mapParser';
 import { NavigationType, NavigationTypeView } from '@/config/config';
+import { find } from 'lodash';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 19);
 
@@ -90,6 +91,7 @@ const UploadMapModal = (props) => {
               } else if (navigationType === NavigationType.SEER_SLAM) {
                 payload = SEER(fileMapData, existIds, {
                   currentLogicArea,
+                  transform: currentMap.cellMap?.transform?.[NavigationType.SEER_SLAM],
                 });
               } else {
                 message.error(
@@ -153,8 +155,9 @@ const UploadMapModal = (props) => {
           rules={[{ required: true }]}
           getValueFromEvent={(value) => {
             setNavigationType(value);
-            if (value === NavigationType.M_QRCODE) {
-              formRef.setFieldsValue({ coordinationType: 'L' });
+            const navigationType = find(NavigationTypeView, { code: value });
+            if (navigationType) {
+              formRef.setFieldsValue({ coordinationType: navigationType.coordinateSystemType });
             } else {
               formRef.setFieldsValue({ coordinationType: null });
             }
@@ -174,7 +177,7 @@ const UploadMapModal = (props) => {
         {navigationType !== NavigationType.M_QRCODE && (
           <Form.Item
             name={'coordinationType'}
-            label={formatMessage({ id: 'app.map.coordinationType' })}
+            label={formatMessage({ id: 'app.map.coordinateSystemType' })}
             rules={[{ required: true }]}
           >
             <Select style={{ width: 200 }}>

@@ -6,7 +6,7 @@ const EditorCard = (props) => {
 
   return (
     <div className={styles.editorCard}>
-      <div style={{ color: '#e8e8e8' }}>{label}</div>
+      <div>{label}</div>
       <div>{children}</div>
     </div>
   );

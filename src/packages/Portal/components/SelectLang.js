@@ -1,10 +1,8 @@
 import React, { memo } from 'react';
-import { Menu, Dropdown, message } from 'antd';
+import { Dropdown, Menu, message } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import I18NIcon from '@/components/I18NIcon';
 import styles from './Header.module.less';
-import { formatMessage } from '@/utils/util';
-import { ClockCircleOutlined } from '@ant-design/icons';
 
 const EditModeMessageKey = 'Edit_Mode_Tip';
 const SelectLang = (props) => {

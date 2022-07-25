@@ -255,7 +255,7 @@ class LatentToteOrderComponent extends Component {
               pageSize: page.size,
               total: page.totalElements || 0,
               showTotal: (total) =>
-                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+                formatMessage({ id: 'app.template.tableRecord' }, { count: total }),
             }}
             onChange={this.handleTableChange}
             expandColumns={this.expandColumns}

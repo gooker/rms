@@ -1,5 +1,5 @@
 import React, { memo, useEffect } from 'react';
-import { Button, Form, InputNumber } from 'antd';
+import { Button, Form, InputNumber, message } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -7,6 +7,8 @@ import styles from '../../popoverPanel.module.less';
 import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
 import ButtonInput from '@/components/ButtonInput';
 import { MapSelectableSpriteType } from '@/config/consts';
+import { getNavigationTypes } from '@/utils/mapUtil';
+import { NavigationType } from '@/config/config';
 
 const MoveCell = (props) => {
   const { dispatch, selectCellIds, mapContext } = props;
@@ -19,30 +21,38 @@ const MoveCell = (props) => {
 
   function submit() {
     formRef.validateFields().then((value) => {
-      dispatch({
-        type: 'editor/moveCells',
-        payload: {
-          cellIds: value.cellIds,
-          dir: value.dir,
-          distance: value.distance,
-        },
-      }).then((result) => {
-        const { cell, line } = result;
-        mapContext.updateCells({ type: 'move', payload: cell });
+      const navigationTypes = getNavigationTypes();
+      // 只能针对牧星点位
+      if (navigationTypes.length === 1 && navigationTypes[0] === NavigationType.M_QRCODE) {
+        dispatch({
+          type: 'editor/moveCells',
+          payload: value,
+        }).then((result) => {
+          const { cell, line } = result;
+          mapContext.updateCells({ type: 'move', payload: cell });
 
-        const removePayload = { lines: [], arrows: [] };
-        line.delete.forEach(({ source, target }) => {
-          // line 正反都要删
-          removePayload.lines.push(`${source}-${target}`);
-          removePayload.lines.push(`${target}-${source}`);
-
-          removePayload.arrows.push(`${source}-${target}`);
-          removePayload.arrows.push(`${target}-${source}`);
+          const removePayload = { lines: [], arrows: [] };
+          line.delete.forEach(({ source, target }) => {
+            removePayload.arrows.push(`${source}-${target}`);
+            removePayload.arrows.push(`${target}-${source}`);
+            removePayload.lines.push(`${source}-${target}`);
+            removePayload.lines.push(`${target}-${source}`);
+          });
+          mapContext.updateLines({ type: 'remove', payload: removePayload });
+          mapContext.updateLines({ type: 'add', payload: line.add });
         });
-        mapContext.updateLines({ type: 'remove', payload: removePayload });
-        mapContext.updateLines({ type: 'add', payload: line.add });
-      });
+      } else {
+        message.warn(formatMessage({ id: 'app.message.onlyMQRMove' }));
+      }
     });
+  }
+
+  function validator(_, value) {
+    if ([0, 90, 180, 270].includes(value)) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject(new Error(formatMessage({ id: 'app.message.angleRequired' })));
+    }
   }
 
   return (
@@ -65,9 +75,9 @@ const MoveCell = (props) => {
 
         {/* 偏移方向 */}
         <Form.Item
-          name={'dir'}
+          name={'angle'}
           initialValue={510}
-          rules={[{ required: true }]}
+          rules={[{ required: true }, { validator }]}
           label={formatMessage({ id: 'app.direction' })}
         >
           <DirectionSelector />

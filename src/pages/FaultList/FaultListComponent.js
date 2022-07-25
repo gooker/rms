@@ -44,7 +44,7 @@ const FaultListComponent = (props) => {
       align: 'center',
       render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
     },
-  
+
     {
       title: formatMessage({ id: 'app.fault.lastReport' }),
       dataIndex: 'updateTime',
@@ -133,7 +133,7 @@ const FaultListComponent = (props) => {
   }
 
   function renderTotalTip(total) {
-    return formatMessage({ id: 'app.common.tableRecord' }, { count: total });
+    return formatMessage({ id: 'app.template.tableRecord' }, { count: total });
   }
 
   return (

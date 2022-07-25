@@ -1,11 +1,24 @@
-/* eslint-disable no-console */
+/**
+ * 1. 用于将不同厂商的地图数据转换为RMS可识别的结构
+ * 2. 原则：物理坐标往 "VDA5050" 默认坐标系靠；导航坐标PIXI坐标系靠
+ * 3. 其他厂商(下称A) "导航" & "物理" 互转流程
+ *    3.1 若A为右手坐标系
+ *      3.1.1 原坐标作为物理坐标，但是需要进行一次transform(加入存在旋转等操作)
+ *      3.1.2 原坐标转换成导航坐标，这里不需要transform，只需要坐标类型转换
+ *
+ *    3.2 若A是左手坐标系
+ *      3.2.1 原坐标作为导航坐标，这里不需要transform
+ *      3.2.2 原坐标转换成物理坐标，但是需要先进行一次transform(加入存在旋转等操作)，再转换到物理坐标
+ */
 import { message } from 'antd';
 import { isNull } from '@/utils/util';
 import { getAngle, getCellMapId, getDistance } from '@/utils/mapUtil';
+import { convertSeerOriginPos2LandAndNavi } from '@/utils/mapTransformer';
 import { CellEntity, LogicArea, MapEntity, RelationEntity, RouteMap } from '@/entities';
-import { NavigationType } from '@/config/config';
+import { LineType, NavigationType } from '@/config/config';
 import packageJSON from '../../package.json';
 
+// 获取地图名称
 export function getMapName(mapData, navigationCellType) {
   switch (navigationCellType) {
     case NavigationType.M_QRCODE:
@@ -17,6 +30,7 @@ export function getMapName(mapData, navigationCellType) {
   }
 }
 
+// 判断是否是牧星的旧版本地图结构
 export function isOldMushinyMap(mapData) {
   const { cellMap } = mapData;
   const firstKey = Object.keys(cellMap)[0];
@@ -116,7 +130,7 @@ export function extractFromNewMap(mapData) {
   return result;
 }
 
-// *********************** parser *********************** //
+/*********************** 仙工地图转换器 ***********************/
 /**
  * 仙工地图数据转化工具
  * 1. 第一版只需要关注物理坐标，即线条只关注关系，不关注具体形式，比如: 直线、贝塞尔、圆弧
@@ -127,12 +141,11 @@ export function extractFromNewMap(mapData) {
  */
 export function SEER(mapData, existIds, options) {
   const ids = [...existIds];
+  const tempIdCellMap = {};
   const instanceNameIdMap = {};
+  const result = { cells: [], relations: [] };
 
-  const defaultRelations = [];
-  const result = { cells: [], relations: [{ DEFAULT: defaultRelations }] };
   const { advancedPointList, advancedCurveList } = mapData;
-
   const advancedPointMap = {};
   if (Array.isArray(advancedPointList)) {
     advancedPointList.forEach((item) => {
@@ -144,19 +157,23 @@ export function SEER(mapData, existIds, options) {
     const { instanceName, pos, dir, ignoreDir } = advancedPoint;
     const id = getCellMapId(ids);
     ids.push(id);
+    // 将原始点位转换成对应的物理坐标和导航坐标
+    const coordinate = convertSeerOriginPos2LandAndNavi(pos, options.transform);
+    // 生成点位数据对象
     const cellMapItem = new CellEntity({
       id,
       naviId: instanceName,
       navigationType: NavigationType.SEER_SLAM,
-      x: Math.round(pos.x * 1000),
-      y: Math.round(pos.y * 1000),
-      nx: Math.round(pos.x * 1000),
-      ny: Math.round(pos.y * 1000),
+      ...coordinate,
       logicId: options.currentLogicArea,
       additional: { dir: !isNull(dir) ? Math.round(dir * 1000) / 1000 : undefined, ignoreDir },
     });
+    // 用来缓存并决定是否新建点位
     instanceNameIdMap[instanceName] = id;
-    result.cells.push(cellMapItem);
+    // 标记id与点位的关系，用于快速计算angle和nangle
+    tempIdCellMap[id] = cellMapItem;
+    // 填充返回值用
+    result.cells.push(cellMapItem); //
     return id;
   }
 
@@ -164,6 +181,7 @@ export function SEER(mapData, existIds, options) {
   if (Array.isArray(advancedCurveList)) {
     advancedCurveList.forEach((advancedCurve) => {
       const { className, startPos, endPos, controlPos1, controlPos2 } = advancedCurve;
+
       let source, target;
       if (isNull(instanceNameIdMap[startPos.instanceName])) {
         source = createCellEntity({ ...advancedPointMap[startPos.instanceName], ...startPos });
@@ -177,21 +195,43 @@ export function SEER(mapData, existIds, options) {
         target = instanceNameIdMap[endPos.instanceName];
       }
 
-      const relationItem = new RelationEntity({
-        type: className,
-        source,
-        target,
-        angle: getAngle(startPos.pos, endPos.pos),
-        distance: getDistance(
-          { x: startPos.pos.x * 1000, y: startPos.pos.y * 1000 },
-          { x: endPos.pos.x * 1000, y: endPos.pos.y * 1000 },
-        ),
-        control1: { x: controlPos1.x * 1000, y: controlPos1.y * 1000 },
-        control2: { x: controlPos2.x * 1000, y: controlPos2.y * 1000 },
-      });
-      relationItem.angle = Math.round(relationItem.angle);
-      relationItem.distance = Math.round(relationItem.distance);
-      defaultRelations.push(relationItem);
+      const relationItem = new RelationEntity({ type: className, source, target });
+
+      // control1
+      const control1 = convertSeerOriginPos2LandAndNavi(controlPos1, options.transform);
+      relationItem.control1 = { x: control1.x, y: control1.y };
+      relationItem.ncontrol1 = { x: control1.nx, y: control1.ny };
+
+      // control2
+      const control2 = convertSeerOriginPos2LandAndNavi(controlPos2, options.transform);
+      relationItem.control2 = { x: control2.x, y: control2.y };
+      relationItem.ncontrol2 = { x: control2.nx, y: control2.ny };
+
+      // distance
+      const distance = getDistance(
+        { x: tempIdCellMap[source].x, y: tempIdCellMap[source].y },
+        { x: tempIdCellMap[target].x, y: tempIdCellMap[target].y },
+      );
+      relationItem.distance = Math.trunc(distance);
+
+      // 只有直线才需要计算角度
+      if (className === LineType.StraightPath) {
+        // angle
+        const angle = getAngle(
+          { x: tempIdCellMap[source].x, y: tempIdCellMap[source].y },
+          { x: tempIdCellMap[target].x, y: tempIdCellMap[target].y },
+        );
+        relationItem.angle = Math.trunc(angle);
+
+        // nangle
+        const nangle = getAngle(
+          { x: tempIdCellMap[source].nx, y: tempIdCellMap[source].ny },
+          { x: tempIdCellMap[target].nx, y: tempIdCellMap[target].ny },
+        );
+        relationItem.nangle = Math.trunc(nangle);
+      }
+
+      result.relations.push(relationItem);
     });
   } else {
     throw new Error('"advancedCurveList"字段缺失');
@@ -220,6 +260,7 @@ export function SEER(mapData, existIds, options) {
   return result;
 }
 
+/*********************** 新版牧星地图转换器 ***********************/
 /**
  * 新版牧星地图数据转化工具
  * @param mapData {{}}

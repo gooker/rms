@@ -75,12 +75,12 @@ export const NavigationTypeView = [
     code: NavigationType.M_QRCODE,
     name: NavigationType.M_QRCODE,
     color: '#037ef3',
-    coordinationType: 'L',
+    coordinateSystemType: 'L',
   },
   {
     code: NavigationType.SEER_SLAM,
     name: NavigationType.SEER_SLAM,
     color: '#8e43e7',
-    coordinationType: 'R',
+    coordinateSystemType: 'R',
   },
 ];

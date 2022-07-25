@@ -8,16 +8,20 @@ import FormattedMessage from '@/components/FormattedMessage';
 import FunctionListItem from '../components/FunctionListItem';
 import StationForm from './StationForm';
 import commonStyles from '@/common.module.less';
+import Dictionary from '@/utils/Dictionary';
 
+const Colors = Dictionary().color;
 const StationPanel = (props) => {
-  const { dispatch, height, commonList, mapContext } = props;
+  const { dispatch, height, cellMap, commonList, mapContext } = props;
 
   const [addFlag, setAddFlag] = useState(-1);
   const [editing, setEditing] = useState(null);
   const [formVisible, setFormVisible] = useState(null);
 
   function edit(index, record) {
-    setEditing(record);
+    // 此处record.stopCellId是业务ID，需要转换成导航ID
+    const _record = { ...record, stopCellId: cellMap[record.stopCellId]?.naviId };
+    setEditing(_record);
     setFormVisible(true);
     setAddFlag(index);
   }
@@ -27,33 +31,42 @@ const StationPanel = (props) => {
       type: 'editor/removeFunction',
       payload: { flag: index, type: 'commonList', scope: 'logic' },
     }).then((result) => {
-      mapContext.removeCommonFunction(result);
+      mapContext.removeStation(result);
       mapContext.refresh();
     });
   }
 
   function getListData() {
     return commonList.map((item, index) => {
-      const { name, station, stopCellId, angle } = item;
+      const { code, name, stopCellId, angle, nangle } = item;
+
+      const naviID = cellMap[stopCellId]?.naviId ?? (
+        <span style={{ color: Colors.red }}>
+          <FormattedMessage id={'app.common.notAvailable'} />
+        </span>
+      );
+
       return {
-        name,
         index,
+        name,
         rawData: item,
         fields: [
           {
-            field: 'station',
             label: <FormattedMessage id={'app.common.code'} />,
-            value: station,
+            value: code,
+            col: 24,
           },
           {
-            field: 'stopCellId',
-            label: <FormattedMessage id={'editor.workstation.stop'} />,
-            value: stopCellId,
+            label: <FormattedMessage id={'editor.cellType.stop'} />,
+            value: naviID,
           },
           {
-            field: 'angle',
-            label: <FormattedMessage id={'app.common.angle'} />,
+            label: <FormattedMessage id={'app.map.landAngle'} />,
             value: angle,
+          },
+          {
+            label: <FormattedMessage id={'app.map.naviAngle'} />,
+            value: nangle,
           },
         ],
       };
@@ -124,5 +137,5 @@ const StationPanel = (props) => {
 export default connect(({ editor }) => {
   const currentLogicAreaData = getCurrentLogicAreaData();
   const commonList = currentLogicAreaData?.commonList ?? [];
-  return { commonList, mapContext: editor.mapContext };
+  return { commonList, mapContext: editor.mapContext, cellMap: editor.currentMap?.cellMap };
 })(memo(StationPanel));

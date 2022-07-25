@@ -3,7 +3,7 @@ import { message } from 'antd';
 import { find } from 'lodash';
 import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
-import { NavigationType, NavigationTypeView, VehicleType } from '@/config/config';
+import { CoordinateType, NavigationType, NavigationTypeView, VehicleType } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
 import { dealResponse, formatMessage, getToteLayoutBaseParam, isEqual, isNull, isStrictNull } from '@/utils/util';
 import {
@@ -18,7 +18,6 @@ import {
   zIndex,
 } from '@/config/consts';
 import {
-  convertAngleToPixiAngle,
   convertToteLayoutData,
   getElevatorMapCellId,
   getLockCellBounds,
@@ -43,7 +42,12 @@ import {
 } from '@/entities';
 import BaseMap from '@/components/BaseMap';
 import { fetchVehicleInfo } from '@/services/commonService';
-import { coordinateTransformer } from '@/utils/coordinateTransformer';
+import {
+  convertLandAngle2Pixi,
+  convertLandCoordinate2Navi,
+  mushinyConvertLandAngle2Navi,
+  transformXYByParams,
+} from '@/utils/mapTransformer';
 import { loadMonitorExtraTextures } from '@/utils/textures';
 
 class MonitorMapView extends BaseMap {
@@ -407,43 +411,47 @@ class MonitorMapView extends BaseMap {
   };
 
   // ************************ 小车 & 货架相关 **********************
-  updateVehicleCommonState = (vehicle, vehicleState, vehicleEntity, vehicleType) => {
-    const { x, y, uniqueId, battery, mainTain, manualMode, errorLevel } = vehicleState;
-    const {
-      navigationType = NavigationType.M_QRCODE,
-      vehicleStatus,
-      currentCellId,
-      currentDirection,
-    } = vehicleState;
+  updateVehicleCommonState = (vehicle, vehicleState, vehicleEntity) => {
+    const { x, y, nx, ny, currentCellId, currentDirection } = vehicleState;
+    const { uniqueId, battery, mainTain, manualMode } = vehicleState;
+    const { logicId, navigationType, vehicleStatus, errorLevel } = vehicleState;
 
-    // 1. 如果小车数据【vehicle.c】与 currentCellId 不一致说小车当前在电梯中；
-    // 2. 此时需要对比 currentCellId 对应的点位位置与 x,y 是否一样; 一样表示在当前逻辑区，不一样表示当前小车不在这个逻辑区需要隐藏
-    // 3. 但是有个隐藏bug，如果楼层间的电梯都处于同一个点位那么这个逻辑就会失效，就得要求后台在小车消息中加sectionId
-    const cellEntity = this.idCellMap.get(currentCellId);
-    if (cellEntity) {
-      if (vehicle !== currentCellId) {
-        if (cellEntity.x !== x || cellEntity.y !== y) {
-          this.pixiUtils.viewportRemoveChild(vehicleEntity);
-          vehicleEntity.__gui__on__map = false;
-          return;
-        }
-      }
-      if (!vehicleEntity.__gui__on__map) {
-        vehicleEntity.__gui__on__map = true;
+    // 首先判断车辆可见
+    if (this.currentLogicArea === logicId) {
+      if (vehicleEntity.__visible__on__map === false) {
+        vehicleEntity.__visible__on__map = true;
         this.pixiUtils.viewportAddChild(vehicleEntity);
       }
     } else {
-      // 如果找不到点位，那就说明现在小车在别的逻辑区
-      this.pixiUtils.viewportRemoveChild(vehicleEntity);
-      vehicleEntity.__gui__on__map = false;
+      if (vehicleEntity.__visible__on__map === true) {
+        vehicleEntity.__visible__on__map = false;
+        this.pixiUtils.viewportRemoveChild(vehicleEntity);
+      }
       return;
     }
 
-    // 更新位置
-    const pixiCoordinate = coordinateTransformer({ x, y }, navigationType);
+    /**
+     * 更新车辆位置
+     *
+     */
+    let pixiCoordinate;
+    if (this.cellCoordinateType === CoordinateType.NAVI) {
+      pixiCoordinate = transformXYByParams({ x: nx, y: ny }, navigationType);
+    } else {
+      pixiCoordinate = { x, y };
+    }
     vehicleEntity.x = pixiCoordinate.x;
     vehicleEntity.y = pixiCoordinate.y;
     vehicleEntity.currentCellId = currentCellId;
+
+    /**
+     * 更新小车方向
+     * currentDirection是物理方向
+     */
+    if (!isNull(currentDirection)) {
+      // currentDirection 是物理角度，所以只需要转成pixi角度即可
+      vehicleEntity.angle = convertLandAngle2Pixi(currentDirection);
+    }
 
     // 更新小车状态
     if (vehicleStatus && vehicleEntity.state !== vehicleStatus) {
@@ -453,11 +461,6 @@ class MonitorMapView extends BaseMap {
     // 手动模式
     if (manualMode !== vehicleEntity.manualMode) {
       vehicleEntity.updateManuallyMode(manualMode);
-    }
-
-    // 更新小车方向
-    if (!isNull(currentDirection)) {
-      vehicleEntity.angle = convertAngleToPixiAngle(currentDirection);
     }
 
     // 刷新行驶路线
@@ -489,35 +492,60 @@ class MonitorMapView extends BaseMap {
     // 这里需要一个检查，因为在页面存在车的情况下刷新页面，socket信息可能比小车列表数据来得快，所以update**Vehicle就会创建一台车[offline]
     // 但是一旦小车列表数据到了后会再次渲染出相同的小车, 所以这里需要检查当前id的车是否存在。如果小车存在就更新，如果小车不存在且点位存在就新建小车
     let latentVehicle = this.idVehicleMap.get(latentVehicleData.uniqueId);
-    const cellEntity = this.idCellMap.get(latentVehicleData.currentCellId);
     if (latentVehicle) {
       this.updateLatentVehicle([latentVehicleData]);
       return latentVehicle;
     }
     latentVehicle = new LatentVehicle({
+      x: latentVehicleData.x,
+      y: latentVehicleData.y,
       id: latentVehicleData.vehicleId,
-      x: latentVehicleData.x || cellEntity?.x,
-      y: latentVehicleData.y || cellEntity?.y,
       uniqueId: latentVehicleData.uniqueId,
+      cellId: latentVehicleData.currentCellId,
+      angle: mushinyConvertLandAngle2Navi(latentVehicleData.currentDirection),
       vehicleType: latentVehicleData.vehicleType,
       vehicleIcon: latentVehicleData.vehicleIcon,
       battery: latentVehicleData.battery || 0,
-      errorLevel: latentVehicleData.errorLevel || 0,
       state: latentVehicleData.vehicleStatus ?? VehicleState.offline,
       mainTain: latentVehicleData.mainTain,
       manualMode: latentVehicleData.manualMode,
-      cellId: latentVehicleData.currentCellId,
-      angle: convertAngleToPixiAngle(latentVehicleData.currentDirection),
+      errorLevel: latentVehicleData.errorLevel || 0,
       select: this.select,
     });
-    cellEntity && this.pixiUtils.viewportAddChild(latentVehicle);
+
+    // 判断地图可见
+    const __visible__on__map = latentVehicleData.logicId === this.currentLogicArea;
+    latentVehicle.__visible__on__map = __visible__on__map;
+    if (__visible__on__map) {
+      this.pixiUtils.viewportAddChild(latentVehicle);
+    }
     this.idVehicleMap.set(latentVehicleData.uniqueId, latentVehicle);
     return latentVehicle;
   };
 
   renderLatentVehicle = (latentVehicleList) => {
     if (Array.isArray(latentVehicleList)) {
-      latentVehicleList.forEach((latentVehicleData) => {
+      const _latentVehicleList = latentVehicleList.map((item) => {
+        const { vehicle, vehicleId, vehicleType, vehicleInfo, vehicleWorkStatusDTO } = item;
+        return {
+          x: vehicleInfo.x,
+          y: vehicleInfo.y,
+          nx: vehicleInfo.nx,
+          ny: vehicleInfo.ny,
+          id: vehicleId,
+          uniqueId: vehicleInfo.id,
+          cellId: vehicleInfo.currentCellId,
+          angle: vehicleInfo.direction,
+          vehicleType,
+          vehicleIcon: null,
+          battery: vehicleInfo.battery,
+          state: vehicleWorkStatusDTO.vehicleStatus,
+          mainTain: vehicle.maintain,
+          manualMode: vehicle.manualMode,
+          errorLevel: null,
+        };
+      });
+      _latentVehicleList.forEach((latentVehicleData) => {
         const latentVehicle = this.idVehicleMap.get(latentVehicleData.uniqueId);
         if (isNull(latentVehicle)) {
           this.addLatentVehicle(latentVehicleData);
@@ -532,6 +560,8 @@ class MonitorMapView extends BaseMap {
       const {
         x,
         y,
+        nx,
+        ny,
         loadId,
         loadDirection,
         vehicleId,
@@ -559,8 +589,8 @@ class MonitorMapView extends BaseMap {
       if (isNull(latentVehicle)) {
         // 新增小车: 登陆小车的第一条信息没有【状态】值, 就默认【离线】
         latentVehicle = this.addLatentVehicle({
-          x,
-          y,
+          x: this.cellCoordinateType === CoordinateType.LAND ? x : nx,
+          y: this.cellCoordinateType === CoordinateType.LAND ? y : ny,
           vehicleId,
           uniqueId,
           vehicleType,
@@ -650,7 +680,7 @@ class MonitorMapView extends BaseMap {
           ...latentPod,
           width: latentPod.w,
           height: latentPod.h,
-          angle: convertAngleToPixiAngle(latentPod.angle ?? 90),
+          angle: convertLandAngle2Pixi(latentPod.angle ?? 0),
         });
       });
       this.refresh();
@@ -669,7 +699,7 @@ class MonitorMapView extends BaseMap {
    */
   refreshLatentPod = (loadStatus) => {
     const { vId: vehicleUniqueId, cellId: currentCellId, loadId, angle, w, h } = loadStatus;
-    const loadAngle = convertAngleToPixiAngle(angle) ?? 90; // 默认0°方向(PIXI的90°)
+    const loadAngle = convertLandAngle2Pixi(angle) ?? 0;
     const width = w || LatentPodSize.width;
     const height = h || LatentPodSize.height;
 
@@ -770,7 +800,7 @@ class MonitorMapView extends BaseMap {
       vehicleType: toteVehicleData.vehicleType,
       vehicleIcon: toteVehicleData.vehicleIcon,
       cellId: toteVehicleData.currentCellId,
-      angle: convertAngleToPixiAngle(toteVehicleData.currentDirection),
+      angle: mushinyConvertLandAngle2Navi(toteVehicleData.currentDirection),
       shelfs: toteVehicleData.shelfs || 0,
       battery: toteVehicleData.battery || 0,
       errorLevel: toteVehicleData.errorLevel || 0,
@@ -822,6 +852,7 @@ class MonitorMapView extends BaseMap {
         vehicleStatus,
         currentCellId,
         currentDirection,
+        ncurrentDirection,
         errorLevel,
         uniqueId,
         vehicleType,
@@ -934,7 +965,7 @@ class MonitorMapView extends BaseMap {
             const totePod = new TotePod({
               x,
               y,
-              angle: convertAngleToPixiAngle(angle),
+              angle: convertLandAngle2Pixi(angle),
               side: 'L',
               checkTote: this.props.checkTote,
               ...bin,
@@ -966,7 +997,7 @@ class MonitorMapView extends BaseMap {
             const totePod = new TotePod({
               x,
               y,
-              angle: convertAngleToPixiAngle(angle),
+              angle: convertLandAngle2Pixi(angle),
               side: 'R',
               checkTote: this.props.checkTote,
               ...bin,
@@ -1013,7 +1044,7 @@ class MonitorMapView extends BaseMap {
       mainTain: sorterVehicleData.mainTain,
       manualMode: sorterVehicleData.manualMode,
       cellId: sorterVehicleData.currentCellId,
-      angle: convertAngleToPixiAngle(sorterVehicleData.currentDirection),
+      angle: mushinyConvertLandAngle2Navi(sorterVehicleData.currentDirection),
       active: true,
       select: typeof callback === 'function' ? callback : this.select,
       simpleCheckVehicle,
@@ -1121,12 +1152,10 @@ class MonitorMapView extends BaseMap {
         vehicleId,
         boxType,
         lockLevel,
-        openAngle,
-        geoModel: { angle, dimension, position },
+        openAngle, // openAngle 是物理角度
+        geoModel: { angle, dimension, position }, // angle是物理角度，position是物理坐标
       } = lockData;
-      // TODO: 锁格数据需要包含小车的导航类型
-      const navigationType = NavigationType.M_QRCODE;
-      const currentPosition = coordinateTransformer(position, navigationType);
+      const currentPosition = convertLandCoordinate2Navi(position);
       const { width, height } = getLockCellBounds(dimension);
       // 校验锁格数据，尤其是宽高
       if (!height || !width) {
@@ -1145,8 +1174,8 @@ class MonitorMapView extends BaseMap {
         boxType,
         width,
         height,
-        openAngle,
-        angle: convertAngleToPixiAngle(angle),
+        openAngle: convertLandAngle2Pixi(openAngle),
+        angle: convertLandAngle2Pixi(angle),
         radius: dimension.radius,
         vehicleId: find(allVehicles, { uniqueId: lockData.vehicleId })?.vehicleId,
         uniqueId: vehicleId,
@@ -1198,7 +1227,7 @@ class MonitorMapView extends BaseMap {
     } = lockData;
 
     const navigationType = NavigationType['M_QRCODE'];
-    const currentPosition = coordinateTransformer({ x, y }, navigationType);
+    const currentPosition = transformXYByParams({ x, y }, navigationType);
     const { width, height } = getLockCellBounds(dimension);
 
     // 渲染新的所有指定类型的锁
@@ -1222,7 +1251,7 @@ class MonitorMapView extends BaseMap {
       ...dimension,
       width,
       height,
-      angle: convertAngleToPixiAngle(angle),
+      angle: convertLandAngle2Pixi(angle),
       uniqueId: lockData.vehicleId,
       vehicleId: find(allVehicles, { uniqueId: lockData.vehicleId })?.vehicleId,
     };

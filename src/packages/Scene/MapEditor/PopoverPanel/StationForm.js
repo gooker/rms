@@ -1,8 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Col, Form, Input, InputNumber, message, Row, Select } from 'antd';
-import { ReloadOutlined } from '@ant-design/icons';
+import { Button, Form, Input, InputNumber, Row, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { formatMessage, getRandomString, isNull, isStrictNull } from '@/utils/util';
+import { formatMessage, getRandomString, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import AngleSelector from '@/components/AngleSelector';
 import { MapSelectableSpriteType } from '@/config/consts';
@@ -12,12 +11,8 @@ import CardRadio from '@/packages/Scene/components/CardRadio';
 const { Option } = Select;
 
 const StationForm = (props) => {
-  const { dispatch, allCommons, allWebHooks, allStationTypes, mapContext } = props;
-  const { flag, station, selectCellIds } = props;
-
-  const [iconWidth, iconHeight] = station?.size.split('@').map((value) => parseInt(value, 10)) || [
-    1000, 1000,
-  ];
+  const { flag, cellMap, station, selectCellIds } = props;
+  const { dispatch, allStationTypes, mapContext } = props;
 
   const [formRef] = Form.useForm();
   const [stationType, setStationType] = useState('COMMON');
@@ -30,129 +25,31 @@ const StationForm = (props) => {
     }
   }, []);
 
-  function checkCodeDuplicate(key, keyValue) {
-    const tid = isNull(station) ? -1 : flag;
-    let newFunctionData = [...allCommons];
-    newFunctionData.splice(tid, 1);
-    const existCodes = newFunctionData.map((item) => item[key]);
-    return existCodes.includes(keyValue);
-  }
-
-  function onValuesChange(changedValues, allValues) {
-    const { setFieldsValue, getFieldValue } = formRef;
-    const currentCommon = { ...allValues };
-    currentCommon.x = currentCommon.x || 0;
-    currentCommon.y = currentCommon.y || 0;
+  function onValuesChange() {
     if (latentToteVisible) return;
-
-    if (!isNull(currentCommon.stopCellId) && !isNull(currentCommon.angle)) {
-      // 如果没有编码字段就手动添加: 停止点-角度
-      if (isStrictNull(currentCommon.station)) {
-        if (!isNull(currentCommon.stopCellId) && !isNull(currentCommon.angle)) {
-          currentCommon.station = `${currentCommon.stopCellId}-${currentCommon.angle}`;
-        }
-      }
-
-      // 默认值(保证数据正确)和size字段
-      currentCommon.size = `${currentCommon.iconWidth || currentCommon.width}@${
-        currentCommon.iconHeight || currentCommon.height
-      }`;
-
-      // 删除无用的字段
-      delete currentCommon['direction&&angle'];
-      delete currentCommon.iconWidth;
-      delete currentCommon.iconHeight;
-
-      // 只有编码字段为空时候才会自动赋值
-      const currentCode = getFieldValue('station');
-      if (isNull(currentCode)) {
-        setFieldsValue({ station: currentCommon.station });
-      }
-      dispatch({
-        type: 'editor/updateFunction',
-        payload: { scope: 'logic', type: 'commonList', data: currentCommon },
-      }).then((result) => {
-        if (result.type === 'add') {
-          mapContext.renderCommonFunction([result.payload], null);
-        }
-        if (result.type === 'update') {
-          const { pre, current } = result;
-          mapContext.removeCommonFunction(pre);
-          mapContext.renderCommonFunction([current]);
-        }
-        mapContext.refresh();
-      });
-    }
-  }
-
-  function checkStopIdDuplicate(stopcellId) {
-    if (isStrictNull(stopcellId)) {
-      return Promise.reject(new Error(formatMessage({ id: 'app.common.select' })));
-    }
-    if (latentToteVisible && isNull(station) && !Array.isArray(stopcellId)) {
-      return Promise.reject(new Error('停止点要选择2个'));
-    }
-
-    return Promise.resolve();
-  }
-
-  function latentToteSubmit() {
-    const angle = formRef.getFieldValue('angle');
-    if (isStrictNull(angle)) {
-      // formRef.validateFields(['angle'], { force: true });
-      message.error('选择角度');
-      return;
-    }
-
-    formRef
-      .validateFields()
-      .then((values) => {
-        const currentCommon = { ...values };
-        currentCommon.x = currentCommon.x || 0;
-        currentCommon.y = currentCommon.y || 0;
-        // 默认值(保证数据正确)和size字段
-        currentCommon.size = `${currentCommon.iconWidth || currentCommon.width}@${
-          currentCommon.iconHeight || currentCommon.height
-        }`;
-
-        // 删除无用的字段
-        delete currentCommon.iconWidth;
-        delete currentCommon.iconHeight;
-
-        const { stopCellId, flag } = currentCommon;
-        const newStopCellId = isNull(station) ? [...stopCellId] : [stopCellId];
-
-        newStopCellId.map((id, index) => {
+    setTimeout(() => {
+      formRef
+        .validateFields()
+        .then((allValues) => {
           dispatch({
             type: 'editor/updateFunction',
-            payload: {
-              scope: 'logic',
-              type: 'commonList',
-              data: {
-                ...currentCommon,
-                station: isNull(station) ? getRandomString(6) : station.station,
-                name: isNull(station) ? `${currentCommon.groupCode}-${index}` : station.name,
-                stopCellId: id,
-                flag: index === 0 ? flag : flag + 1,
-              },
-            },
+            payload: { scope: 'logic', type: 'commonList', data: allValues },
           }).then((result) => {
             if (result.type === 'add') {
-              mapContext.renderCommonFunction([result.payload], null);
+              mapContext.renderStation([result.payload], null, cellMap);
             }
             if (result.type === 'update') {
-              const { pre, current } = result;
-              mapContext.removeCommonFunction(pre);
-              mapContext.renderCommonFunction([current]);
+              mapContext.updateStation(result.current, cellMap);
             }
             mapContext.refresh();
           });
+        })
+        .catch(() => {
         });
-      })
-      .catch(() => {});
+    });
   }
 
-  function freshAllWebHook() {
+  function latentToteSubmit() {
     //
   }
 
@@ -169,7 +66,9 @@ const StationForm = (props) => {
     <div>
       <Form form={formRef} layout={'vertical'} onValuesChange={onValuesChange}>
         {/* 隐藏字段 */}
-        <Form.Item hidden name={'flag'} initialValue={flag} />
+        <Form.Item hidden name={'flag'} initialValue={flag}>
+          <Input disabled />
+        </Form.Item>
 
         {/* 类型 */}
         <Form.Item
@@ -186,25 +85,13 @@ const StationForm = (props) => {
         </Form.Item>
 
         {/* 编码 */}
-        {!latentToteVisible && (
+        {!latentToteVisible ? (
           <>
             <Form.Item
-              name={'station'}
-              initialValue={station?.station || getRandomString(6)}
+              name={'code'}
+              initialValue={station?.code || `station_${getRandomString(10)}`}
               label={formatMessage({ id: 'app.common.code' })}
-              rules={[
-                () => ({
-                  validator(_, value) {
-                    const isDuplicate = checkCodeDuplicate('station', value);
-                    if (!isDuplicate || isNull(station)) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error(formatMessage({ id: 'editor.code.duplicate' })),
-                    );
-                  },
-                }),
-              ]}
+              rules={[{ required: true }]}
             >
               <Input />
             </Form.Item>
@@ -213,32 +100,17 @@ const StationForm = (props) => {
             <Form.Item
               name={'name'}
               initialValue={station?.name}
-              label={<FormattedMessage id="app.common.name" />}
+              label={<FormattedMessage id='app.common.name' />}
             >
               <Input />
             </Form.Item>
           </>
-        )}
-
-        {latentToteVisible && (
+        ) : (
           <Form.Item
             name={'groupCode'}
             initialValue={station?.groupCode}
-            label={<FormattedMessage id="sourcemanage.vehiclegroup.name" />}
-            rules={[
-              { required: true },
-              () => ({
-                validator(_, value) {
-                  const isDuplicate = checkCodeDuplicate('groupCode', value);
-                  if (!isDuplicate) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error(formatMessage({ id: 'groupManage.groupname.duplicate' })),
-                  );
-                },
-              }),
-            ]}
+            label={<FormattedMessage id='sourcemanage.vehiclegroup.name' />}
+            rules={[{ required: true }]}
           >
             <Input disabled={!isNull(station)} />
           </Form.Item>
@@ -249,39 +121,26 @@ const StationForm = (props) => {
           name={'stopCellId'}
           initialValue={station?.stopCellId}
           label={formatMessage({ id: 'editor.cellType.stop' })}
-          rules={[
-            () => ({
-              validator(_, value) {
-                return checkStopIdDuplicate(value);
-              },
-            }),
-          ]}
+          rules={[{ required: true }]}
         >
           <RichInput
             currentCellId={selectCellIds}
             icon={
               <img
-                alt="stop"
+                alt='stop'
                 style={{ width: 25 }}
-                src={require('../../../../../public/images/stop.png').default}
+                src={require('@/../public/images/stop.png').default}
               />
             }
-            showlatentTote={latentToteVisible && isNull(station)}
+            showLatentTote={latentToteVisible && isNull(station)}
           />
         </Form.Item>
 
-        {/* 站点角度 */}
+        {/* 站点物理角度 */}
         <Form.Item
           name={'angle'}
-          initialValue={station?.angle}
-          label={<FormattedMessage id="app.common.angle" />}
-          getValueFromEvent={(value) => {
-            formRef.setFieldsValue({
-              direction: value.dir,
-              angle: value.angle,
-            });
-            return value;
-          }}
+          initialValue={station?.angle ?? 0}
+          label={formatMessage({ id: 'app.common.angle' })}
         >
           <AngleSelector
             disabled
@@ -298,107 +157,37 @@ const StationForm = (props) => {
         {/* 偏移距离 */}
         <Form.Item
           name={'offset'}
-          initialValue={station?.offset}
-          label={<FormattedMessage id="editor.moveCell.offsetDistance" />}
+          initialValue={station?.offset || 1500}
+          label={formatMessage({ id: 'editor.moveCell.offsetDistance' })}
+          rules={[{ required: true }]}
         >
           <InputNumber style={{ width: 150 }} />
         </Form.Item>
-
-        {/* ---- 滚筒站 ---- */}
-        {stationType === 'ROLLER' && (
-          <>
-            {/* 料箱编码 */}
-            <Form.Item
-              name={'binCode'}
-              initialValue={station?.binCode}
-              label={formatMessage({ id: 'app.roller.binCode' })}
-            >
-              <Input />
-            </Form.Item>
-
-            {/* 车头方向 */}
-            <Form.Item
-              name={'toteVehicleDirection'}
-              initialValue={station?.toteVehicleDirection}
-              label={formatMessage({ id: 'vehicle.direction' })}
-            >
-              <AngleSelector getAngle />
-            </Form.Item>
-
-            {/* 高度 */}
-            <Form.Item label={formatMessage({ id: 'app.common.height' })}>
-              <Row gutter={10}>
-                <Col span={10}>
-                  <Form.Item noStyle name={'heightOffset'} initialValue={station?.heightOffset}>
-                    <InputNumber style={{ width: '100%' }} />
-                  </Form.Item>
-                </Col>
-                <Col span={4} style={{ display: 'flex', alignItems: 'center' }}>
-                  mm
-                </Col>
-              </Row>
-            </Form.Item>
-
-            {/* 深度 */}
-            <Form.Item label={formatMessage({ id: 'app.common.depth' })}>
-              <Row gutter={10}>
-                <Col span={10}>
-                  <Form.Item
-                    noStyle
-                    name={'toteVehicleDepth'}
-                    initialValue={station?.toteVehicleDepth}
-                  >
-                    <InputNumber style={{ width: '100%' }} />
-                  </Form.Item>
-                </Col>
-                <Col span={4} style={{ display: 'flex', alignItems: 'center' }}>
-                  mm
-                </Col>
-              </Row>
-            </Form.Item>
-
-            {/* WebHook */}
-            <Form.Item label={'Web Hook'}>
-              <Row gutter={10}>
-                <Col span={15}>
-                  <Form.Item noStyle name={'webHookId'} initialValue={station?.webHookId}>
-                    <Select style={{ width: '100%' }}>
-                      {allWebHooks.map(({ id, name }) => (
-                        <Option key={id} value={id}>
-                          {name}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={4} style={{ display: 'flex', alignItems: 'center' }}>
-                  <Button
-                    type="link"
-                    size={'small'}
-                    icon={<ReloadOutlined />}
-                    onClick={freshAllWebHook}
-                    style={{ marginLeft: '5px' }}
-                  />
-                </Col>
-              </Row>
-            </Form.Item>
-          </>
-        )}
 
         {/* 图标 */}
         <Form.Item
           name={'icon'}
           initialValue={station?.icon || 'common'}
-          label={<FormattedMessage id="editor.station.icon" />}
+          label={<FormattedMessage id='editor.station.icon' />}
         >
-          <CardRadio type="common" />
+          <CardRadio type='common' />
+        </Form.Item>
+
+        {/* 图标角度 */}
+        <Form.Item
+          name={'iconAngle'}
+          initialValue={station?.iconAngle || 0}
+          label={<FormattedMessage id='editor.station.icon.angle' />}
+        >
+          <AngleSelector disabled width={'100%'} />
         </Form.Item>
 
         {/* 图标宽度 */}
         <Form.Item
           name={'iconWidth'}
-          initialValue={iconWidth}
-          label={<FormattedMessage id="editor.station.icon.width" />}
+          initialValue={station?.iconWidth ?? 1000}
+          label={formatMessage({ id: 'editor.station.icon.width' })}
+          rules={[{ required: true }]}
         >
           <InputNumber style={{ width: 150 }} />
         </Form.Item>
@@ -406,19 +195,11 @@ const StationForm = (props) => {
         {/* 图标高度 */}
         <Form.Item
           name={'iconHeight'}
-          initialValue={iconHeight}
-          label={<FormattedMessage id="editor.station.icon.height" />}
+          initialValue={station?.iconHeight ?? 1000}
+          label={formatMessage({ id: 'editor.station.icon.height' })}
+          rules={[{ required: true }]}
         >
           <InputNumber style={{ width: 150 }} />
-        </Form.Item>
-
-        {/* 图标角度 */}
-        <Form.Item
-          name={'iconAngle'}
-          initialValue={station?.iconAngle || 0}
-          label={<FormattedMessage id="app.common.angle" />}
-        >
-          <AngleSelector disabled width={'100%'} />
         </Form.Item>
 
         {/* 保存 */}
@@ -436,24 +217,15 @@ const StationForm = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { currentMap, selections, allWebHooks } = editor;
-
-  // 获取所有通用站点列表
-  const allCommons = [];
-  const { logicAreaList } = currentMap;
-  logicAreaList.forEach((item) => {
-    const commonList = item.commonList || [];
-    allCommons.push(...commonList);
-  });
+  const { currentMap, selections } = editor;
 
   const selectCellIds = selections
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
-    .map(({ id }) => id);
+    .map(({ naviId }) => naviId);
 
   return {
-    allCommons,
-    allWebHooks,
     selectCellIds,
+    cellMap: currentMap.cellMap,
     mapContext: editor.mapContext,
     allStationTypes: editor.allStationTypes,
   };

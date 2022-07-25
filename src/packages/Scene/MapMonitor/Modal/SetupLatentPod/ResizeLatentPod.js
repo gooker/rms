@@ -1,9 +1,9 @@
 import React, { memo, useState } from 'react';
-import { Button, Col, Form, Row, Select, message } from 'antd';
+import { Button, Col, Form, message, Row, Select } from 'antd';
 import LatentPodUpdater from '../Simulator/LatentPodUpdater';
 import { updateLatentPodSize } from '@/services/XIHEService';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, isNull, LatentSizeUpdaterValidator, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, LatentSizeUpdaterValidator } from '@/utils/util';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 const noLabelLayout = { wrapperCol: { span: 16, offset: 6 } };
@@ -73,7 +73,7 @@ const ResizeLatentPod = () => {
                 }}
               >
                 <FormattedMessage
-                  id={resizeAll ? 'app.button.cancel' : 'monitor.view.selectVehicleall'}
+                  id={resizeAll ? 'app.button.cancel' : 'monitor.view.selectAllVehicles'}
                 />
               </Button>
             </Col>

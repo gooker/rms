@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import BitText from './BitText';
 import { angleToRad, isNull, radToAngle } from '@/utils/util';
 import { GlobalAlpha } from '@/config/consts';
-import { convertAngleToPixiAngle } from '@/utils/mapUtil';
+import { convertLandAngle2Pixi } from '@/utils/mapTransformer';
 
 export default class OpenLock extends PIXI.Container {
   constructor(props) {
@@ -14,7 +14,7 @@ export default class OpenLock extends PIXI.Container {
     this.alpha = GlobalAlpha;
     this.vehicleId = props.vehicleId;
     this.mathOpenAngle = props.openAngle;
-    this.openAngle = convertAngleToPixiAngle(props.openAngle);
+    this.openAngle = convertLandAngle2Pixi(props.openAngle);
     this.color = props.color;
     this.radius = props.radius;
     this.boxAction = props.boxAction;
