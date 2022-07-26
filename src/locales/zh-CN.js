@@ -20,11 +20,13 @@ import operationLog from './zh-CN/SSO/operationlog';
 import lockManage from './zh-CN/Resource/lockManage';
 import mapEditor from './zh-CN/Scene/editor';
 import mapMonitor from './zh-CN/Scene/monitor';
+import simulator from './zh-CN/Scene/simulator';
 import notification from './zh-CN/SSO/notification';
 import alert from './zh-CN/alarm';
 import latentTotStorage from './zh-CN/Resource/latentToteStorage';
 import resource from './zh-CN/Resource/resource';
 import vehicle from './zh-CN/vehicle';
+import message from './zh-CN/message';
 
 export default {
   ...map,
@@ -35,6 +37,7 @@ export default {
   ...common,
   ...collection,
   ...requestor,
+  ...simulator,
   ...chargingStrategy,
   ...systemParameters,
   ...reportCenter,
@@ -54,4 +57,5 @@ export default {
   ...latentTotStorage,
   ...resource,
   ...vehicle,
+  ...message,
 };

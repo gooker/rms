@@ -1,14 +1,14 @@
 import * as PIXI from 'pixi.js';
 import { LINE_SCALE_MODE, SmoothGraphics } from '@pixi/graphics-smooth';
 import * as XLSX from 'xlsx';
+import { DashLine } from 'pixi-dashed-line';
 import { cloneDeep, find, groupBy, orderBy, pickBy, sortBy } from 'lodash';
-import { LineArrow, LogicArea } from '@/entities';
+import { CoordinateType, LineType, NavigationType } from '@/config/config';
+import { MapSelectableSpriteType, VehicleState, zIndex } from '@/config/consts';
 import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
-import { CellSize, MapSelectableSpriteType, VehicleState } from '@/config/consts';
+import { CellEntity, LogicArea } from '@/entities';
+import { convertLandAngle2Pixi } from '@/utils/mapTransformer';
 import json from '../../package.json';
-import CellEntity from '@/entities/CellEntity';
-import RelationEntity from '@/entities/RelationEntity';
-import { LineType, NavigationType } from '@/config/config';
 
 // 根据行列数批量生成点位
 export function generateCellMapByRowsAndCols(
@@ -27,7 +27,7 @@ export function generateCellMapByRowsAndCols(
     for (let col = 0; col < cols; col++) {
       let innerX = firstPosition.x;
       innerX += col * distanceX;
-      cells.push(new CellEntity({ id, x: innerX, y: innerY }));
+      cells.push(new CellEntity({ id, nx: innerX, ny: innerY }));
       id += 1;
     }
   }
@@ -38,34 +38,13 @@ export function getDistance(pos, pos2) {
   return Math.round(Math.sqrt((pos.x - pos2.x) ** 2 + (pos.y - pos2.y) ** 2));
 }
 
-// 以数学坐标系为基准的角度
+// 获取物理角度
 export function getAngle(source, target) {
   const angle = Math.atan2(target.y - source.y, target.x - source.x) * (180 / Math.PI);
   if (angle > 0) {
     return 360 - angle;
   }
   return -angle;
-}
-
-/**
- * 现在元素角度显示按照数学坐标系转换
- * 这个方法就是将数学坐标系角度转换成pixi地图的角度
- * 比如: 地图数据里线条朝右是0度，那么地图显示就必须是90度
- */
-export function convertAngleToPixiAngle(mathAngle) {
-  if (!isStrictNull(mathAngle) && typeof mathAngle === 'number') {
-    let pixi;
-    if (mathAngle >= 360) {
-      mathAngle = mathAngle - 360;
-    }
-    if (mathAngle >= 0 && mathAngle <= 90) {
-      pixi = 90 - mathAngle;
-    } else {
-      pixi = 450 - mathAngle;
-    }
-    return pixi;
-  }
-  return null;
 }
 
 export function getCoordinator(source, angle, r) {
@@ -75,60 +54,30 @@ export function getCoordinator(source, angle, r) {
   return { x, y };
 }
 
+export function getKeyByCoordinateType(coordinateType) {
+  if (coordinateType === CoordinateType.LAND) {
+    return ['x', 'y'];
+  }
+  return ['nx', 'ny'];
+}
+
 export function getLineJson(source, target, cost, type) {
+  // 只要先算出物理角度，然后转换成导航角度即可；且计算物理角度必须基于导航坐标
+  let angle = getAngle(
+    { x: source.coordinate.nx, y: source.coordinate.ny },
+    { x: target.coordinate.nx, y: target.coordinate.ny },
+  );
+  angle = Math.trunc(angle);
+
   return {
+    type: type || LineType.StraightPath,
+    cost,
+    angle,
+    nangle: convertLandAngle2Pixi(angle),
     source: source.id,
     target: target.id,
-    type: type || LineType.StraightPath,
-    angle: getAngle(source, target),
-    cost,
     distance: getDistance(source, target),
   };
-}
-
-// 判断是否有对头线
-function getHasOppositeDirection(relations, source, target) {
-  let result = false;
-  for (let index = 0; index < relations.length; index++) {
-    const element = relations[index];
-    if (element.source === target && element.target === source) {
-      result = true;
-      break;
-    }
-  }
-  return result;
-}
-
-// 如果是斜线，要考虑锚点在点位角上
-function getLineCorner(relations, beginCell, endCell, angle) {
-  let x1;
-  let y1;
-
-  switch (true) {
-    case angle > 0 && angle < 90: {
-      x1 = beginCell.x + CellSize.width / 2;
-      y1 = beginCell.y - CellSize.height / 2;
-      break;
-    }
-    case angle > 90 && angle < 180: {
-      x1 = beginCell.x + CellSize.width / 2;
-      y1 = beginCell.y + CellSize.height / 2;
-      break;
-    }
-    case angle > 180 && angle < 270: {
-      x1 = beginCell.x - CellSize.width / 2;
-      y1 = beginCell.y + CellSize.height / 2;
-      break;
-    }
-    case angle > 270 && angle < 360: {
-      x1 = beginCell.x - CellSize.width / 2;
-      y1 = beginCell.y - CellSize.height / 2;
-      break;
-    }
-    default:
-      break;
-  }
-  return { x1, y1 };
 }
 
 const CAP_WIDTH = 50;
@@ -168,246 +117,68 @@ export function getRelationSelectionBG(width, height) {
 }
 
 /**
- * 获取当前线条的起始点坐标和角度
- * @param {*} relations
- * @param {*} beginCell
- * @param {*} endCell
- * @param {*} angle
- * @returns {{distance: number, length: number, fromX: number, fromY: number}}
- */
-export function getLineAnchor(relations, beginCell, endCell, angle) {
-  let fromX;
-  let fromY;
-  let length;
-
-  // 计算线条起点
-  if (getHasOppositeDirection(relations, beginCell.id, endCell.id)) {
-    fromX = (beginCell.x + endCell.x) / 2;
-    fromY = (beginCell.y + endCell.y) / 2;
-  } else {
-    switch (angle) {
-      case 0: {
-        fromX = beginCell.x;
-        fromY = beginCell.y - CellSize.height / 2;
-        break;
-      }
-      case 90: {
-        fromX = beginCell.x + CellSize.height / 2;
-        fromY = beginCell.y;
-        break;
-      }
-      case 180: {
-        fromX = beginCell.x;
-        fromY = beginCell.y + CellSize.width / 2;
-        break;
-      }
-      case 270: {
-        fromX = beginCell.x - CellSize.height / 2;
-        fromY = beginCell.y;
-        break;
-      }
-      default: {
-        const data = getLineCorner(relations, beginCell, endCell, angle);
-        fromX = data.x1;
-        fromY = data.y1;
-        break;
-      }
-    }
-  }
-
-  // 计算线条长度
-  if ([0, 90, 180, 270].includes(angle)) {
-    length = calculateCellDistance({ x: fromX, y: fromY }, endCell) - CellSize.height / 2;
-  } else {
-    length =
-      calculateCellDistance({ x: fromX, y: fromY }, endCell) -
-      Math.sqrt(CellSize.height ** 2 + CellSize.width ** 2) / 2;
-  }
-
-  const distance = calculateCellDistance(beginCell, endCell);
-  return { fromX, fromY, length, distance };
-}
-
-/**
- * 获取线条实例
- * @param relations
- * @param beginCell
- * @param endCell
- * @param lineAngle
- * @param cost
- * @param select
- * @param ctrlSelect
- * @param refresh
- * @param mapMode
- * @returns {LineArrow}
- */
-export function createRelation(
-  relations,
-  beginCell,
-  endCell,
-  lineAngle,
-  cost,
-  select,
-  ctrlSelect,
-  refresh,
-  mapMode,
-) {
-  const interactive = !isNull(select) || !isNull(ctrlSelect);
-  const { fromX, fromY, length, distance } = getLineAnchor(
-    relations,
-    beginCell,
-    endCell,
-    lineAngle,
-  );
-  return new LineArrow({
-    id: `${beginCell.id}_${endCell.id}`,
-    fromX,
-    fromY,
-    lineAngle,
-    cost,
-    length,
-    distance,
-    interactive,
-    refresh,
-    select,
-    ctrlSelect,
-    isClassic: mapMode === 'standard',
-  });
-}
-
-/**
  * 根据所选的点位，和方向，优先级生成线
- * @param {*} targetPoints cellIds
+ * @param {*} cells cellIds
  * @param {*} dir  方向
  * @param {*} value 优先级
- * @returns
+ * TIPS: 这个方法最低效，因为采用穷举法；实际上可以根据dir对点位进行分组，随后按组进行reduce操作
  */
-export function batchGenerateLine(targetPoints, dir, value) {
+export function batchGenerateLine(cells, dir, value) {
   const result = {};
-  if (targetPoints.length > 2) {
-    for (let index = 0; index < targetPoints.length; index++) {
-      const element = targetPoints[index];
-      for (let j = 0; j < targetPoints.length; j++) {
-        const point = targetPoints[j];
-        const key = `${element.id}_${dir}`; // 标记key值
-        if (element.id === point.id) {
+  if (cells.length === 2) {
+    let source, target;
+    if (dir === 90) {
+      [target, source] = orderBy(cells, 'y');
+    } else if (dir === 0) {
+      [source, target] = orderBy(cells, 'x');
+    } else if (dir === 270) {
+      [source, target] = orderBy(cells, 'y');
+    } else {
+      [target, source] = orderBy(cells, 'x');
+    }
+    const key = `${source.id}-${target.id}`;
+    result[key] = getLineJson(source, target, value);
+  }
+  if (cells.length > 2) {
+    for (let source of cells) {
+      for (let target of cells) {
+        if (source.id === target.id) {
           continue;
         }
-        if (getAngle(element, point) === dir) {
+        const key = `${source.id}_${dir}`;
+        if (getAngle(source, target) === dir) {
+          // 同一个方向可能有多个连接点，但是只取最近的那个点
           if (result[key]) {
-            const newDistance = getDistance(element, point);
-            if (result[key].distance > newDistance) {
-              result[key] = new RelationEntity({
-                source: element.id,
-                target: point.id,
-                angle: getAngle(element, point),
-                cost: value,
-                distance: newDistance,
-              });
+            const distance = getDistance(source, target);
+            if (result[key].distance > distance) {
+              result[key] = getLineJson(source, target, value);
             }
           } else {
-            const newDistance = getDistance(element, point);
-            result[key] = new RelationEntity({
-              source: element.id,
-              target: point.id,
-              angle: getAngle(element, point),
-              cost: value,
-              distance: newDistance,
-            });
+            result[key] = getLineJson(source, target, value);
           }
         }
       }
     }
-    const endResult = {};
     Object.keys(result).map((key) => {
       const { source, target } = result[key];
-      endResult[`${source}-${target}`] = result[key];
+      result[`${source}-${target}`] = result[key];
     });
-    return endResult;
-  }
-  if (targetPoints.length === 2) {
-    if (dir === 90) {
-      if (targetPoints[0].y > targetPoints[1].y) {
-        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
-        result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
-      } else if (targetPoints[0].y < targetPoints[1].y) {
-        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
-        result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
-      }
-    } else if (dir === 0) {
-      if (targetPoints[0].x > targetPoints[1].x) {
-        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
-        result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
-      } else if (targetPoints[0].x < targetPoints[1].x) {
-        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
-        result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
-      }
-    } else if (dir === 270) {
-      if (targetPoints[0].y > targetPoints[1].y) {
-        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
-        result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
-      } else if (targetPoints[0].y < targetPoints[1].y) {
-        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
-        result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
-      }
-    } else {
-      if (targetPoints[0].x < targetPoints[1].x) {
-        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
-        result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
-      } else if (targetPoints[0].x > targetPoints[1].x) {
-        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
-        result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
-      }
-    }
-  } else {
-    return {};
   }
   return result;
 }
 
-/**
- * 移动点位位置
- * @param {*} target 点位JSON数据
- * @param {*} distance 移动距离
- * @param {*} dir 移动方向
- */
-export function moveCell(target, distance, dir) {
-  const result = { ...target };
+export function moveCell(cell, angle, distance) {
+  let { x, y } = cell;
   let flag = 1;
-  if ([0, 3].includes(dir)) {
+  if ([90, 180].includes(angle)) {
     flag = -1;
   }
-  if ([0, 2].includes(dir)) {
-    result.y = target.y + flag * distance;
+  if ([90, 270].includes(angle)) {
+    y = y + flag * distance;
   } else {
-    result.x = target.x + flag * distance;
+    x = x + flag * distance;
   }
-  result.nx = result.x;
-  result.ny = result.y;
-  return result;
-}
-
-/**
- * 根据参数获取点位ID
- * @param cellMap
- * @param start
- * @param loopStep
- * @param step
- * @param way
- * @returns {[]|*}
- */
-export function generateCellId(cellMap, start, loopStep, step, way) {
-  let newId = start + loopStep.loop * step;
-  if (way === 'subtract') {
-    newId = start - loopStep.loop * step;
-  }
-  // 没找到就可以使用
-  if (cellMap[newId] === undefined) {
-    loopStep.loop += 1;
-    return newId;
-  }
-  loopStep.loop += 1;
-  return generateCellId(cellMap, start, loopStep, step);
+  return { x, y };
 }
 
 /**
@@ -416,9 +187,8 @@ export function generateCellId(cellMap, start, loopStep, step, way) {
 export function generateCellIds(cellMap, requiredCount) {
   // 获取已存在的牧星点位导航ID
   const mushinyCells = pickBy(cellMap, { navigationType: NavigationType.M_QRCODE });
-  const existNaviIds = Object.values(mushinyCells)
-    .map(({ naviId }) => naviId)
-    .map((item) => parseInt(item));
+  // 牧星的id和naviId是==的
+  const existNaviIds = Object.values(mushinyCells).map(({ id }) => id);
 
   const naviId = [];
   let value = 1;
@@ -466,77 +236,17 @@ export function transform(object, oldValue, newValue, isUpdate) {
   }
 }
 
-export function transformCurveData(lineData) {
-  /**
-   *  cost: 10
-   *  type: "curve"
-   *  source: primary
-   *  target: third
-   *  bparam1: secondary.x
-   *  bparam2: secondary.y,
-   *  angle:angle
-   * */
-  if (lineData.type === 'line') return lineData;
-  const { type, cost, angle, primary, secondary, third } = lineData;
-  return {
-    cost,
-    type,
-    angle,
-    source: primary,
-    target: third,
-    bparam1: secondary.x,
-    bparam2: secondary.y,
-  };
-}
-
-// ************************ 地图部分数据转换 ************************ //
-export function renderCommonList(commonList, cellMap) {
-  return commonList.map((record) => {
-    const { stopCellId, x, y } = record;
-    if (stopCellId) {
-      const stopCell = cellMap[stopCellId];
-      if (!isNull(stopCell)) {
-        return {
-          ...record,
-          x: stopCell.x + x,
-          y: stopCell.y + y,
-        };
-      }
-      return record;
-    }
-    return record;
-  });
-}
-
-export function renderWorkStationList(workstationList, cellMap) {
-  return workstationList.map((record) => {
-    const { stopCellId, angle, offset } = record;
-    if (!isStrictNull(stopCellId) && !isStrictNull(angle)) {
-      const stopCell = cellMap[stopCellId];
-      if (!isNull(stopCell)) {
-        const { x, y } = getCoordinator({ x: stopCell.x, y: stopCell.y }, angle, offset || 1900);
-        return { ...record, x, y };
-      }
-      return record;
-    }
-    return record;
-  });
-}
-
 /**
  // ********************** 充电桩 ********************* //
  **/
 export function generateChargerXY(charger, cellMap) {
   const { angle, chargingCells } = charger;
-  const stopCellCollection = chargingCells
-    .map(({ cellId }) => cellId)
-    .map((cellId) => cellMap[cellId]);
+  const stopCellCollection = chargingCells.map(({ cellId }) => cellMap[cellId]);
   if (stopCellCollection.length === 1) {
     const stopCell = stopCellCollection[0];
-    if (!isNull(stopCell)) {
-      const { x, y } = getCoordinator({ x: stopCell.x, y: stopCell.y }, angle, 1000);
-      return { x, y, ...charger };
-    }
+    // 充电桩坐标数据不用于后台业务处理，所以这里定位使用pixi定位的坐标，仅供显示用
+    const { x, y } = getCoordinator({ x: stopCell.x, y: stopCell.y }, angle, 1000);
+    return { x, y, ...charger };
   } else {
     // 如果存在多个充电点，那么充电桩和充电点应该在一条直线，且充电桩距离最近的充电点是1000
     let stopCell;
@@ -579,31 +289,86 @@ export function convertSupportTypesToDTO(supportTypes) {
   return $$supportTypes;
 }
 
+export function drawRelationLine(source, target) {
+  const relationLine = new PIXI.Graphics();
+  relationLine.zIndex = zIndex.targetLine;
+  const dash = new DashLine(relationLine, {
+    dash: [20, 40],
+    width: 20,
+    color: 0x0389ff,
+  });
+  dash.moveTo(source.x, source.y);
+  dash.lineTo(target.x, target.y);
+  return relationLine;
+}
+
+// 根据导航ID获取业务ID(自增ID)
+// BUG: 如果两种存在相同的naviID, 那么这里会出现bug
+export function getIdByNaviId(naviId, cellMap) {
+  if (isNull(cellMap)) {
+    console.error(`[RMS]: 'cellMap' loss`);
+    return null;
+  }
+  const item = pickBy(cellMap, (value) => value.naviId === naviId);
+  if (item) {
+    return Object.values(item)[0]?.id;
+  }
+  return null;
+}
+
+// 根据业务ID获取导航ID
+export function getNaviIdById(id, cellMap) {
+  if (isNull(cellMap)) {
+    console.error(`[RMS]: 'cellMap' loss`);
+    return null;
+  }
+  return cellMap[id]?.naviId;
+}
+
 // 将充电桩数据转换成后台数据结构
 export function convertChargerToDTO(charger, cellMap) {
+  // 这个charger数据是表单数据，避免直接修改值，所以这里clone
   const _charger = cloneDeep(charger);
-  _charger.chargingCells.forEach((item) => {
+  _charger.chargingCells = _charger.chargingCells.map((item) => {
+    // 这里的cellId是导航ID，需要转换成业务ID
+    item.cellId = getIdByNaviId(item.cellId, cellMap);
     if (Array.isArray(item.supportTypes)) {
       item.supportTypes = convertSupportTypesToDTO(item.supportTypes);
     } else {
       item.supportTypes = [];
     }
+    item.nangle = convertLandAngle2Pixi(item.angle);
+    return item;
   });
-  return generateChargerXY(_charger, cellMap);
+  return _charger;
+}
+
+export function convertStationToDTO(station, cellMap) {
+  const _station = cloneDeep(station);
+  _station.nangle = convertLandAngle2Pixi(_station.angle);
+  // 这里的stopCellId是导航ID，需要转换成业务ID
+  _station.stopCellId = getIdByNaviId(_station.stopCellId, cellMap);
+  return _station;
 }
 
 // 将充电桩后台数据转换成前端数据
-export function convertChargerToView(charger) {
+export function convertChargerToView(charger, cellMap) {
   if (isStrictNull(charger)) return null;
-  const chargingCells = charger.chargingCells.map(({ cellId, supportTypes }) => {
-    const _supportTypes = supportTypes.map(({ adapterType, vehicleTypes }) =>
-      vehicleTypes.map((item) => `${adapterType}@${item}`),
-    );
-    return {
-      cellId,
-      supportTypes: _supportTypes.flat(),
-    };
-  });
+
+  // TIPS: 这里的cellId是业务ID，要转成导航ID
+  const chargingCells = charger.chargingCells.map(
+    ({ cellId, distance, angle, nangle, supportTypes }) => {
+      const _supportTypes = supportTypes.map(({ adapterType, vehicleTypes }) =>
+        vehicleTypes.map((item) => `${adapterType}@${item}`),
+      );
+      return {
+        cellId: getNaviIdById(cellId, cellMap),
+        distance,
+        angle,
+        supportTypes: _supportTypes.flat(),
+      };
+    },
+  );
   return { ...charger, chargingCells };
 }
 
@@ -618,9 +383,9 @@ export function convertRestToView(rest) {
     supportTypes: _supportTypes.flat(),
   };
 }
-// ********************* 充电桩 ********************* //
 
-export function renderElevatorList(elevatorList) {
+// 将电梯数据转换成地图渲染适用的结构
+export function convertElevatorToView(elevatorList) {
   const result = [];
   elevatorList.forEach((record) => {
     const { logicLocations } = record;
@@ -642,58 +407,6 @@ export function renderElevatorList(elevatorList) {
   });
   return result;
 }
-// ************************ 地图部分数据转换 - end ************************ //
-
-export function generateLogicCellMap(record, innerCellMap) {
-  const result = { ...record };
-  Object.keys(innerCellMap).forEach((key) => {
-    if (result[innerCellMap[key]] !== null) {
-      result[key] = {
-        ...result[innerCellMap[key]],
-        id: key,
-      };
-      delete result[innerCellMap[key]];
-    }
-  });
-  return result;
-}
-
-export function getLogicCellMap(record, ele, currentLogic) {
-  let innerMappings = {};
-  for (let index = 0; index < ele.length; index++) {
-    const element = ele[index];
-    const { logicLocations } = element;
-
-    if (logicLocations && logicLocations[currentLogic.id]?.innerMapping) {
-      innerMappings = {
-        ...innerMappings,
-        ...logicLocations[currentLogic.id].innerMapping,
-      };
-    }
-  }
-  return generateLogicCellMap(record, innerMappings);
-}
-
-export function mergeStorageRack(storageRack) {
-  const { angle, virtualStorages } = storageRack;
-  const result = { angle, columns: [] };
-  const group = groupBy(
-    virtualStorages,
-    (storage) => `${storage.coordinate.x}_${storage.coordinate.y}`,
-  );
-  Object.values(group).forEach((value) => {
-    result.columns.push({
-      x: value[0].coordinate.x,
-      y: value[0].coordinate.y,
-      cellId: value[0].storageCellId,
-      disabled: value[0].disabled,
-      code: value[0].storageBaseCode.slice(0, 8),
-      width: value[0].size.width,
-      height: value[0].size.depth,
-    });
-  });
-  return result;
-}
 
 /**
  * 验证地图JSON数据是否合法
@@ -711,51 +424,6 @@ export function validateMapData(mapData) {
     }
   }
   return true;
-}
-
-export function getTunnelGateCells(entrance, exit) {
-  const gateSet = new Set();
-  entrance.forEach((item) => {
-    const [source] = item.split('-');
-    gateSet.add(source);
-  });
-  exit.forEach((item) => {
-    const [, target] = item.split('-');
-    gateSet.add(target);
-  });
-  return [...gateSet];
-}
-
-export function formatTunnelStateDataSource(targetCunnelName, response) {
-  const result = [];
-  const tunnels = Object.values(response);
-  tunnels.forEach(({ tunnelName, in: entrance, out: exit, lockOn, lockOnVehicle }) => {
-    if (tunnelName !== targetCunnelName) return;
-    const resultItem = { tunnelName, in: [], out: [] };
-    if (lockOn && lockOnVehicle != null) {
-      // 如果通道被锁，那么只需要简单显示该小车ID即可，不需要显示对应的入口或者出口
-      resultItem.in.push(lockOnVehicle);
-      resultItem.out.push(lockOnVehicle);
-    } else {
-      Object.keys(entrance).forEach((item) => {
-        resultItem.in.push({
-          code: item, // 入口或者出口ID
-          vehicles: entrance[item],
-        });
-      });
-      Object.keys(exit).forEach((item) => {
-        resultItem.out.push({
-          code: item,
-          vehicles: exit[item],
-        });
-      });
-    }
-
-    if (resultItem.in.length > 0 || resultItem.out.length > 0) {
-      result.push(resultItem);
-    }
-  });
-  return result;
 }
 
 export function convertCadToMap(file) {
@@ -860,17 +528,6 @@ export function convertCadToMap(file) {
   });
 }
 
-export function calculateCellDistance(cell1, cell2) {
-  if (cell1.x === cell2.x) {
-    return Math.abs(cell1.y - cell2.y);
-  }
-  if (cell1.y === cell2.y) {
-    return Math.abs(cell1.x - cell2.x);
-  }
-
-  return Number.parseInt(Math.sqrt((cell1.x - cell2.x) ** 2 + (cell1.y - cell2.y) ** 2), 10);
-}
-
 export function getCurrentLogicAreaData(namespace = 'editor') {
   const dvaStore = window.$$state();
   const namespaceState = dvaStore[namespace];
@@ -889,13 +546,15 @@ export function getCurrentRouteMapData(namespace = 'editor') {
   return null;
 }
 
-export function syncLineState(cellIds, newCellMap, result) {
+export function syncLineState(cellIds, cellMap, result) {
   const currentRouteMapData = getCurrentRouteMapData();
   let relations = [...(currentRouteMapData.relations || [])];
+
   // 1. 删除相关曲线
+  const { StraightPath, BezierPath, ArcPath } = LineType;
   relations = relations.filter((item) => {
-    if (item.type === LineType.StraightPath) return true;
-    if ([LineType.ArcPath, LineType.BezierPath].includes(item.type)) {
+    if (item.type === StraightPath) return true;
+    if ([ArcPath, BezierPath].includes(item.type)) {
       if (cellIds.includes(item.source) || cellIds.includes(item.target)) {
         result.line.delete.push(item);
         return false;
@@ -916,12 +575,17 @@ export function syncLineState(cellIds, newCellMap, result) {
     }
   });
 
-  // 重新计算 Distance
+  // 重新计算箭头数据
+  function convert(_cell) {
+    const cell = { ..._cell };
+    cell.coordinate = { x: cell.x, y: cell.y, nx: cell.nx, ny: cell.ny };
+    return cell;
+  }
   relationsWillUpdate = relationsWillUpdate.map((relation) => {
-    const { source, target } = relation;
-    const newDistance = getDistance(newCellMap[source], newCellMap[target]);
-    const angle = getAngle(newCellMap[source], newCellMap[target]);
-    return { ...relation, angle, distance: newDistance };
+    const { source, target, cost, type } = relation;
+    const sourceCell = convert(cellMap[source]);
+    const targetCell = convert(cellMap[target]);
+    return getLineJson(sourceCell, targetCell, cost, type);
   });
 
   result.line.add = relationsWillUpdate;
@@ -1116,46 +780,6 @@ export function getElevatorMapCellId(currentCellId) {
 }
 
 /**
- * 根据起点和终点获取线条数据
- * @param {*} idLineMap
- * @param {*} source
- * @param {*} target
- * @returns
- */
-export function getLineEntityFromMap(idLineMap, source, target) {
-  let line = null;
-  Object.keys(idLineMap).forEach((cost) => {
-    const lineMaps = idLineMap[cost];
-    const key = `${source}-${target}`;
-    if (lineMaps.has(key)) {
-      line = lineMaps.get(key);
-    }
-  });
-  return line;
-}
-
-/**
- * 根据线条ID从Map对象获取线条数据
- * @param {*} lineId
- * @param {*} idLineMap
- * @returns
- */
-export function getLineFromIdLineMap(lineId, idLineMap) {
-  const keys = Object.keys(idLineMap);
-  let result = [];
-  for (let index = 0; index < keys.length; index++) {
-    const key = keys[index];
-    const map = idLineMap[key];
-    const line = map.get(lineId);
-    if (line) {
-      result = [key, line]; // [cost, LineEntity]
-      break;
-    }
-  }
-  return result;
-}
-
-/**
  * 计算base点到target点的方向distance距离的点位
  * 返回 0 表示两个点没有相同坐标轴(指 相同x 或者 相同y)
  * 返回 1 表示两个点为同一个点
@@ -1323,14 +947,20 @@ export function getCurrentload(data) {
 }
 
 export function unifyVehicleState(vehicle) {
-  // 对小车点位进行转换，如果接受到的电梯替换点就转换成地图原始点位
+  /**
+   * 1. "c"是点位的业务ID
+   * 2. 对小车点位进行转换，如果接受到的电梯替换点就转换成地图原始点位
+   */
   let currentCellId = vehicle.c ?? vehicle.currentCellId;
   currentCellId = getElevatorMapCellId(currentCellId);
 
   return {
     x: vehicle.x,
     y: vehicle.y,
+    nx: vehicle.nx,
+    ny: vehicle.ny,
     currentCellId,
+    logicId: vehicle.lg ?? vehicle.logicId,
     navigationType: vehicle.bd ?? vehicle.navigationType,
     uniqueId: vehicle.rId,
     vehicleType: vehicle.rT,
@@ -1341,6 +971,7 @@ export function unifyVehicleState(vehicle) {
     manualMode: vehicle.mly ?? vehicle.manualMode,
     vehicleStatus: explainVehicleStatus(vehicle.s) ?? vehicle.vehicleStatus,
     currentDirection: vehicle.rD ?? vehicle.currentDirection,
+    ncurrentDirection: vehicle.nRd ?? vehicle.currentDirection,
     loadId: vehicle.l ? getCurrentload(vehicle.l)?.loadId : vehicle.loadId,
     loadDirection: vehicle.l ? getCurrentload(vehicle.l)?.loadDirection : vehicle.loadDirection,
     longSide: vehicle.lS,
@@ -1527,23 +1158,6 @@ export function adaptLabelSize({ width, height }, labelSize, isRect) {
   return [textWidth, textHeight];
 }
 
-export function checkControlUsageByXY(naviCellMap, x, y) {
-  // {AA:{ AA1: {} }, }
-  const naviCellGroup = Object.values(naviCellMap);
-  for (let i = 0; i < naviCellGroup.length; i++) {
-    // { AA1: {} }
-    const naviCells = Object.values(naviCellGroup[i]);
-    for (let j = 0; j < naviCells.length; j++) {
-      const naviCell = naviCells[j];
-      if (naviCell.x === x && naviCell.y === y) {
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
-
 /**
  * 顺序取值, 原理是基于reduce方法判断数组元素是否是顺序的，如果不是顺序的就是插值
  * @param cellIds {Array}
@@ -1569,7 +1183,7 @@ export function getCellMapId(cellIds) {
 
 ///// ******************* 地图点位选择 ********************* /////
 export function getCellSelections(namespace = 'editor') {
-  const allCells = getSelectionNaviCells(namespace);
+  const allCells = getCellsWithPosition(namespace);
   const types = allCells.map(({ brand }) => brand);
   return {
     cells: allCells,
@@ -1578,7 +1192,7 @@ export function getCellSelections(namespace = 'editor') {
 }
 
 // 获取选中的所有点位，包括重合的点位
-export function getSelectionNaviCells(namespace = 'editor') {
+export function getCellsWithPosition(namespace = 'editor') {
   const { mapContext, selections } = window.$$state()[namespace];
   const selectedCells = selections.filter((item) => item.type === MapSelectableSpriteType.CELL);
   const { xyCellMap } = mapContext;
@@ -1594,8 +1208,8 @@ export function getSelectionNaviCells(namespace = 'editor') {
   return Object.values(allNaviCells);
 }
 
-export function getSelectionNaviCellTypes(namespace = 'editor') {
-  const types = getSelectionNaviCells(namespace).map(({ navigationType }) => navigationType);
+export function getNavigationTypes(namespace = 'editor') {
+  const types = getCellsWithPosition(namespace).map(({ navigationType }) => navigationType);
   return [...new Set(types)];
 }
 
@@ -1611,4 +1225,9 @@ export function getLockCellBounds(dimension) {
   let width = right + left;
   let height = rear + front;
   return { width, height };
+}
+
+export function getCellByNaviId(cellMap, naviId) {
+  let pickResult = pickBy(cellMap, (item) => item.naviId === naviId);
+  return Object.values(pickResult)[0];
 }

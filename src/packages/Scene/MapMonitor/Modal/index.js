@@ -25,31 +25,22 @@ import CommonStationReport from './CommonStationReport';
 import VehicleAlert from './VehicleInfo/VehicleAlert';
 import VehicleRunningInfo from './VehicleInfo/VehicleRunninInfo';
 import EmergencyManagerModal from './EmergencyStopModal';
+import SourceLockPanel from '@/packages/Scene/MapMonitor/Modal/SourceLockPanel';
 
 const MonitorModals = (props) => {
   const { categoryModal, categoryPanel, dispatch } = props;
 
   return (
     <>
-      {categoryModal === 'VehicleAlert' && <VehicleAlert />}
-      {categoryModal === 'VehicleRunInfo' && <VehicleRunningInfo />}
-
+      {/* 基础任务 */}
       {categoryModal === 'emptyRun' && <EmptyRun dispatch={dispatch} />}
       {categoryModal === 'charge' && <Charging />}
       {categoryModal === 'goRest' && <ToRest />}
       {categoryModal === 'carry' && <CarryPod />}
+
+      {categoryModal === 'VehicleAlert' && <VehicleAlert />}
+      {categoryModal === 'VehicleRunInfo' && <VehicleRunningInfo />}
       {categoryModal === 'advancedCarry' && <AdvancedCarry />}
-
-      {categoryModal === 'workStationTask' && categoryPanel === 'LatentVehicle' && (
-        <LatentWorkStationTask />
-      )}
-      {categoryModal === 'autoCall' && categoryPanel === 'LatentVehicle' && (
-        <AutomaticLatentWorkstationTask />
-      )}
-      {categoryModal === 'workStationTask' && categoryPanel === 'ToteVehicle' && (
-        <AutomaticToteWorkstationTask />
-      )}
-
       {categoryModal === 'remoteControl' && <RemoteControl />}
       {categoryModal === 'custom' && <CustomComponent />}
       {categoryModal === 'dumpCargo' && <Parabolic />}
@@ -63,9 +54,19 @@ const MonitorModals = (props) => {
       {categoryModal === 'stopMessage' && <LatentStopMessage />}
       {categoryModal === 'temporaryBlock' && <TemporaryForbiddenCell />}
       {categoryModal === 'emergencyManagerModal' && <EmergencyManagerModal dispatch={dispatch} />}
-
       {categoryModal === 'station' && <CommonStationReport />}
       {categoryModal === 'WorkStation' && <WorkStationReport />}
+      {categoryModal === 'sourceLock' && <SourceLockPanel dispatch={dispatch} />}
+
+      {categoryModal === 'workStationTask' && categoryPanel === 'LatentVehicle' && (
+        <LatentWorkStationTask />
+      )}
+      {categoryModal === 'autoCall' && categoryPanel === 'LatentVehicle' && (
+        <AutomaticLatentWorkstationTask />
+      )}
+      {categoryModal === 'workStationTask' && categoryPanel === 'ToteVehicle' && (
+        <AutomaticToteWorkstationTask />
+      )}
     </>
   );
 };

@@ -120,7 +120,6 @@ export function initI18n(userLanguage) {
     } catch (e) {
       locales[language] = {};
     }
-    await intl.init({ currentLocale: language, locales });
 
     // 2. 批量获取国际化相关数据
     const [systemLanguage, i18nData] = await Promise.allSettled([

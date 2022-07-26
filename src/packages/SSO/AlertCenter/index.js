@@ -258,7 +258,7 @@ class QuestionCenter extends Component {
             ...pagination,
             showSizeChanger: true,
             showTotal: (total) =>
-              `${formatMessage({ id: 'app.common.tableRecord' }, { count: total })}`,
+              `${formatMessage({ id: 'app.template.tableRecord' }, { count: total })}`,
           }}
         />
       </TablePageWrapper>

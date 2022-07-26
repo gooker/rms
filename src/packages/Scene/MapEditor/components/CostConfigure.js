@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { Button } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
+import { CostColor } from '@/config/consts';
 
 const CostConfigure = (props) => {
   const { showSelection, value, onChange } = props;
@@ -9,7 +10,7 @@ const CostConfigure = (props) => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Button
-          style={{ background: '#e64a19' }}
+          style={{ background: CostColor['1000'].replace('0x', '#') }}
           onClick={() => {
             onChange(1000);
           }}
@@ -17,7 +18,7 @@ const CostConfigure = (props) => {
           {showSelection && value === 1000 ? <CheckOutlined style={{ color: '#000000' }} /> : ' '}
         </Button>
         <Button
-          style={{ background: '#ffca28' }}
+          style={{ background: CostColor['100'].replace('0x', '#') }}
           onClick={() => {
             onChange(100);
           }}
@@ -27,7 +28,7 @@ const CostConfigure = (props) => {
       </div>
       <div style={{ textAlign: 'center' }}>
         <Button
-          style={{ background: '#FFF' }}
+          style={{ background: '#FFFFFF' }}
           onClick={() => {
             onChange(-1);
           }}
@@ -37,7 +38,7 @@ const CostConfigure = (props) => {
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Button
-          style={{ background: '#1976d2' }}
+          style={{ background: CostColor['20'].replace('0x', '#') }}
           onClick={() => {
             onChange(20);
           }}
@@ -45,7 +46,7 @@ const CostConfigure = (props) => {
           {showSelection && value === 20 ? <CheckOutlined style={{ color: '#000000' }} /> : ' '}
         </Button>
         <Button
-          style={{ background: '#388e3c' }}
+          style={{ background: CostColor['10'].replace('0x', '#') }}
           onClick={() => {
             onChange(10);
           }}

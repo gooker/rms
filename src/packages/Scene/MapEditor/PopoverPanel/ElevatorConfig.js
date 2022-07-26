@@ -15,7 +15,7 @@ const ElevatorConfig = (props) => {
 
   const selectCellIds = selections
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
-    .map(({ id }) => id);
+    .map(({ naviId }) => naviId);
 
   const [formRef] = Form.useForm();
   const [isDouble, setIsDouble] = useState(false);

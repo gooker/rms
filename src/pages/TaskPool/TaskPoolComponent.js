@@ -130,7 +130,7 @@ class TaskLibraryComponent extends Component {
             current: page.currentPage,
             pageSize: page.size,
             total: page.totalElements || 0,
-            showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+            showTotal: (total) => formatMessage({ id: 'app.template.tableRecord' }, { count: total }),
           }}
           onChange={this.handleTableChange}
         />

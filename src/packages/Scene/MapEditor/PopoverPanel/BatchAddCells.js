@@ -5,13 +5,14 @@ import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import { MapSelectableSpriteType } from '@/config/consts';
-import { NavigationTypeView } from '@/config/config';
+import { NavigationType, NavigationTypeView } from '@/config/config';
 import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
 import styles from '../../popoverPanel.module.less';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(9, 15);
+
 const BatchAddCells = (props) => {
-  const { dispatch, mapContext } = props;
+  const { dispatch, mapContext, shownCellCoordinateType } = props;
   const [formRef] = Form.useForm();
 
   const [addWay, setAddWay] = useState('absolute');
@@ -24,10 +25,17 @@ const BatchAddCells = (props) => {
       }).then((result) => {
         if (isPlainObject(result)) {
           const { centerMap, additionalCells } = result;
-          mapContext.updateCells({
-            type: 'add',
-            payload: additionalCells,
+          const payload = additionalCells.map((item) => {
+            // 原则上不同的shownCellCoordinateType需要拿不同类型的坐标来渲染点位(最终要转成对应的导航坐标)，但是牧星点位比较特殊，就直接拿导航坐标
+            return {
+              ...item,
+              x: item.nx,
+              y: item.ny,
+              coordinateType: shownCellCoordinateType,
+              coordinate: { x: item.x, y: item.y, nx: item.nx, ny: item.ny },
+            };
           });
+          mapContext.updateCells({ type: 'add', payload });
           centerMap && mapContext.centerView();
         }
       });
@@ -62,7 +70,7 @@ const BatchAddCells = (props) => {
         >
           <Select style={{ width: 133 }}>
             {NavigationTypeView.map(({ code, name }, index) => (
-              <Select.Option key={index} value={code}>
+              <Select.Option key={index} value={code} disabled={code === NavigationType.SEER_SLAM}>
                 {name}
               </Select.Option>
             ))}
@@ -78,9 +86,11 @@ const BatchAddCells = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => {
-  const { mapContext } = editor;
-  return { mapContext };
+export default connect(({ editor, editorView }) => {
+  return {
+    mapContext: editor.mapContext,
+    shownCellCoordinateType: editorView.shownCellCoordinateType,
+  };
 })(memo(BatchAddCells));
 
 const BatchAddCellWithAbsolut = (props) => {

@@ -3,13 +3,11 @@ import { Button, Checkbox, Col, Form, InputNumber, message, Row, Select, Switch 
 import { CloseOutlined } from '@ant-design/icons';
 import { fetchCellLocks, fetchLogicAllVehicleLocks } from '@/services/XIHEService';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, getMapModalPosition, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { LockCellPolling } from '@/workers/WebWorkerManager';
 import styles from '../monitorLayout.module.less';
 
-const width = 500;
-const height = 400;
 const { formItemLayout } = getFormLayout(6, 16);
 
 const PathLock = (props) => {
@@ -182,22 +180,15 @@ const PathLock = (props) => {
   }
 
   return (
-    <div
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        left: `calc(50% - ${width / 2}px)`,
-      }}
-      className={styles.monitorModal}
-    >
+    <div style={getMapModalPosition(550)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.pathLock'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
-        <Form form={form} onValuesChange={onValuesChange}>
+        <Form labelWrap form={form} onValuesChange={onValuesChange}>
           {/* 小车ID */}
-          <Form.Item {...formItemLayout} label={formatMessage({ id: 'vehicle.id' })} labelWrap>
+          <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.vehicle' })} labelWrap>
             <Row gutter={10}>
               <Col span={18}>
                 <Form.Item
@@ -228,17 +219,63 @@ const PathLock = (props) => {
                 </Form.Item>
               </Col>
               <Col span={6}>
-                <Button size="small" onClick={selectAllVehicles}>
-                  <FormattedMessage id="monitor.view.selectVehicleall" />
+                <Button size='small' onClick={selectAllVehicles}>
+                  <FormattedMessage id='app.button.selectAll' />
                 </Button>
               </Col>
             </Row>
           </Form.Item>
 
-          {/* 显示锁格  -小车*/}
-          <Form.Item {...formItemLayout} label={formatMessage({ id: 'monitor.view.lockView' })}>
+          {/* 任务路径 */}
+          <Form.Item {...formItemLayout} label={formatMessage({ id: 'monitor.view.taskPath' })}>
             <Row gutter={10}>
-              <Col span={8}>
+              <Col>
+                <Form.Item
+                  noStyle
+                  {...formItemLayout}
+                  name={'showRoute'}
+                  valuePropName={'checked'}
+                  initialValue={routeView?.showRoute}
+                >
+                  <Switch
+                    checkedChildren={formatMessage({ id: 'app.common.visible' })}
+                    unCheckedChildren={formatMessage({ id: 'app.common.hidden' })}
+                  />
+                </Form.Item>
+              </Col>
+              <Col offset={2}>
+                <Form.Item
+                  noStyle
+                  {...formItemLayout}
+                  name={'showFullPath'}
+                  valuePropName={'checked'}
+                  initialValue={routeView?.showFullPath || false}
+                >
+                  <Checkbox>
+                    <FormattedMessage id='monitor.view.taskPath.fullPath' />
+                  </Checkbox>
+                </Form.Item>
+              </Col>
+              <Col offset={2}>
+                <Form.Item
+                  noStyle
+                  {...formItemLayout}
+                  name={'showTargetLine'}
+                  valuePropName={'checked'}
+                  initialValue={routeView?.showTargetLine || false}
+                >
+                  <Checkbox>
+                    <FormattedMessage id='monitor.view.taskPath.targetLine' />
+                  </Checkbox>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form.Item>
+
+          {/* 路径锁格 */}
+          <Form.Item {...formItemLayout} label={formatMessage({ id: 'monitor.right.pathLock' })}>
+            <Row>
+              <Col>
                 <Form.Item
                   noStyle
                   {...formItemLayout}
@@ -251,78 +288,31 @@ const PathLock = (props) => {
                   }}
                 >
                   <Switch
-                    disabled={selectVehicle?.length === 0}
-                    checkedChildren={formatMessage({ id: 'app.common.true' })}
-                    unCheckedChildren={formatMessage({ id: 'app.common.false' })}
+                    checkedChildren={formatMessage({ id: 'app.common.visible' })}
+                    unCheckedChildren={formatMessage({ id: 'app.common.hidden' })}
                   />
                 </Form.Item>
               </Col>
-              <Col span={7}>
-                <Button size="small" onClick={refreshMapVehicleLock}>
-                  <FormattedMessage id="app.button.refresh" />
+              <Col offset={2}>
+                <Button
+                  size='small'
+                  onClick={refreshMapVehicleLock}
+                  disabled={!vehicleLockView?.showLockCellPolling}
+                >
+                  <FormattedMessage id='app.button.refresh' />
                 </Button>
               </Col>
             </Row>
           </Form.Item>
 
-          {/* 显示路径 */}
-          <Form.Item {...formItemLayout} label={formatMessage({ id: 'monitor.view.pathView' })}>
-            <Row gutter={10}>
-              <Col span={8}>
-                <Form.Item
-                  noStyle
-                  {...formItemLayout}
-                  name={'showRoute'}
-                  valuePropName={'checked'}
-                  initialValue={routeView?.showRoute}
-                >
-                  <Switch
-                    checkedChildren={formatMessage({ id: 'app.common.on' })}
-                    unCheckedChildren={formatMessage({ id: 'app.common.off' })}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  noStyle
-                  {...formItemLayout}
-                  name={'showFullPath'}
-                  valuePropName={'checked'}
-                  initialValue={routeView?.showFullPath || false}
-                >
-                  <Checkbox>
-                    <FormattedMessage id="monitor.view.path.fullPath" />
-                  </Checkbox>
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  noStyle
-                  {...formItemLayout}
-                  name={'showTargetLine'}
-                  valuePropName={'checked'}
-                  initialValue={routeView?.showTargetLine || false}
-                >
-                  <Checkbox>
-                    <FormattedMessage id="monitor.view.path.targetLine" />
-                  </Checkbox>
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form.Item>
-
           {/* 点位锁格 */}
-          <Form.Item {...formItemLayout} label={<FormattedMessage id="monitor.view.cellLock" />}>
+          <Form.Item {...formItemLayout} label={<FormattedMessage id='monitor.view.cellLock' />}>
             <Row style={{ width: '100%' }}>
-              <Col span={5}>
+              <Col>
                 <Form.Item noStyle>
                   <Switch
-                    checkedChildren={formatMessage({
-                      id: 'app.common.visible',
-                    })}
-                    unCheckedChildren={formatMessage({
-                      id: 'app.common.hidden',
-                    })}
+                    checkedChildren={formatMessage({ id: 'app.common.visible' })}
+                    unCheckedChildren={formatMessage({ id: 'app.common.hidden' })}
                     onChange={(value) => {
                       switchCellLock(value);
                       if (!value) {
@@ -334,20 +324,21 @@ const PathLock = (props) => {
                   />
                 </Form.Item>
               </Col>
-
-              <Col span={12} offset={1}>
+              <Col offset={2}>
                 <Form.Item name={'cellIdForLock'} noStyle>
                   <InputNumber
                     allowClear
                     disabled={!showCellLock}
-                    size="small"
-                    style={{ width: '80%' }}
-                    placeholder={formatMessage({ id: 'monitor.view.cell.required' })}
+                    size='small'
+                    style={{ width: '100%' }}
+                    placeholder={formatMessage(
+                      { id: 'app.template.required' },
+                      { name: formatMessage({ id: 'app.map.cell' }) },
+                    )}
                   />
                 </Form.Item>
               </Col>
-
-              <Col span={5} style={{ paddingTop: 4 }}>
+              <Col offset={1}>
                 <Button size='small' disabled={!showCellLock} onClick={viewCellLocker}>
                   <FormattedMessage id='app.button.refresh' />
                 </Button>
@@ -363,15 +354,11 @@ const PathLock = (props) => {
               labelWrap
             >
               <Row>
-                <Col span={8}>
+                <Col>
                   <Form.Item noStyle>
                     <Switch
-                      checkedChildren={formatMessage({
-                        id: 'app.common.visible',
-                      })}
-                      unCheckedChildren={formatMessage({
-                        id: 'app.common.hidden',
-                      })}
+                      checkedChildren={formatMessage({ id: 'app.common.visible' })}
+                      unCheckedChildren={formatMessage({ id: 'app.common.hidden' })}
                       onChange={(value) => {
                         switchLogicLockedCells(value);
                         form.setFieldsValue({ showLockCellPolling: null });
@@ -383,8 +370,7 @@ const PathLock = (props) => {
                     />
                   </Form.Item>
                 </Col>
-
-                <Col span={7}>
+                <Col offset={2}>
                   <Button size='small' disabled={!showLogicLockedCell} onClick={viewLogicLocked}>
                     <FormattedMessage id='app.button.refresh' />
                   </Button>

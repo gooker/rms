@@ -26,12 +26,11 @@ const EmptyRun = (props) => {
         setExecuting(true);
         emptyRun({ ...values })
           .then((response) => {
-            if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
-              close();
-            }
+            dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }));
           })
           .finally(() => {
             setExecuting(false);
+            close();
           });
       })
       .catch(() => {});

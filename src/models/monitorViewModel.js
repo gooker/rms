@@ -80,8 +80,8 @@ const MonitorViewModelState = {
   dashBoardVisible: false, // dashboard
 
   // 地图显示模式
-  shownNavigationCellType: [NavigationType.M_QRCODE, NavigationType.SEER_SLAM], // 显示的导航点类型
-  shownCellCoordinateType: CoordinateType.LAND, // land 表示物理点位、navi表示导航点位
+  shownCellCoordinateType: CoordinateType.NAVI, // land 表示物理点位、navi表示导航点位
+  shownNavigationType: [NavigationType.M_QRCODE, NavigationType.SEER_SLAM],
 };
 
 export default {
@@ -95,6 +95,18 @@ export default {
     unmount(state) {
       return {
         ...MonitorViewModelState,
+      };
+    },
+    updateShownNavigationType(state, action) {
+      return {
+        ...state,
+        shownNavigationType: action.payload,
+      };
+    },
+    updateShownCellCoordinateType(state, action) {
+      return {
+        ...state,
+        shownCellCoordinateType: action.payload,
       };
     },
     saveViewState(state, action) {

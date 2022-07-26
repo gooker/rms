@@ -7,7 +7,26 @@ import MapShownModeSelector from '@/packages/Scene/components/MapShownModeSelect
 import styles from './editorFooter.module.less';
 
 const EditorFooter = (props) => {
-  const { mapRatio, mapMinRatio, onSliderChange } = props;
+  const {
+    dispatch,
+    mapRatio,
+    mapMinRatio,
+    onSliderChange,
+    shownNavigationType,
+    shownCellCoordinateType,
+  } = props;
+
+  function onCellCoordinateTypeChanged(type) {
+    dispatch({ type: 'editorView/updateShownCellCoordinateType', payload: type });
+  }
+
+  function onNavigationTypeChanged(type) {
+    dispatch({
+      type: 'editorView/updateShownNavigationCellType',
+      payload: type,
+    });
+  }
+
   return (
     <Row
       style={{ height: FooterHeight }}
@@ -15,10 +34,17 @@ const EditorFooter = (props) => {
       justify={'space-between'}
     >
       <MapRatioSlider mapRatio={mapRatio} mapMinRatio={mapMinRatio} onChange={onSliderChange} />
-      <MapShownModeSelector />
+      <MapShownModeSelector
+        onCellCoordinateTypeChanged={onCellCoordinateTypeChanged}
+        onNavigationTypeChanged={onNavigationTypeChanged}
+        shownCellCoordinateType={shownCellCoordinateType}
+        shownNavigationType={shownNavigationType}
+      />
     </Row>
   );
 };
-export default connect(({ editor }) => ({
+export default connect(({ editor, editorView }) => ({
   mapMinRatio: editor.mapMinRatio,
+  shownNavigationType: editorView.shownNavigationType,
+  shownCellCoordinateType: editorView.shownCellCoordinateType,
 }))(memo(EditorFooter));

@@ -8,7 +8,7 @@ const ExpandPanel = (props) => {
     <Row>
       {columns.map(({ title, dataIndex, render }, index) => (
         <Col key={index} span={span}>
-          <LabelComponent label={title} color={'#000'}>
+          <LabelComponent label={title} labelColor={'#000000'}>
             {typeof render === 'function' ? render(record[dataIndex], record) : record[dataIndex]}
           </LabelComponent>
         </Col>

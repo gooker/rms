@@ -7,23 +7,17 @@ import AngleSelector from '@/components/AngleSelector';
 import ButtonInput from '@/components/ButtonInput';
 import { MapSelectableSpriteType } from '@/config/consts';
 
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 19);
 
 const ChargerMultiForm = (props) => {
-  const { dispatch, allChargers, selectCellIds, mapContext, allAdaptors, back } = props;
+  const { dispatch, selectCellIds, mapContext, cellMap, allAdaptors, back } = props;
 
   const [formRef] = Form.useForm();
-
-  function checkNameDuplicate(name) {
-    const { tid } = formRef.getFieldValue();
-    const existNames = allChargers.filter((item) => item.tid !== tid).map((item) => item.name);
-    return existNames.includes(name);
-  }
 
   function multiSubmit() {
     formRef.validateFields().then((values) => {
       dispatch({ type: 'editor/addChargerInBatches', payload: values }).then((result) => {
-        mapContext.renderChargers(result);
+        mapContext.renderChargers(result, null, cellMap);
         mapContext.refresh();
         back();
       });
@@ -49,29 +43,17 @@ const ChargerMultiForm = (props) => {
   }
 
   return (
-    <Form form={formRef} style={{ width: '100%' }} {...formItemLayout}>
+    <Form form={formRef} labelWrap style={{ width: '100%' }} {...formItemLayout}>
       {/* 名称 */}
       <Form.Item
         name={'name'}
         label={formatMessage({ id: 'app.common.name' })}
-        rules={[
-          { required: true },
-          () => ({
-            validator(_, value) {
-              const isDuplicate = checkNameDuplicate(value);
-              if (!isDuplicate) {
-                return Promise.resolve();
-              }
-              return Promise.reject(new Error(formatMessage({ id: 'app.form.name.duplicate' })));
-            },
-          }),
-        ]}
+        rules={[{ required: true }]}
       >
         <Input />
       </Form.Item>
-
       {/* 角度 */}
-      <Form.Item name={'angle'} label={<FormattedMessage id="app.common.angle" />}>
+      <Form.Item name={'angle'} label={<FormattedMessage id='app.common.angle' />}>
         <AngleSelector
           disabled
           width={'100%'}
@@ -83,7 +65,22 @@ const ChargerMultiForm = (props) => {
           }}
         />
       </Form.Item>
-
+      {/* 距离 */}
+      <Form.Item
+        name={'distance'}
+        label={formatMessage({ id: 'editor.config.distance' })}
+        rules={[{ required: true }]}
+      >
+        <InputNumber />
+      </Form.Item>
+      {/* 充电点 */}
+      <Form.Item name={'cellIds'} label={<FormattedMessage id='editor.cellType.charging' />}>
+        <ButtonInput multi data={selectCellIds} btnDisabled={selectCellIds.length === 0} />
+      </Form.Item>
+      {/* 小车类型 */}
+      <Form.Item name={'supportTypes'} label={formatMessage({ id: 'app.vehicleType' })}>
+        <Select mode='multiple'>{renderSupportTypesOptions()}</Select>
+      </Form.Item>
       {/* 优先级 */}
       <Form.Item
         name={'priority'}
@@ -92,39 +89,25 @@ const ChargerMultiForm = (props) => {
       >
         <InputNumber min={1} max={10} />
       </Form.Item>
-
-      {/* 充电点 */}
-      <Form.Item name={'cellIds'} label={<FormattedMessage id="editor.cellType.charging" />}>
-        <ButtonInput multi data={selectCellIds} btnDisabled={selectCellIds.length === 0} />
-      </Form.Item>
-
-      {/* 小车类型 */}
-      <Form.Item name={'supportTypes'} label={formatMessage({ id: 'app.vehicleType' })}>
-        <Select mode="multiple">{renderSupportTypesOptions()}</Select>
-      </Form.Item>
-
       <Form.Item {...formItemLayoutNoLabel}>
-        <Button type="primary" onClick={multiSubmit}>
-          <FormattedMessage id="app.button.confirm" />
+        <Button type='primary' onClick={multiSubmit}>
+          <FormattedMessage id='app.button.confirm' />
         </Button>
       </Form.Item>
     </Form>
   );
 };
 export default connect(({ editor, global }) => {
-  const { selections, currentMap, mapContext } = editor;
-
-  // 获取所有充电桩名称列表
-  const allChargers = [];
-  const { logicAreaList } = currentMap;
-  logicAreaList.forEach((item) => {
-    const chargerList = item.chargerList || [];
-    allChargers.push(...chargerList);
-  });
+  const { selections, mapContext, currentMap } = editor;
 
   const selectCellIds = selections
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
-    .map(({ id }) => id);
+    .map(({ naviId }) => naviId);
 
-  return { allChargers, mapContext, selectCellIds, allAdaptors: global.allAdaptors };
+  return {
+    mapContext,
+    selectCellIds,
+    allAdaptors: global.allAdaptors,
+    cellMap: currentMap.cellMap,
+  };
 })(memo(ChargerMultiForm));

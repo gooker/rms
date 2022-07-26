@@ -61,8 +61,8 @@ export default {
 
   // 点位操作
   'editor.cell.code': '地址码',
-  'editor.cell.abscissa': '横坐标',
-  'editor.cell.ordinate': '纵坐标',
+  'editor.cell.abscissa': '导航横坐标',
+  'editor.cell.ordinate': '导航纵坐标',
   'editor.cell.addNavigation': '添加导航点',
   'editor.cell.batchAdd': '批量添加',
   'editor.cell.delete': '删除点位',
@@ -116,7 +116,7 @@ export default {
   'editor.cost.noPass': '不可走',
   'editor.cost.straightLineType': '直线',
   'editor.cost.curveType': '曲线',
-  'editor.cost.delete': '删除线路',
+  'editor.cost.delete': '删除箭头',
 
   // 显示
   'editor.view.mapViewMode': '模式切换',
@@ -132,10 +132,10 @@ export default {
 
   // 功能
   'editor.config.distance': '距离',
-  'editor.workstation.stop': '停止点',
   'editor.station.icon': '图标',
   'editor.station.icon.width': '图标宽度',
   'editor.station.icon.height': '图标高度',
+  'editor.station.icon.angle': '图标角度',
   'editor.aisle.unLockCells': '解锁点',
   'editor.delivery': '投递点',
   'editor.delivery.basket': '投递框',

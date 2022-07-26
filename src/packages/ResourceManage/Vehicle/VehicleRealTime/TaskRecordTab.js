@@ -1,12 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Col, Pagination, Row, Timeline } from 'antd';
-import {
-  CloseCircleOutlined,
-  FrownOutlined,
-  MehOutlined,
-  SmileTwoTone,
-  SyncOutlined,
-} from '@ant-design/icons';
+import { CloseCircleOutlined, FrownOutlined, MehOutlined, SmileTwoTone, SyncOutlined } from '@ant-design/icons';
 import { convertToUserTimezone, formatMessage } from '@/utils/util';
 import { VehicleType } from '@/config/config';
 import { connect } from '@/utils/RmsDva';
@@ -90,7 +84,7 @@ class TaskRecordTab extends PureComponent {
               current={data && data.page ? data.page.currentPage : 0}
               total={data && data.page ? data.page.totalElements : 0}
               showTotal={(total) =>
-                formatMessage({ id: 'app.common.tableRecord' }, { count: total })
+                formatMessage({ id: 'app.template.tableRecord' }, { count: total })
               }
               showSizeChanger={false}
               onChange={(current) => {

@@ -3,7 +3,7 @@ import { reverse } from 'lodash';
 import BaseMap from '@/components/BaseMap';
 import { getDirByAngle, isItemOfArray, isNull, isStrictNull } from '@/utils/util';
 import { Cell, PixiBuilder, ResizeableEmergencyStop } from '@/entities';
-import { getCurrentRouteMapData } from '@/utils/mapUtil';
+import { getCurrentRouteMapData, getKeyByCoordinateType } from '@/utils/mapUtil';
 import { loadEditorExtraTextures } from '@/utils/textures';
 import { EditorAdaptStorageKey, MapSelectableSpriteType, SelectionType } from '@/config/consts';
 import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
@@ -18,7 +18,6 @@ class EditorMapView extends BaseMap {
       ...defaultEditorViewConfig,
     };
 
-    // 核心业务逻辑参数
     this.fixedEStopMap = new Map(); // 固定紧急避让区
     this.selectedCells = []; // 缓存选中的点位ID, 用于shift选择
   }
@@ -40,7 +39,7 @@ class EditorMapView extends BaseMap {
   /**
    * 自适应(scale=0.15为分界线，低于0.15需要做自适应，大于0.15情况下viewport已经可以看清全貌，可以不用自适应)
    * 基准参数: 看清楚点位情况下的pixel值
-   * 1. 在scale=0.15的情况下, 点圆的世界宽高是21
+   * 1. 在scale=0.15的情况下, 点圆的世界宽高是15
    * 2. 点圆的自身尺寸为140
    *
    *    var viewport = window.EditorPixiUtils.viewport
@@ -54,7 +53,7 @@ class EditorMapView extends BaseMap {
     // 开始自适应的上限值
     let thresholdValue = window.localStorage.getItem(EditorAdaptStorageKey);
     if (isStrictNull(thresholdValue)) {
-      thresholdValue = 20;
+      thresholdValue = 15;
     } else {
       thresholdValue = parseInt(thresholdValue);
     }
@@ -83,6 +82,8 @@ class EditorMapView extends BaseMap {
   };
 
   // ************************ 点位相关 **********************
+  // 该方法不会进行任何转换，所以传进来的数据必须包含已转换好的xy
+  // {x,y,coordinateType,coordinate:{}}
   renderCells = (payload) => {
     payload.forEach((item) => {
       const cell = new Cell({
@@ -91,6 +92,12 @@ class EditorMapView extends BaseMap {
         select: this.select,
         showCoordinate: this.states.showCoordinate,
       });
+
+      // 检查显示相关的配置
+      const { showCoordinate } = this.states;
+      cell.switchCoordinationShown(showCoordinate);
+
+      // 记录数据
       const xyCellMapKey = `${item.x}_${item.y}`;
       if (!Array.isArray(this.xyCellMap.get(xyCellMapKey))) {
         this.xyCellMap.set(xyCellMapKey, [cell]);
@@ -151,32 +158,35 @@ class EditorMapView extends BaseMap {
         }
       });
     }
-
     // 移动点位
     if (type === 'move') {
       Object.values(payload).forEach((cellPayload) => {
-        const { id, x, y } = cellPayload;
-        const cellEntity = this.idCellMap.get(id);
-        cellEntity && cellEntity.updateCoordination(x, y);
+        const [xKey, yKey] = getKeyByCoordinateType(this.cellCoordinateType);
+        const cellEntity = this.idCellMap.get(cellPayload.id);
+        if (cellEntity) {
+          const cellCoordinate = {
+            x: cellPayload.x,
+            y: cellPayload.y,
+            nx: cellPayload.nx,
+            ny: cellPayload.ny,
+          };
+          cellEntity.updateCoordination(cellPayload[xKey], cellPayload[yKey], cellCoordinate);
+        }
       });
     }
-
-    // *************** 以下待调整 *************** //
     // 调整码间距
     if (type === 'adjustSpace') {
-      Object.keys(payload)
-        .map((item) => parseInt(item))
-        .forEach((cellId) => {
-          const { type: field, coord } = payload[cellId];
-          const cellEntity = this.idCellMap.get(cellId);
-          if (cellEntity) {
-            if (field === 'x') {
-              cellEntity.updateCoordination(coord, cellEntity.y);
-            } else {
-              cellEntity.updateCoordination(cellEntity.x, coord);
-            }
-          }
-        });
+      payload.forEach((cellData) => {
+        const cellEntity = this.idCellMap.get(cellData.id);
+        if (cellEntity) {
+          cellEntity.updateCoordination(cellData.nx, cellData.ny, {
+            x: cellData.x,
+            y: cellData.y,
+            nx: cellData.nx,
+            ny: cellData.ny,
+          });
+        }
+      });
     }
 
     this.refresh();

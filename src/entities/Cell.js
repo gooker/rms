@@ -4,21 +4,24 @@ import { BitText } from '@/entities';
 import { isNull, isStrictNull, radToAngle } from '@/utils/util';
 import { CellSize, MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
 import { NavigationTypeView } from '@/config/config';
-import { getTextureFromResources } from '@/utils/mapUtil';
+import { getKeyByCoordinateType, getTextureFromResources } from '@/utils/mapUtil';
 
 const HitAreaSize = 280;
 const InnerIndex = { direction: 1, navigation: 2, type: 3, text: 3, bg: 4 };
 
 export default class Cell extends PIXI.Container {
   constructor(props) {
-    super(props);
+    super();
     this.type = MapSelectableSpriteType.CELL;
     this.navigationType = props.navigationType; // 导航点类型
+    this.coordinateType = props.coordinateType; // 当前显示的坐标类型
+    this.coordinate = props.coordinate; // 记录点位在地图数据里的两种坐标，导航坐标为原始坐标
+    this.additional = props.additional;
 
-    const targetData = find(NavigationTypeView, { code: this.navigationType });
-    if (!isNull(targetData)) {
-      this.coordinationType = targetData.coordinationType;
-      this.brandColor = targetData.color.replace('#', '0x');
+    const navigationType = find(NavigationTypeView, { code: this.navigationType });
+    if (!isNull(navigationType)) {
+      this.coordinateSystemType = navigationType.coordinateSystemType;
+      this.brandColor = navigationType.color.replace('#', '0x');
     } else {
       this.brandColor = '0xffffff';
       console.error(`Cell: 未识别的导航类型 > ${this.navigationType}`);
@@ -29,13 +32,10 @@ export default class Cell extends PIXI.Container {
 
     this.x = props.x;
     this.y = props.y;
-    this.xLabel = props.xLabel;
-    this.yLabel = props.yLabel;
-    this.additional = props.additional;
-
     this.width = CellSize.width;
     this.height = CellSize.height;
     this.zIndex = zIndex.cell;
+
     this.cullable = true;
     this.sortableChildren = true;
     this.interactiveChildren = false;
@@ -150,8 +150,10 @@ export default class Cell extends PIXI.Container {
       this.coordX.destroy(true);
       this.coordX = null;
     }
+
+    const [xKey, yKey] = getKeyByCoordinateType(this.coordinateType);
     this.coordX = new BitText(
-      this.xLabel,
+      this['coordinate'][xKey],
       -CellSize.width / 2,
       -CellSize.height / 2,
       this.brandColor,
@@ -168,7 +170,7 @@ export default class Cell extends PIXI.Container {
       this.coordY = null;
     }
     this.coordY = new BitText(
-      this.yLabel,
+      this['coordinate'][yKey],
       CellSize.width / 2,
       -CellSize.height / 2,
       this.brandColor,
@@ -181,24 +183,10 @@ export default class Cell extends PIXI.Container {
   }
 
   // 坐标切换为左手坐标系; 坐标Label切换为有事坐标系
-  updateCoordination(x, y) {
-    // 替换坐标
-    if (this.coordinationType !== 'L') {
-      this.x = x;
-      this.y = -y;
-    } else {
-      this.x = x;
-      this.y = y;
-    }
-
-    // 替换坐标文本
-    if (this.coordinationType !== 'R') {
-      this.xLabel = x;
-      this.yLabel = -y;
-    } else {
-      this.x = x;
-      this.y = y;
-    }
+  updateCoordination(posX, poxY, coordinate) {
+    this.x = posX;
+    this.y = poxY;
+    this.coordinate = coordinate;
     this.addCoordination();
   }
 

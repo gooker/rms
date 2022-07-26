@@ -150,21 +150,27 @@ export const VehicleCategoryTools = [
 // 显示二级
 export const ViewCategoryTools = [
   {
-    label: <FormattedMessage id={'monitor.right.pathLock'} />,
-    icon: 'pathView.png',
-    style: { width: '30px', height: 'auto' },
-    value: 'pathLock',
-  },
-  {
     label: <FormattedMessage id={'monitor.right.mapView'} />,
     icon: 'mapView.png',
     style: { width: '30px', height: 'auto' },
     value: 'mapShow',
   },
   {
+    label: <FormattedMessage id={'monitor.right.pathLock'} />,
+    icon: 'pathView.png',
+    style: { width: '30px', height: 'auto' },
+    value: 'pathLock',
+  },
+  {
+    label: <FormattedMessage id={'monitor.right.sourceLock'} />,
+    icon: 'sourceLock.png',
+    style: { width: '34px', height: 'auto' },
+    value: 'sourceLock',
+  },
+  {
     label: <FormattedMessage id={'monitor.right.heat'} />,
     icon: 'heatView.png',
-    style: { width: '37px', height: 'auto' },
+    style: { width: '40px', height: 'auto' },
     value: 'heatHeat',
   },
 ];

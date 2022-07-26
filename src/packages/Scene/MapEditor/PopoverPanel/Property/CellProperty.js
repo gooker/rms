@@ -1,39 +1,41 @@
 import React, { memo, useEffect } from 'react';
 import { Button, Col, Empty, Form, Input, InputNumber, Row, Tag } from 'antd';
 import { SyncOutlined } from '@ant-design/icons';
+import { isPlainObject } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
-import FormattedMessage from '@/components/FormattedMessage';
-import { CellTypeSetting } from '@/packages/Scene/MapEditor/editorEnums';
-import EditorCard from '../../components/EditorCard';
-import LabelComponent from '@/components/LabelComponent';
 import { CoordinateType } from '@/config/config';
-import { isPlainObject } from 'lodash';
+import EditorCard from '../../components/EditorCard';
+import FormattedMessage from '@/components/FormattedMessage';
+import LabelComponent from '@/components/LabelComponent';
+import { CellTypeSetting } from '@/packages/Scene/MapEditor/editorEnums';
 
 const { formItemLayout } = getFormLayout(6, 18);
+
 const CellProperty = (props) => {
-  const { dispatch, data, selections, mapContext, cellMap, shownCellCoordinateType } = props;
+  const { dispatch, mapContext, cell, shownCellCoordinateType } = props;
+
   const [formRef] = Form.useForm();
-  const cellProps = cellMap[selections[0]?.id];
   const currentLogicArea = getCurrentLogicAreaData();
   const currentRouteMap = getCurrentLogicAreaData();
 
   useEffect(() => {
+    const { naviId, coordinate } = cell;
     formRef.setFieldsValue({
-      naviId: cellProps.naviId,
-      x: shownCellCoordinateType === CoordinateType.LAND ? cellProps.x : cellProps.nx,
-      y: shownCellCoordinateType === CoordinateType.LAND ? cellProps.y : cellProps.ny,
+      naviId,
+      x: shownCellCoordinateType === CoordinateType.LAND ? coordinate.x : coordinate.nx,
+      y: shownCellCoordinateType === CoordinateType.LAND ? coordinate.y : coordinate.ny,
     });
-  }, [cellProps]);
+  }, [cell, shownCellCoordinateType]);
 
   function renderCellTypeEnum() {
     return CellTypeSetting.map(({ type, scope, i18n }) => {
       const scopeData = scope === 'logic' ? currentLogicArea : currentRouteMap;
       const typeCells = scopeData[type] || [];
-      if (typeCells.includes(data.id)) {
+      if (typeCells.includes(cell.id)) {
         return (
-          <Tag key={type} closable color="blue">
+          <Tag key={type} closable color='blue'>
             <FormattedMessage id={i18n} />
           </Tag>
         );
@@ -47,7 +49,7 @@ const CellProperty = (props) => {
       .then((value) => {
         dispatch({
           type: 'editor/updateCellNaviId',
-          payload: { originId: cellProps.naviId, newId: value.naviId },
+          payload: { originId: cell.naviId, newId: value.naviId },
         }).then((result) => {
           if (isPlainObject(result)) {
             mapContext.updateCells({ type: 'updateNaviId', payload: result });
@@ -83,7 +85,11 @@ const CellProperty = (props) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Button type={'primary'} onClick={updateNaviId}>
+              <Button
+                type={'primary'}
+                onClick={updateNaviId}
+                disabled={shownCellCoordinateType === CoordinateType.NAVI}
+              >
                 <SyncOutlined /> <FormattedMessage id={'app.button.update'} />
               </Button>
             </Col>
@@ -97,13 +103,13 @@ const CellProperty = (props) => {
           })}`}
         >
           <LabelComponent label={formatMessage({ id: 'app.common.type' })}>
-            {cellProps?.navigationType}
-          </LabelComponent>
-          <LabelComponent label={formatMessage({ id: 'app.map.landCoordinator' })}>
-            {cellProps?.x}, {cellProps?.y}
+            {cell.navigationType}
           </LabelComponent>
           <LabelComponent label={formatMessage({ id: 'app.map.naviCoordinator' })}>
-            {cellProps?.nx}, {cellProps?.ny}
+            ( {cell.coordinate.nx}, {cell.coordinate.ny} )
+          </LabelComponent>
+          <LabelComponent label={formatMessage({ id: 'app.map.landCoordinator' })}>
+            ( {cell.coordinate.x}, {cell.coordinate.y} )
           </LabelComponent>
         </EditorCard>
 
@@ -126,7 +132,6 @@ const CellProperty = (props) => {
 };
 export default connect(({ editor, editorView }) => ({
   mapContext: editor.mapContext,
-  selections: editor.selections,
-  cellMap: editor.currentMap.cellMap,
+  cell: editor.selections[0],
   shownCellCoordinateType: editorView.shownCellCoordinateType,
 }))(memo(CellProperty));

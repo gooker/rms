@@ -25,7 +25,7 @@ class ErrorRecordTab extends PureComponent {
               current={data && data.page ? data.page.currentPage : 0}
               total={data && data.page ? data.page.totalElements : 0}
               showTotal={(total) =>
-                formatMessage({ id: 'app.common.tableRecord' }, { count: total })
+                formatMessage({ id: 'app.template.tableRecord' }, { count: total })
               }
               showSizeChanger={false}
               onChange={(current) => {

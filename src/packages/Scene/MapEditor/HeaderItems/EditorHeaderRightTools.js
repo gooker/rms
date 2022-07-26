@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Divider, message, Modal, Tooltip } from 'antd';
+import { Divider, Modal, Tooltip } from 'antd';
 import {
   AimOutlined,
   FullscreenExitOutlined,
@@ -51,8 +51,6 @@ const EditorHeaderRightTools = (props) => {
   function activeMap() {
     if (mapId) {
       dispatch({ type: 'editor/activeMap', payload: mapId });
-    } else {
-      message.warn(formatMessage({ id: 'app.mapTool.saveMap' }));
     }
   }
 

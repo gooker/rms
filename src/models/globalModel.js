@@ -124,12 +124,6 @@ export default {
         textureLoaded: payload,
       };
     },
-    saveAllVehicleTypes(state, { payload }) {
-      return {
-        ...state,
-        allVehicleTypes: payload,
-      };
-    },
     changeFullScreen(state, { payload }) {
       return {
         ...state,
@@ -212,7 +206,6 @@ export default {
     // 页面初始化加载信息，加载网络信息，加载APP应用信息（主应用，子应用）,个人信息
     *initPlatformState(_, { call, put, select }) {
       const { currentUser } = yield select((state) => state.user);
-      const adminType = currentUser?.adminType ?? 'USER'; // 用来对SSO菜单进行筛选
 
       // 权限数据重新组装
       const permissionMap = {};
@@ -240,15 +233,15 @@ export default {
         }
       });
       const { allModuleFormattedMenuData, routeLocaleKeyMap } = convertAllMenu(
-        adminType,
+        currentUser?.adminType ?? 'USER',
         allModuleMenuData,
         permissionMap,
       );
       const routeData = convertMenuData2RouteData(allModuleFormattedMenuData);
 
       // 保存信息
-      yield put({ type: 'saveLogo', payload: null }); // 保存Logo数据
-      yield put({ type: 'saveCopyRight', payload: null }); // 保存CopyRight数据
+      // yield put({ type: 'saveLogo', payload: null }); // 保存Logo数据
+      // yield put({ type: 'saveCopyRight', payload: null }); // 保存CopyRight数据
       yield put({ type: 'saveGrantedAPx', payload: sortAppList(grantedAPP) }); // 所有授权的APP
 
       // 保存菜单相关

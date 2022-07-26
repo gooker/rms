@@ -70,6 +70,10 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('production'), {
           filter: (resourcePath) => !resourcePath.endsWith('.ttf'),
           to: 'fonts',
         },
+        {
+          from: `${paths.appPublic}/iconfont.js`,
+          to: paths.appBuild,
+        },
       ],
     }),
 

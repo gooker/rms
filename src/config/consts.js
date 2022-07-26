@@ -7,7 +7,7 @@ export const GlobalAlpha = 0.6;
 export const MapScaleRatio = 1.08;
 export const MonitorAdaptStorageKey = 'MONITOR_CELL_ADAPT_THRESHOLD';
 export const MonitorMapSizeKey = 'MONITOR_MAP_SIZE';
-export const EditorAdaptStorageKey = 'EDITOR_CELL_ADAPT_THRESHOLD';
+export const EditorAdaptStorageKey = 'EDITOR_CELL_ADAPT_THRESH6LD';
 export const EditorMapSizeKey = 'EDITOR_MAP_SIZE';
 
 export const SelectionType = {
@@ -83,8 +83,8 @@ export const CostColor = {
 
 // Size
 export const CellSize = {
-  width: 50,
-  height: 50,
+  width: 60,
+  height: 60,
 };
 
 export const LatentVehicleSize = {
@@ -136,11 +136,6 @@ export const CommonFunctionSize = {
 export const ElevatorSize = {
   width: 900,
   height: 1300,
-};
-
-export const CellTypeSize = {
-  width: 80,
-  height: 80,
 };
 
 export const TaskPathColor = {
@@ -257,38 +252,6 @@ export const EmergencyStopMode = [
   { label: 'editor.emergency.ImmediateStop', value: 'ImmediateStop' },
   { label: 'editor.emergency.LockPath', value: 'LockPath' },
 ];
-
-// 小车子类型
-export const VehicleSubTypeMap = {
-  LatentLifting: [
-    {
-      label: 'monitor.simulator.subType.normal',
-      value: 'Normal',
-    },
-    {
-      label: 'monitor.simulator.subType.infrared',
-      value: 'Infrared',
-    },
-    {
-      label: 'monitor.simulator.subType.frock',
-      value: 'Frock',
-    },
-    {
-      label: 'monitor.simulator.subType.tote',
-      value: 'Tote',
-    },
-  ],
-  Tote: [
-    {
-      label: 'monitor.simulator.subType.normal',
-      value: 'Normal',
-    },
-    {
-      label: 'monitor.simulator.subType.infrared',
-      value: 'Infrared',
-    },
-  ],
-};
 
 // 纸张尺寸
 export const PaperSize = [

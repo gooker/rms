@@ -14,10 +14,10 @@ const DirectionSelector = (props) => {
         <span className={styles.rowItem} />
         <span className={styles.rowItem}>
           <Button
-            type={value === 0 ? 'primary' : 'default'}
+            type={value === 90 ? 'primary' : 'default'}
             style={BtnStyle}
             onClick={() => {
-              onChange(0);
+              onChange(90);
             }}
           >
             <IconFont type={'icon-align-top'} />
@@ -28,10 +28,10 @@ const DirectionSelector = (props) => {
       <div className={styles.row}>
         <span className={styles.rowItem}>
           <Button
-            type={value === 3 ? 'primary' : 'default'}
+            type={value === 180 ? 'primary' : 'default'}
             style={BtnStyle}
             onClick={() => {
-              onChange(3);
+              onChange(180);
             }}
           >
             <IconFont type={'icon-align-left'} />
@@ -40,10 +40,10 @@ const DirectionSelector = (props) => {
         <span className={styles.rowItem} />
         <span className={styles.rowItem}>
           <Button
-            type={value === 1 ? 'primary' : 'default'}
+            type={value === 0 ? 'primary' : 'default'}
             style={BtnStyle}
             onClick={() => {
-              onChange(1);
+              onChange(0);
             }}
           >
             <IconFont type={'icon-align-right'} />
@@ -54,10 +54,10 @@ const DirectionSelector = (props) => {
         <span className={styles.rowItem} />
         <span className={styles.rowItem}>
           <Button
-            type={value === 2 ? 'primary' : 'default'}
+            type={value === 270 ? 'primary' : 'default'}
             style={BtnStyle}
             onClick={() => {
-              onChange(2);
+              onChange(270);
             }}
           >
             <IconFont type={'icon-align-bottom'} />

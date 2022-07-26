@@ -1,30 +1,28 @@
 import React from 'react';
 
-// FIXME: 难用死了，要重构或者直接删除
 const LabelComponent = (props) => {
   const {
-    label,
-    children,
-    style,
     layout = 'row', // column
-    width = '100%',
-    color = '#e8e8e8', // label颜色
-    weight = 600,
+    label,
+    labelColor = '#ffffff',
+    labelWeight = 600,
+    contentColor = '#ffffff',
   } = props;
+
+  const bodyStyle = { ...props.bodyStyle, width: '100%' };
   return (
     <div
       style={{
-        width,
         display: 'flex',
         flexFlow: `${layout} nowrap`,
         marginBottom: 8,
-        ...style,
+        ...bodyStyle,
       }}
     >
       <div
         style={{
-          color,
-          fontWeight: weight,
+          color: labelColor,
+          fontWeight: labelWeight,
           marginRight: layout === 'row' ? '10px' : 0,
           marginBottom: layout !== 'row' ? '3px' : 0,
           display: 'flex',
@@ -34,7 +32,7 @@ const LabelComponent = (props) => {
       >
         {label}:
       </div>
-      <div style={{ flex: 1, color: '' }}>{children}</div>
+      <div style={{ flex: 1, color: contentColor }}>{props.children}</div>
     </div>
   );
 };

@@ -2,11 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Col, Divider, Empty, InputNumber, Row, Select } from 'antd';
 import { PlusOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
 import { debounce } from 'lodash';
-import {
-  getCurrentRouteMapData,
-  getSelectionNaviCells,
-  getSelectionNaviCellTypes,
-} from '@/utils/mapUtil';
+import { getCellsWithPosition, getCurrentRouteMapData, getNavigationTypes } from '@/utils/mapUtil';
 import { connect } from '@/utils/RmsDva';
 import { convertMapToArrayMap, formatMessage } from '@/utils/util';
 import { ProgramingItemType } from '@/config/config';
@@ -68,7 +64,7 @@ const ProgramingCellTab = (props) => {
   }
 
   function addConfigCell() {
-    const selectionsTypes = getSelectionNaviCellTypes();
+    const selectionsTypes = getNavigationTypes();
     if (selectionsTypes.length === 1) {
       setConfigCells(selectCellIds);
     } else {
@@ -166,7 +162,7 @@ const ProgramingCellTab = (props) => {
         visible={naviTypeOption.length > 0}
         onConfirm={(types) => {
           setConfigCells(
-            getSelectionNaviCells()
+            getCellsWithPosition()
               .filter((item) => types.includes(item.navigationType))
               .map(({ id }) => id),
           );

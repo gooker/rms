@@ -1,6 +1,6 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
-import { Category, ViewCategoryTools, ResourceCategoryTools } from '../enums';
+import { Category, ResourceCategoryTools, ViewCategoryTools } from '../enums';
 import styles from '../monitorLayout.module.less';
 
 const ViewCategorySecondaryPanel = (props) => {
@@ -47,11 +47,11 @@ const ViewCategorySecondaryPanel = (props) => {
   }
 
   return (
-    <div style={{ height, width: 60, top }} className={styles.popoverPanel}>
+    <div style={{ width: 60, top }} className={styles.popoverPanel}>
       {categoryTools
         .map(({ label, icon, value, style }) => {
           return (
-            <Tooltip key={value} placement="left" title={label}>
+            <Tooltip key={value} placement='left' title={label}>
               <div
                 role={'category'}
                 onClick={() => {

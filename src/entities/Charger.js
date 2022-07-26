@@ -3,13 +3,7 @@ import { SmoothGraphics } from '@pixi/graphics-smooth';
 import Text from './Text';
 import { isNull, isStrictNull } from '@/utils/util';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import {
-  ChargerSize,
-  ChargerStateColor,
-  MapSelectableSpriteType,
-  SelectionType,
-  zIndex,
-} from '@/config/consts';
+import { ChargerSize, ChargerStateColor, MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
 
 export default class Charger extends PIXI.Container {
   constructor(props) {
@@ -31,7 +25,7 @@ export default class Charger extends PIXI.Container {
     this.selected = false; // 标记该工作站是否被选中
 
     this.create();
-    this.addName();
+    this.addName(this.name);
     this.createSelectionBorder();
 
     // 处理点击事件
@@ -40,12 +34,12 @@ export default class Charger extends PIXI.Container {
     this.charger.interactiveChildren = false;
     this.charger.on('pointerdown', this.click);
 
-    // if (props.active) {
-    this.addLightningIcon(); // 充电中标记
-    this.addErrorMaskState(); // 错误状态标记
-    this.addOfflineMaskState(); // 离线标记
-    this.addChargeUnbindState(); // 未绑定硬件标记
-    // }
+    if (props.active) {
+      this.addLightningIcon(); // 充电中标记
+      this.addErrorMaskState(); // 错误状态标记
+      this.addOfflineMaskState(); // 离线标记
+      this.addChargeUnbindState(); // 未绑定硬件标记
+    }
   }
 
   // 选择相关
@@ -86,18 +80,37 @@ export default class Charger extends PIXI.Container {
     this.addChild(this.charger);
   }
 
-  addName() {
-    if (isStrictNull(this.charger)) return;
+  addName(name) {
+    if (isStrictNull(name)) return;
     if (this.nameSprite) {
       this.removeChild(this.nameSprite);
       this.nameSprite.destroy(true);
       this.nameSprite = null;
     }
 
-    const y = this.charger.height / 2 + 200;
-    this.nameSprite = new Text(this.name, 0, -y, 0xffffff, false, 150);
+    const y = this.charger.height / 2 + 50;
+    this.nameSprite = new Text(name, 0, -y, 0xffffff, false, 150);
     this.nameSprite.angle = -this.angle;
-    this.nameSprite.anchor.set(0.5);
+    switch (this.angle) {
+      case 0: {
+        this.nameSprite.anchor.set(0.5, 1);
+        break;
+      }
+      case 90: {
+        this.nameSprite.anchor.set(0, 0.5);
+        break;
+      }
+      case 180: {
+        this.nameSprite.anchor.set(0.5, 0);
+        break;
+      }
+      case 270: {
+        this.nameSprite.anchor.set(1, 0.5);
+        break;
+      }
+      default:
+        this.nameSprite.anchor.set(0.5);
+    }
     this.addChild(this.nameSprite);
   }
 

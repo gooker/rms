@@ -7,17 +7,17 @@ import {
   addTemporaryId,
   batchGenerateLine,
   convertChargerToDTO,
+  convertElevatorToView,
+  convertStationToDTO,
   generateCellIds,
   generateCellMapByRowsAndCols,
-  generateChargerXY,
   getAngle,
+  getCellByNaviId,
   getCellMapId,
   getCurrentLogicAreaData,
   getCurrentRouteMapData,
   getDistance,
   moveCell,
-  renderElevatorList,
-  renderWorkStationList,
   syncLineState,
   validateMapData,
 } from '@/utils/mapUtil';
@@ -34,8 +34,8 @@ import {
 import { activeMap } from '@/services/commonService';
 import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { MapSelectableSpriteType } from '@/config/consts';
-import { coordinateTransformer, reverseCoordinateTransformer } from '@/utils/coordinateTransformer';
-import { LineType, NavigationType, NavigationTypeView, ProgramingItemType } from '@/config/config';
+import { convertNaviCoordinate2Land } from '@/utils/mapTransformer';
+import { LineType, ProgramingItemType } from '@/config/config';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
 
@@ -284,15 +284,6 @@ export default {
         for (let index = 0; index < logicAreaList.length; index++) {
           const loopLogicAreaData = logicAreaList[index];
 
-          // 充电桩重新计算坐标
-          const chargerList = loopLogicAreaData?.chargerList || [];
-          const chargerVMs = chargerList.map((charger) => generateChargerXY(charger, cellMap));
-          for (let chargerIndex = 0; chargerIndex < chargerList.length; chargerIndex++) {
-            chargerList[chargerIndex].x = chargerVMs[chargerIndex].x;
-            chargerList[chargerIndex].y = chargerVMs[chargerIndex].y;
-          }
-          loopLogicAreaData.chargerList = chargerList;
-
           // 优先级线条
           const logicRouteMap = loopLogicAreaData.routeMap;
           Object.keys(logicRouteMap).forEach((routeMapKey) => {
@@ -303,13 +294,6 @@ export default {
                 .filter((relation) => {
                   const { source, target } = relation;
                   return !isNull(cellMap[source]) && !isNull(cellMap[target]);
-                })
-                .map((relation) => {
-                  // 重新计算线条角度
-                  const _relation = { ...relation };
-                  const { source, target } = _relation;
-                  _relation.angle = getAngle(cellMap[source], cellMap[target]);
-                  return _relation;
                 });
             } else {
               loopRouteMapData.relations = [];
@@ -319,11 +303,7 @@ export default {
 
         // 4. 保存
         const response = yield call(saveMap, mapData);
-        if (dealResponse(response)) {
-          message.error(formatMessage({ id: 'app.message.operateFailed' }));
-        } else {
-          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-
+        if (!dealResponse(response, true)) {
           // 此时判断是上传还是新建地图
           if (isNull(payload)) {
             if (isNull(currentMap.id)) {
@@ -489,22 +469,18 @@ export default {
     // 新增单个导航点
     *addNavigation({ payload }, { select }) {
       const { currentMap, currentLogicArea } = yield select(({ editor }) => editor);
-      const { navigationCellType: navigationType, code, x, y } = payload;
-
+      const { navigationCellType: navigationType, code: naviId, x, y } = payload;
       const cells = Object.values(currentMap.cellMap);
-      let findResult;
 
       // 判断该车型下是否有相同导航点ID
-      if (navigationType !== NavigationType.M_QRCODE) {
-        findResult = find(cells, { naviId: code, navigationType: navigationType });
-        if (findResult) {
-          message.error('导航点编码已存在');
-          return null;
-        }
+      let findResult = find(cells, { naviId, navigationType });
+      if (findResult) {
+        message.error('导航点编码已存在');
+        return null;
       }
 
       // 判断该车型下是否有相同的导航点坐标
-      findResult = find(cells, { x, y, navigationType: navigationType });
+      findResult = find(cells, { x, y, navigationType });
       if (findResult) {
         message.error('导航点坐标已存在');
         return null;
@@ -513,19 +489,17 @@ export default {
       const id = getCellMapId(Object.values(currentMap.cellMap).map(({ id }) => id));
 
       // 将xy转换成对应导航点类型的实际坐标
+      const landCoordinate = convertNaviCoordinate2Land({ x, y });
       const cell = new CellEntity({
         id,
-        x,
-        y,
-        naviId: navigationType === NavigationType.M_QRCODE ? id : code,
-        navigationType: navigationType,
+        naviId,
+        nx: x,
+        ny: y,
+        ...landCoordinate,
+        navigationType,
         logicId: currentLogicArea,
       });
-      currentMap.cellMap[id] = reverseCoordinateTransformer(
-        cell,
-        navigationType,
-        currentMap?.transform?.[navigationType],
-      );
+      currentMap.cellMap[id] = cell;
       return cell;
     },
 
@@ -538,6 +512,7 @@ export default {
       let additionalCells = [];
       if (addWay === 'absolute') {
         const { rows, cols, autoGenCellIdStart, x, y, distanceX, distanceY } = payload;
+        // 生成的坐标是导航点坐标
         additionalCells = generateCellMapByRowsAndCols(
           rows,
           cols,
@@ -546,27 +521,30 @@ export default {
           distanceX,
           distanceY,
         );
+        // TIPS: 因为牧星点位不存在任何旋转等，所以可以直接转成物理坐标
+        additionalCells = additionalCells.map((item) => ({
+          ...item,
+          ...convertNaviCoordinate2Land({ x: item.nx, y: item.ny }),
+          navigationType: navigationCellType,
+          logicId: currentLogicArea,
+        }));
       } else {
-        /**
-         * 偏移功能需要注意:
-         * 因为地图显示方式的左手坐标系
-         * 所以如果点位所对应的地图是右手坐标系, 那么左右偏移没有影响， 但是上下偏移则在计算的时候是相反的
-         */
-        const configNavigationCellType = find(NavigationTypeView, { code: navigationCellType });
-        if (isNull(configNavigationCellType)) {
-          message.error(`无法识别的导航点类型: ${navigationCellType}`);
-          return;
-        }
-        const coordinateSystemType = configNavigationCellType.coordinationType;
-        const { cellIds, count, distance } = payload;
-        let dir = payload.dir;
-        if ([0, 2].includes(dir) && coordinateSystemType === 'R') {
-          dir = dir === 0 ? 2 : 0;
-        }
+        // TIPS: 因为地图点位显示永远是导航位置，所以无论是导航模式还是物理模式都以导航模式处理
+        const { cellIds, count, distance, dir } = payload;
         const selectedCellsData = cellIds.map((cellId) => cellMap[cellId]);
         selectedCellsData.forEach((cellData) => {
           for (let index = 1; index < count + 1; index++) {
-            additionalCells.push(moveCell(cellData, distance * index, dir));
+            const naviCoordinate = moveCell(
+              { x: cellData.nx, y: cellData.ny },
+              dir,
+              distance * index,
+            );
+            const landCoordinate = convertNaviCoordinate2Land(naviCoordinate);
+            additionalCells.push({
+              ...landCoordinate,
+              nx: naviCoordinate.x,
+              ny: naviCoordinate.y,
+            });
           }
         });
         const { cellId, naviId } = generateCellIds(cellMap, additionalCells.length);
@@ -574,15 +552,10 @@ export default {
           ...cell,
           id: cellId[index],
           naviId: naviId[index] + '',
+          navigationType: navigationCellType,
+          logicId: currentLogicArea,
         }));
       }
-
-      // 再转换一次 additionalCells, 向数据里添加 naviId 和 logicId
-      additionalCells = additionalCells.map((cell) => ({
-        ...cell,
-        navigationType: navigationCellType,
-        logicId: currentLogicArea,
-      }));
 
       // 只有一开始不存在点位时候批量新增完点位才需要居中
       const centerMap =
@@ -593,12 +566,7 @@ export default {
       const newCellMap = { ...cellMap };
       additionalCells.forEach((cell) => {
         newCellMap[cell.id] = { ...cell };
-        const transformedXY = coordinateTransformer(
-          cell,
-          navigationCellType,
-          currentMap.transform?.[navigationCellType],
-        );
-        result.push({ ...cell, ...transformedXY });
+        result.push(cell);
       });
       currentMap.cellMap = newCellMap;
       return { centerMap, additionalCells: result };
@@ -693,98 +661,105 @@ export default {
       return [key];
     },
 
-    // 移动点位
-    *moveCells({ payload }, { select, put }) {
-      const { cellIds, distance } = payload;
-      const { currentMap } = yield select((state) => state.editor);
+    /**
+     * 通常情况下移动点位的功能只会应用到牧星点(点位融合不会调用该方法)
+     * 第一版本只做牧星二维码，即：左手地图、没有任何旋转、缩放等转换系数
+     */
+    * moveCells({ payload }, { select }) {
+      const { currentMap } = yield select(({ editor }) => editor);
+      const { cellIds, angle, distance } = payload;
 
       const result = {
         cell: {},
         line: { add: [], delete: [] },
       };
 
-      // 处理点位位置
-      const newCellMap = { ...currentMap.cellMap };
-      cellIds.map((cellId) => {
-        const cell = newCellMap[cellId];
-        // 判断点位类型
-        let dir = payload.dir;
-        const navigation = find(NavigationTypeView, { code: cell.navigationType });
-        if (navigation) {
-          if ([0, 2].includes(dir) && navigation.coordinationType === 'R') {
-            dir = dir === 0 ? 2 : 0;
-          }
-        }
-        const { x, y } = moveCell(cell, distance, dir);
-        result.cell[cellId] = { ...cell, x, y, nx: x, ny: y };
-        newCellMap[cellId] = { ...cell, x, y };
+      cellIds.map((naviId) => {
+        const cell = getCellByNaviId(currentMap.cellMap, naviId);
+        const naviCoordinate = moveCell({ x: cell.nx, y: cell.ny }, angle, distance);
+        const landCoordinate = convertNaviCoordinate2Land(naviCoordinate);
+        const newCellData = {
+          ...cell,
+          ...landCoordinate,
+          nx: naviCoordinate.x,
+          ny: naviCoordinate.y,
+        };
+        result.cell[naviId] = newCellData;
+        currentMap.cellMap[naviId] = newCellData;
       });
-      currentMap.cellMap = newCellMap;
 
       // 处理线条
       const currentRouteMapData = getCurrentRouteMapData();
-      currentRouteMapData.relations = syncLineState(cellIds, newCellMap, result);
+      currentRouteMapData.relations = syncLineState(cellIds, currentMap.cellMap, result);
       return result;
     },
 
-    // ********************************* 待调整 ********************************* //
     // 调整码间距
-    *adjustSpace({ payload }, { select, put }) {
-      const { currentMap, currentCells } = yield select((state) => state.editor);
-      const { isAll, cellIds, dir, distance } = payload;
-      const newCellMap = { ...currentMap.cellMap };
+    * adjustSpace({ payload }, { select }) {
+      const { currentMap } = yield select((state) => state.editor);
+      const { naviIds, dir, distance } = payload;
 
       // 先获取操作点位对象数据
-      let logicCells = [...currentCells];
-      if (!isAll) {
-        logicCells = cellIds.map((id) => newCellMap[id]);
+      let targetCells = Object.values(currentMap.cellMap);
+      if (naviIds.length > 0) {
+        const cells = Object.values(currentMap.cellMap);
+        targetCells = cells.filter((item) => naviIds.includes(item.naviId));
       }
 
       // 根据调整方向确定分组方式(上下方向以Y分组，左右为以X分组)
-      let groupKey = 'y';
-      if ([1, 3].includes(dir)) {
-        groupKey = 'x';
+      let editProps = 'ny';
+      if ([0, 180].includes(dir)) {
+        editProps = 'nx';
       }
-      // **** 每一组点位需要被修改的属性与分组的标识保持一致
-      const editProps = groupKey;
-      const groups = groupBy(logicCells, groupKey);
+
+      // 每一组点位需要被修改的属性与分组的标识保持一致
+      const groups = groupBy(targetCells, editProps);
       const groupEditProps = Object.keys(groups)
         .map((value) => parseInt(value, 10))
         .sort((a, b) => (a >= b ? 1 : -1));
+
       // 选择偏移基准点
       let baseXY = groupEditProps[0];
-      if ([1, 2].includes(dir)) {
-        baseXY = groupEditProps[groupEditProps.length - 1];
+      if ([0, 270].includes(dir)) {
+        baseXY = groupEditProps.at(-1);
       }
+
+      // 根据baseXY和editProps筛选掉不需要处理的点，因为它们是基准点
+      const targetCellIds = targetCells
+        .filter((item) => item[editProps] !== baseXY)
+        .map(({ id }) => id);
+
       // 返回值供地图更新相关信息
-      const result = { cell: {}, line: { add: [], delete: [] } };
+      const result = {
+        cell: [],
+        line: { add: [], delete: [] },
+      };
       groupEditProps.forEach((key, groupIndex) => {
         const group = groups[key];
         group.forEach((cell) => {
-          // 在PIXI坐标系, 向右和向下为递增，向上和向左为递减
-          if ([1, 2].includes(dir)) {
-            const coord = baseXY - (groupEditProps.length - groupIndex - 1) * distance;
-            cell[editProps] = coord;
-            result.cell[cell.id] = { type: editProps, coord };
-          } else {
-            cell[editProps] = baseXY + groupIndex * distance;
-            result.cell[cell.id] = { type: editProps, coord: baseXY + groupIndex * distance };
+          if (targetCellIds.includes(cell.id)) {
+            // 替换坐标数据
+            let coordinate;
+            if ([0, 270].includes(dir)) {
+              // 计算出来的是导航坐标的某个维度
+              coordinate = baseXY - (groupEditProps.length - groupIndex - 1) * distance;
+            } else {
+              coordinate = baseXY + groupIndex * distance;
+            }
+            cell[editProps] = coordinate;
+            const { x, y } = convertNaviCoordinate2Land({ x: cell.nx, y: cell.ny });
+            cell.x = x;
+            cell.y = y;
+
+            // 缓存更新数据
+            result.cell.push(cell);
           }
         });
-      });
-      currentMap.cellMap = newCellMap;
-
-      // 更新 currentCells 数据
-      const movedCellIds = Object.keys(newCellMap);
-      const _currentCells = currentCells.filter((item) => !movedCellIds.includes(item.id));
-      movedCellIds.forEach((cellId) => {
-        const { type, coord } = newCellMap[cellId];
-        _currentCells.push({ ...newCellMap[cellId], [type]: coord });
       });
 
       // 对操作点位的线条进行调整，直线线条修改distance和angle数值，曲线线条直接删除
       const currentRouteMapData = getCurrentRouteMapData();
-      currentRouteMapData.relations = syncLineState(cellIds, newCellMap, result);
+      currentRouteMapData.relations = syncLineState(targetCellIds, currentMap.cellMap, result);
       return result;
     },
 
@@ -876,7 +851,7 @@ export default {
       }
     },
 
-    insertLabel({ payload }, { select }) {
+    insertLabel({ payload }) {
       const currentLogicAreaData = getCurrentLogicAreaData();
       let labels = currentLogicAreaData.labels || [];
       labels = [...labels, payload];
@@ -1111,51 +1086,42 @@ export default {
         default:
           break;
       }
-      const functionData = scopeData[type] || [];
-      const isAdding = functionData.length < data.flag;
+      let mapScopeTypeData = [];
+      if (Array.isArray(scopeData[type])) {
+        mapScopeTypeData = [...scopeData[type]];
+      }
+      const isAdding = mapScopeTypeData.length < data.flag;
 
-      // 当前传入的"功能"数据
+      // 当前修改的功能地图数据
       let currentFunction = { ...data };
-      const index = data.flag - 1;
+      const currentFunctionIndex = currentFunction.flag - 1;
       delete currentFunction.flag;
+      // 方法返回并渲染到地图的数据
+      let viewReturn;
 
-      let returnPayload = currentFunction;
       if (type === 'chargerList') {
-        returnPayload = generateChargerXY(currentFunction, currentMap.cellMap);
+        // 需要将停止点由导航ID替换为业务ID,当然地图渲染也是基于业务ID
         currentFunction = convertChargerToDTO(currentFunction, currentMap.cellMap);
+        viewReturn = currentFunction;
       }
-      if (type === 'workstationList') {
-        returnPayload = renderWorkStationList([currentFunction], currentMap.cellMap)[0];
+      if (type === 'commonList') {
+        currentFunction = convertStationToDTO(currentFunction, currentMap.cellMap);
+        viewReturn = currentFunction;
       }
       if (type === 'elevatorList') {
-        returnPayload = renderElevatorList([currentFunction])[currentLogicAreaData.id];
+        viewReturn = convertElevatorToView([currentFunction])[currentLogicAreaData.id];
       }
 
-      // 新增
+      // 更新到地图数据
       if (isAdding) {
-        functionData.push({ ...currentFunction });
-        scopeData[type] = functionData;
-        return { type: 'add', payload: returnPayload };
+        mapScopeTypeData.push({ ...currentFunction });
+        scopeData[type] = mapScopeTypeData;
+        return { type: 'add', payload: viewReturn };
+      } else {
+        mapScopeTypeData.splice(currentFunctionIndex, 1, currentFunction);
+        scopeData[type] = mapScopeTypeData;
+        return { type: 'update', current: viewReturn };
       }
-
-      // 更新
-      const oldFunctionData = functionData.splice(index, 1, currentFunction);
-      scopeData[type] = functionData;
-
-      // 对电梯进行特殊处理
-      if (type === 'elevatorList') {
-        const preLoad = renderElevatorList(oldFunctionData)[currentLogicAreaData.id];
-        return {
-          type: 'update',
-          pre: preLoad,
-          current: returnPayload,
-        };
-      }
-      return {
-        type: 'update',
-        pre: oldFunctionData[0],
-        current: returnPayload,
-      };
     },
 
     *removeFunction({ payload }, { select }) {
@@ -1177,16 +1143,10 @@ export default {
       const removedFunctionItem = functionData[flag - 1];
       scopeData[type] = scopeData[type].filter((item, index) => index !== flag - 1);
       let returnPayload = removedFunctionItem;
-      if (type === 'workstationList') {
-        returnPayload = renderWorkStationList([removedFunctionItem], currentMap.cellMap)[0];
-      }
-      if (type === 'chargerList') {
-        // returnPayload = renderChargerList([removedFunctionItem], currentMap.cellMap)[0];
-      }
       if (type === 'elevatorList') {
-        returnPayload = renderElevatorList([removedFunctionItem], currentMap.cellMap)[
+        returnPayload = convertElevatorToView([removedFunctionItem], currentMap.cellMap)[
           currentLogicAreaData.id
-        ];
+          ];
       }
       return returnPayload;
     },
@@ -1194,29 +1154,17 @@ export default {
     // 批量添加充电桩
     *addChargerInBatches({ payload }, { select }) {
       const { currentMap } = yield select(({ editor }) => editor);
-
-      const { name, angle, priority, supportTypes, cellIds } = payload;
+      const { cellIds, name, angle, distance, priority, supportTypes } = payload;
       const scopeData = getCurrentLogicAreaData();
       const functionData = scopeData.chargerList || [];
-
-      let tempCharger = [];
-      cellIds.forEach((cellId, index) => {
-        let nameWillBeUse = `${name}-${index + 1}`;
-        // 判断该名称是否可用
-        const isExist = findIndex(functionData, { name: nameWillBeUse }) >= 0;
-        if (isExist) {
-          nameWillBeUse = `${name}-${getRandomString(6)}`;
-        }
-
-        tempCharger.push({
-          code: `charger_${getRandomString(6)}`,
-          name: nameWillBeUse,
-          angle,
+      const tempCharger = cellIds
+        .map((cellId) => ({
+          code: `charger_${getRandomString(10)}`,
+          name: `${name}-${getRandomString(4)}`,
           priority,
-          chargingCells: [{ cellId, supportTypes }],
-        });
-      });
-      tempCharger = tempCharger.map((item) => convertChargerToDTO(item, currentMap.cellMap));
+          chargingCells: [{ cellId, angle, distance, supportTypes }],
+        }))
+        .map((item) => convertChargerToDTO(item, currentMap.cellMap));
       scopeData.chargerList = [...functionData, ...tempCharger];
       return tempCharger;
     },
@@ -1279,9 +1227,7 @@ export default {
         });
       }
 
-      const newState = {
-        selections: _selections,
-      };
+      const newState = { selections: _selections };
       if (_selections.length === 1) {
         if (categoryPanel === null) {
           newState.categoryPanel = RightCategory.Prop;

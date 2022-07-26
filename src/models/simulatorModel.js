@@ -1,9 +1,4 @@
-import {
-  fetchBatchDeleteSimulatorVehicle,
-  fetchSimulatorVehicleConfig,
-  fetchUpdateVehicleConfig,
-} from '@/services/monitorService';
-import { findVehicle } from '@/services/resourceService';
+import { fetchBatchDeleteSimulatorVehicle } from '@/services/monitorService';
 import { dealResponse, formatMessage, transformVehicleList } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { fetchAllVehicleList } from '@/services/commonService';
@@ -27,10 +22,6 @@ export default {
         yield put({ type: 'saveSimulatorVehicleList', payload: transformVehicleList(allVehicles) });
       }
     },
-    * fetchAddSimulatorVehicle({ payload }, { call }) {
-      const response = yield call(findVehicle, payload);
-      return !dealResponse(response, true);
-    },
 
     * fetchDeletedSimulatorVehicle({ payload, then }, { call }) {
       const { vehicleIds } = payload;
@@ -40,20 +31,6 @@ export default {
         vehicleIds: vehicleIds.join(','),
       };
       const response = yield call(fetchBatchDeleteSimulatorVehicle, params);
-      return !dealResponse(response, true);
-    },
-
-    * fetchSimulatorGetVehicleConfig({ payload, then }, { call }) {
-      const response = yield call(fetchSimulatorVehicleConfig, payload);
-      if (!dealResponse(response)) {
-        return response;
-      } else {
-        return false;
-      }
-    },
-
-    * fetchUpdateVehicleConfig({ payload, then }, { call }) {
-      const response = yield call(fetchUpdateVehicleConfig, payload);
       return !dealResponse(response, true);
     },
   },

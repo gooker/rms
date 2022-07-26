@@ -30,8 +30,10 @@ export default {
     // 地图控制
     mapRotation: 0, // 手动旋转地图
     shownCellCoordinateType: CoordinateType.NAVI, // land 表示物理点位、navi表示导航点位
-    shownNavigationCellType: [NavigationType.M_QRCODE, NavigationType.SEER_SLAM], // 显示的导航点类型
+    shownNavigationType: [NavigationType.M_QRCODE, NavigationType.SEER_SLAM], // 显示的导航点类型
   },
+
+  effects: {},
 
   reducers: {
     saveState(state, action) {
@@ -55,7 +57,7 @@ export default {
     updateShownNavigationCellType(state, action) {
       return {
         ...state,
-        shownNavigationCellType: action.payload,
+        shownNavigationType: action.payload,
       };
     },
     updateShownCellCoordinateType(state, action) {
