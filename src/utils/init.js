@@ -4,12 +4,12 @@ import intl from 'react-intl-universal';
 import { AppCode } from '@/config/config';
 import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import { getTranslationByCode } from '@/services/translationService';
-import { getSystemLanguage } from '@/packages/Strategy/LanguageManage/translateUtils';
+import { getSystemLanguage } from '@/packages/Configuration/LanguageManage/translateUtils';
 import { fetchTaskTypes } from '@/services/taskService';
 import { fetchAllPrograming } from '@/services/XIHEService';
 import { fetchCustomParamType } from '@/services/commonService';
 import { fetchAllAdaptor, fetchResourceGroupType } from '@/services/resourceService';
-import { mockData } from '@/packages/SSO/CustomMenuManager/components/mockData';
+import { mockData } from '@/packages/Configuration/CustomMenuManager/components/mockData';
 
 export async function fetchGlobalExtraData() {
   const dispatch = window.$$dispatch;

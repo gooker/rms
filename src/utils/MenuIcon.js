@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   ApiOutlined,
+  BellOutlined,
   CarOutlined,
   CodepenOutlined,
   ControlOutlined,
@@ -16,7 +17,8 @@ import {
   IeOutlined,
   LockOutlined,
   MediumOutlined,
-  NotificationOutlined,
+  MessageOutlined,
+  PaperClipOutlined,
   ProfileOutlined,
   ProjectOutlined,
   ScheduleOutlined,
@@ -30,12 +32,13 @@ import { IconFont } from '@/components/IconFont';
 
 export default {
   log: <IconFont type='icon-log' />,
+  systemLog: <IconFont type='icon-systemLog' />,
+  utilBox: <IconFont type='icon-utilBox' />,
+  pda: <IconFont type={'icon-PDA'} />,
   layout: <IconFont type='icon-layout' />,
   charger: <IconFont type='icon-charger2' />,
   taskManage: <IconFont type='icon-taskManage' />,
   report: <IconFont type='icon-report' />,
-  customConfig: <IconFont type='icon-customConfig' />,
-  authorize: <IconFont type='icon-authorize' />,
   storage: <IconFont type='icon-storage' />,
   equipment: <IconFont type='icon-automation' />,
   binding: <IconFont type='icon-binding' />,
@@ -47,6 +50,9 @@ export default {
   userRole: <IconFont type='icon-role' />,
   executing: <IconFont type='icon-executing' />,
   pod: <IconFont type='icon-pod' />,
+  upgrade: <IconFont type='icon-upgrade' />,
+  performanceMonitoring: <IconFont type='icon-performance' />,
+  db: <IconFont type='icon-db' />,
 
   quickTask: <FireOutlined />,
   customTask: <FunctionOutlined />,
@@ -70,7 +76,9 @@ export default {
   home: <HomeOutlined />,
   ie: <IeOutlined />,
   richEditor: <MediumOutlined />,
-  notification: <NotificationOutlined />,
   screenReport: <FundProjectionScreenOutlined />,
   menu: <UnorderedListOutlined />,
+  subscription: <PaperClipOutlined />,
+  alert: <BellOutlined />,
+  feedback: <MessageOutlined />,
 };

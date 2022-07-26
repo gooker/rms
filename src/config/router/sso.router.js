@@ -30,32 +30,11 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
   {
-    path: `/${AppCode.SSO}/operationLog`, // 操作日志
-    name: 'operationLog',
-    icon: 'log',
+    path: `/${AppCode.SSO}/channelSubscription`, // 频道订阅
+    name: 'channelSubscription',
+    icon: 'subscription',
+    component: '/SSO/NotificationCenter/ChannelSubscription',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-    component: '/SSO/OperationLog/index',
-  },
-  {
-    path: `/${AppCode.SSO}/customConfiguration`, // 定制化配置
-    name: 'customConfiguration',
-    icon: 'customConfig',
-    component: '/SSO/CustomConfiguration',
-    authority: ['ADMIN'],
-  },
-  {
-    path: `/${AppCode.SSO}/customMenuManager`, // 自定义菜单
-    name: 'customMenuManager',
-    icon: 'menu',
-    component: '/SSO/CustomMenuManager',
-    authority: ['ADMIN', 'SUPERMANAGER'],
-  },
-  {
-    path: `/${AppCode.SSO}/authorizationCenter`, // 授权中心
-    name: 'authorizationCenter',
-    icon: 'authorize',
-    component: '/SSO/AuthorizationCenter',
-    authority: ['ADMIN', 'SUPERMANAGER'],
   },
   {
     path: `/${AppCode.SSO}/accountCenter`, // 个人中心
@@ -63,31 +42,5 @@ export default [
     icon: 'home',
     component: '/SSO/AccountCenter',
     authority: ['SUPERMANAGER', 'MANAGER', 'USER'],
-  },
-  {
-    path: `/${AppCode.SSO}/notificationCenter`,
-    name: 'notificationCenter',
-    icon: 'notification',
-    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-    routes: [
-      {
-        path: `/${AppCode.SSO}/notificationCenter/broadcast`,
-        name: 'broadcast',
-        component: '/SSO/NotificationCenter/BroadcastChannel',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
-        path: `/${AppCode.SSO}/notificationCenter/subscription`,
-        name: 'subscription',
-        component: '/SSO/NotificationCenter/ChannelSubscription',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
-      {
-        path: `/${AppCode.SSO}/alertCenter`,
-        name: 'alertCenter',
-        component: '/SSO/AlertCenter/index',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
-      },
-    ],
   },
 ];

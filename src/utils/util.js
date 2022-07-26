@@ -1,6 +1,6 @@
 import React from 'react';
 import { message, Select, Tag } from 'antd';
-import { cloneDeep, find, isEmpty, isEqual as deepEqual, isPlainObject } from 'lodash';
+import { cloneDeep, find, isEmpty, isEqual as deepEqual, isPlainObject, sortBy } from 'lodash';
 import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
 import { getApiURL } from '@/utils/requestAPI';
@@ -11,6 +11,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
 import { selectAllDB } from '@/utils/IndexDBUtil';
 import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
+import { AppCode } from '@/config/config';
 
 const Colors = Dictionary().color;
 
@@ -521,6 +522,22 @@ export function countDay(params) {
     };
   }
   return { ...params };
+}
+
+export function getSortedAppList(grantedAPP, isAdmin) {
+  if (!Array.isArray(grantedAPP) || grantedAPP.length === 0) return [];
+  if (isAdmin) {
+    // 如果是admin账户登录，就只显示SSO APP
+    return grantedAPP.filter((item) => item === AppCode.SSO);
+  }
+  // 对grantedAPP进行排序，提高与用户体验
+  const baseOrder = Object.keys(AppCode);
+  let sortedSeed = grantedAPP.map((item) => ({
+    code: item,
+    index: baseOrder.indexOf(item),
+  }));
+  sortedSeed = sortBy(sortedSeed, ['index']).map(({ code }) => code);
+  return sortedSeed;
 }
 
 export function match(array, elements, key, descriptionValue) {

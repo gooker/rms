@@ -1,17 +1,18 @@
 // 前端模块编码
 export const AppCode = {
+  Map: 'Map',
   ResourceManage: 'ResourceManage',
   SmartTask: 'SmartTask',
+  Report: 'Report',
+  Configuration: 'Configuration',
+  DevOps: 'DevOps',
+  SSO: 'SSO',
+
+  // 暂时用不到
   LatentPod: 'LatentPod',
   LatentTote: 'LatentTote',
   Tote: 'Tote',
   FlexibleSorting: 'FlexibleSorting',
-  Scene: 'Scene',
-  Report: 'Report',
-  Strategy: 'Strategy',
-  SSO: 'SSO',
-
-  // 暂时用不到
   ForkLift: 'ForkLift',
   Cleaning: 'Cleaning',
   VehicleManned: 'VehicleManned',

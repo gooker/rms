@@ -90,21 +90,20 @@ export default [
       },
     ],
   },
-
-  {
-    path: `/${AppCode.Report}/sourceDownload`,
-    name: 'sourceDownload',
-    icon: 'report',
-    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-    component: '/Report/SourceDownload',
-  },
-  {
-    path: `/${AppCode.Report}/customReport`,
-    name: 'customReport',
-    icon: 'report',
-    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-    component: '/Report/CustomReport',
-  },
+  // {
+  //   path: `/${AppCode.Report}/sourceDownload`,
+  //   name: 'sourceDownload',
+  //   icon: 'report',
+  //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+  //   component: '/Report/SourceDownload',
+  // },
+  // {
+  //   path: `/${AppCode.Report}/customReport`,
+  //   name: 'customReport',
+  //   icon: 'report',
+  //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+  //   component: '/Report/CustomReport',
+  // },
   {
     path: `/${AppCode.Report}/taskReport`,
     name: 'taskReport',

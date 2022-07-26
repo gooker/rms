@@ -1,24 +1,4 @@
 export default {
-  // 模块名称
-  'app.module': '应用',
-  'app.module.ResourceManage': '资源管理',
-  'app.module.SmartTask': '智能任务',
-  'app.module.Scene': '场景',
-  'app.module.LatentPod': '潜伏货架存取',
-  'app.module.LatentTote': '潜伏料箱存取',
-  'app.module.ForkLift': '叉车存取',
-  'app.module.Tote': '料箱存取',
-  'app.module.FlexibleSorting': '柔性分拣',
-  'app.module.Cleaning': '清扫',
-  'app.module.VehicleManned': '载人车',
-  'app.module.Tool': '工具',
-  'app.module.Strategy': '策略&配置',
-  'app.module.Report': '报表数据',
-  'app.module.I18N': '国际化',
-  'app.module.Customized': '定制',
-  'app.module.SSO': 'SSO',
-  'app.module.Carry': '无人搬运',
-
   // 模板
   'app.template.required': '请选择{name}',
   'app.template.tableRecord': '共计 {count} 条记录',
