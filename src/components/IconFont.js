@@ -3,7 +3,7 @@ import { isPlainObject } from 'lodash';
 import { createFromIconfontCN } from '@ant-design/icons';
 
 const ExtraIconCharge = createFromIconfontCN({
-  scriptUrl: ['/iconFont.js'],
+  scriptUrl: '/iconfont.js',
 });
 
 export function getIconFont(icon, style) {
