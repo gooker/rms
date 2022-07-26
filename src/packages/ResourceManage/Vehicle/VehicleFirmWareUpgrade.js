@@ -219,7 +219,7 @@ const VehicleUpgrade = () => {
       setDatasource(nowAllVehicles);
       return;
     }
-    const { ids, vehicleStatus, vehicleType, progress } = searchParams;
+    const { ids, vehicleStatus, vehicleType, progress, softVersion } = searchParams;
     if (ids?.length > 0) {
       nowAllVehicles = nowAllVehicles.filter(({ id }) => ids.includes(id));
     }
@@ -241,6 +241,13 @@ const VehicleUpgrade = () => {
         ({ fileStatus, vehicleFileTaskType }) =>
           fileStatus === currentStatus[0] && vehicleFileTaskType === currentStatus[1],
       );
+    }
+
+    if (softVersion?.length > 0) {
+      nowAllVehicles = nowAllVehicles.filter((item) => softVersion.includes(item.softVersion));
+      if (softVersion.includes('no')) {
+        nowAllVehicles = nowAllVehicles.filter((item) => isNull(item.softVersion));
+      }
     }
 
     setDatasource(nowAllVehicles);
