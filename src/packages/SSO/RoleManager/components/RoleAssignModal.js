@@ -7,13 +7,8 @@ import { formatMessage, isNull } from '@/utils/util';
 import { generateTreeData, handlePermissions } from './assignUtils';
 import { AppCode } from '@/config/config';
 import FormattedMessage from '@/components/FormattedMessage';
-import {
-  generateMenuNodeLocaleKey,
-  getNewMenuDataByMergeCustomNodes,
-  validateRouteAuthority,
-} from '@/utils/init';
+import { generateMenuNodeLocaleKey, getNewMenuDataByMergeCustomNodes, validateRouteAuthority } from '@/utils/init';
 import allModuleRouter from '@/config/router';
-import { mockData } from '../../CustomMenuManager/components/mockData';
 
 @connect(({ user }) => ({
   currentUser: user.currentUser,

@@ -1,11 +1,11 @@
 import React from 'react';
-import { Badge, Popover, Switch } from 'antd';
-import { BellOutlined, FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
+import { Badge, Popover, Switch, Tooltip } from 'antd';
+import { BellOutlined, FullscreenExitOutlined, FullscreenOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { withRouter } from 'react-router-dom';
 import screenfull from 'screenfull';
 import { connect } from '@/utils/RmsDva';
 import { AppCode } from '@/config/config';
-import { dealResponse, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import { getHAInfo } from '@/services/XIHEService';
 import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -114,6 +114,17 @@ class Header extends React.Component {
 
           {/* 刷新基础数据 */}
           <ReloadGlobalResource />
+
+          {/* 帮助文档 */}
+          <Tooltip
+            title={formatMessage({ id: 'app.header.helpDoc' })}
+            color={'#ffffff'}
+            overlayInnerStyle={{ color: '#000000' }}
+          >
+            <span className={styles.action}>
+              <QuestionCircleOutlined />
+            </span>
+          </Tooltip>
 
           {/* 展示时区详情信息 */}
           <HeaderTimezone />

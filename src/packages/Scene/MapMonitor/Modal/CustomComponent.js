@@ -8,7 +8,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { VehicleType } from '@/config/config';
 import styles from '../monitorLayout.module.less';
 import { fetchRequestorList } from '@/services/commonService';
-import { renderRequestBodyForm } from '@/packages/Strategy/Requestor/requestorUtil';
+import { renderRequestBodyForm } from '@/packages/Configuration/Requestor/requestorUtil';
 
 const TabVehicleMap = {
   LatentVehicle: VehicleType.LatentLifting,

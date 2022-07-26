@@ -33,12 +33,6 @@ export default [
     icon: 'storage',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
-      // {
-      //   path: `/${AppCode.ResourceManage}/storage/group`,
-      //   name: 'customType',
-      //   component: '/ResourceManage/Storage/CustomStorageType',
-      //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      // },
       {
         path: `/${AppCode.ResourceManage}/storage/management`,
         name: 'management',
@@ -95,12 +89,6 @@ export default [
         component: '/ResourceManage/Vehicle/VehicleFirmWareUpgrade',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
-      // {
-      //   path: `/${AppCode.ResourceManage}/vehicle/OTA`,
-      //   name: 'OTA',
-      //   component: '/ResourceManage/Vehicle/OTA',
-      //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      // },
     ],
   },
   {
@@ -173,12 +161,6 @@ export default [
         component: '/ResourceManage/ResourceLock/VehicleLock',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
-      // {
-      //   path: `/${AppCode.ResourceManage}/resourceLock/stationLock`,
-      //   name: 'stationLock',
-      //   component: '/ResourceManage/ResourceLock/StationLock',
-      //   authority: ['ADMIN', 'SUPERMANAGER'],
-      // },
       {
         path: `/${AppCode.ResourceManage}/resourceLock/containerLock`,
         name: 'containerLock',
@@ -189,26 +171,6 @@ export default [
         path: `/${AppCode.ResourceManage}/resourceLock/storageLock`,
         name: 'storageLock',
         component: '/ResourceManage/ResourceLock/StorageLock',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-    ],
-  },
-  {
-    path: `/${AppCode.ResourceManage}/integration`,
-    name: 'integration',
-    icon: 'layout',
-    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-    routes: [
-      {
-        path: `/${AppCode.ResourceManage}/integration/webHook`,
-        name: 'webHook',
-        component: '/ResourceManage/Integration/WebHook/index',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/integration/systemLogWarehouse`,
-        name: 'systemLogWarehouse',
-        component: '/ResourceManage/Integration/IntegrationLogManagement',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
     ],

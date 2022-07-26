@@ -3,7 +3,7 @@ import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { parseUrlParams } from '@/utils/util';
 import commonStyle from '@/common.module.less';
-import { mockData } from '@/packages/SSO/CustomMenuManager/components/mockData';
+import { mockData } from '@/packages/Configuration/CustomMenuManager/components/mockData';
 
 const LoadIframeComponent = (props) => {
   const [currentData, setCurrentData] = useState({});

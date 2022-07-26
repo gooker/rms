@@ -2,10 +2,9 @@ import React, { memo, useEffect, useRef } from 'react';
 import { Tabs } from 'antd';
 import { debounce } from 'lodash';
 import { Route, useHistory } from 'react-router-dom';
-import { AppCode } from '@/config/config';
 import { connect } from '@/utils/RmsDva';
 import EventManager from '@/utils/EventManager';
-import { formatMessage, isStrictNull } from '@/utils/util';
+import { formatMessage, getSortedAppList, isStrictNull } from '@/utils/util';
 import TabsBar from '@/components/TabsBar';
 import TaskDetail from '@/components/TaskDetail';
 import style from '@/layout/homeLayout.module.less';
@@ -39,9 +38,10 @@ const Content = (props) => {
       history.push(activeTab);
       // 首页状态下默认显示的APP菜单
       if (activeTab === '/') {
+        const sortedAppList = getSortedAppList(grantedAPP, currentUser.username === 'admin');
         dispatch({
           type: 'global/saveCurrentApp',
-          payload: currentUser.username === 'admin' ? AppCode.SSO : currentApp ?? grantedAPP[0],
+          payload: sortedAppList[0],
         });
       } else {
         const _currentApp = activeTab.split('/')[1];

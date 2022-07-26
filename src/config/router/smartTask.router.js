@@ -1,13 +1,6 @@
 import { AppCode } from '@/config/config';
 
 export default [
-  // {
-  //   path: `/${AppCode.SmartTask}/customOrderPool`,
-  //   name: 'customOrderPool',
-  //   icon: 'taskQueue',
-  //   component: '/SmartTask/CustomOrderPool',
-  //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-  // },
   {
     path: `/${AppCode.SmartTask}/standardOrderPool`,
     name: 'standardTaskPool',
@@ -15,13 +8,6 @@ export default [
     component: '/SmartTask/StandardTaskPool',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
-  // {
-  //   path: `/${AppCode.SmartTask}/executingQueue`,
-  //   name: 'executingQueue',
-  //   icon: 'executing',
-  //   component: '/SmartTask/ExecutingQueue',
-  //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-  // },
   {
     path: `/${AppCode.SmartTask}/taskManagement`,
     name: 'taskManagement',
@@ -29,14 +15,6 @@ export default [
     component: '/SmartTask/TaskManagement',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
-
-  // {
-  //   path: `/${AppCode.SmartTask}/taskDependency`,
-  //   name: 'taskDependency',
-  //   icon: 'dependency',
-  //   component: '/SmartTask/TaskDependency',
-  //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-  // },
   {
     path: `/${AppCode.SmartTask}/customTask`,
     name: 'customTask',
@@ -51,13 +29,6 @@ export default [
     component: '/SmartTask/QuickTask/index',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
-  // {
-  //   path: `/${AppCode.SmartTask}/taskRouteBind`,
-  //   name: 'taskRouteBind',
-  //   icon: 'binding',
-  //   component: '/SmartTask/TaskRouteBind',
-  //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-  // },
   {
     path: `/${AppCode.SmartTask}/limitEqualizer`,
     name: 'limitEqualizer',

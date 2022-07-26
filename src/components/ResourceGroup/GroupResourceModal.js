@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { Button, Form, InputNumber, Modal, Popover, Select, Space, Table, Tag } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { find, isEmpty } from 'lodash';
-import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { saveResourceGroup } from '@/services/resourceService';
 
@@ -118,8 +118,12 @@ const GroupResourceModal = (props) => {
     resetRef();
     if (selection) {
       const { priority } = find(groups, { code: selection });
-      const _dataSource = Object.entries(priority).map(([id, item]) => ({ id, ...item })); // id, memberId, priority
-      setDataSource(_dataSource);
+      if (!isNull(priority)) {
+        const _dataSource = Object.entries(priority).map(([id, item]) => ({ id, ...item })); // id, memberId, priority
+        setDataSource(_dataSource);
+      } else {
+        setDataSource([]);
+      }
     }
   }, [selection]);
 
