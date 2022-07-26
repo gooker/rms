@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
 import { DownloadOutlined, RedoOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Dictionary from '@/utils/Dictionary';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleLogDownload from './VehicleLogDownload';
 import commonStyles from '@/common.module.less';
@@ -14,6 +14,13 @@ const VehicleLogSearch = (props) => {
 
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false); // 下载日志
+
+  let allVersion = allData
+    ?.filter(({ softVersion }) => !isStrictNull(softVersion))
+    .map(({ softVersion }) => softVersion);
+  if (allVersion.length > 0) {
+    allVersion.push('no');
+  }
 
   function logSearch() {
     form.validateFields().then((values) => {
@@ -59,44 +66,69 @@ const VehicleLogSearch = (props) => {
 
   return (
     <Form form={form}>
-      <Row className={commonStyles.tableToolLeft} style={{ marginBottom: 0 }}>
-        <Form.Item label={formatMessage({ id: 'vehicle.id' })} name="ids">
-          <Select allowClear mode="multiple" style={{ width: 300 }}>
-            {renderVehicleIdFilter()}
-          </Select>
-        </Form.Item>
-
-        <Form.Item label={<FormattedMessage id={'app.vehicleType'} />} name="vehicleType">
-          <Select allowClear style={{ width: 300 }}>
-            {Object.values(allAdaptors).map(({ adapterType }) => {
-              const { id, name, vehicleTypes } = adapterType;
-              return (
-                <Select.OptGroup key={id} label={name}>
-                  {vehicleTypes.map((item, index) => (
-                    <Select.Option key={index} value={`${id}@${item.code}`}>
-                      {item.name}
-                    </Select.Option>
-                  ))}
-                </Select.OptGroup>
-              );
-            })}
-          </Select>
-        </Form.Item>
-        <Form.Item label={formatMessage({ id: 'app.vehicleState' })} name="vehicleStatus">
-          <Select allowClear mode="multiple" style={{ width: 300 }}>
-            {renderVehicleStateFilter()}
-          </Select>
-        </Form.Item>
-        {type === 'fireware' && (
-          <Form.Item label={formatMessage({ id: 'firmdware.progress' })} name="progress">
-            <Select allowClear style={{ width: 300 }}>
-              {Object.keys(VehicleUpgradeState)?.map((key) => (
-                <Select.Option key={key} value={key}>
-                  {formatMessage({ id: `${VehicleUpgradeState[key]}` })}
-                </Select.Option>
-              ))}
+      <Row gutter={24}>
+        <Col span={6}>
+          <Form.Item label={formatMessage({ id: 'vehicle.id' })} name="ids">
+            <Select allowClear mode="multiple">
+              {renderVehicleIdFilter()}
             </Select>
           </Form.Item>
+        </Col>
+
+        <Col span={6}>
+          <Form.Item label={<FormattedMessage id={'app.vehicleType'} />} name="vehicleType">
+            <Select allowClear>
+              {Object.values(allAdaptors).map(({ adapterType }) => {
+                const { id, name, vehicleTypes } = adapterType;
+                return (
+                  <Select.OptGroup key={id} label={name}>
+                    {vehicleTypes.map((item, index) => (
+                      <Select.Option key={index} value={`${id}@${item.code}`}>
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                  </Select.OptGroup>
+                );
+              })}
+            </Select>
+          </Form.Item>
+        </Col>
+
+        <Col span={6}>
+          <Form.Item label={formatMessage({ id: 'app.vehicleState' })} name="vehicleStatus">
+            <Select allowClear mode="multiple">
+              {renderVehicleStateFilter()}
+            </Select>
+          </Form.Item>
+        </Col>
+        {type === 'fireware' && (
+          <>
+            <Col span={6}>
+              <Form.Item label={formatMessage({ id: 'firmdware.progress' })} name="progress">
+                <Select allowClear>
+                  {Object.keys(VehicleUpgradeState)?.map((key) => (
+                    <Select.Option key={key} value={key}>
+                      {formatMessage({ id: `${VehicleUpgradeState[key]}` })}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+
+            <Col span={6}>
+              <Form.Item label={formatMessage({ id: 'firmdware.version' })} name="softVersion">
+                <Select allowClear mode="multiple">
+                  {allVersion.map((version) => (
+                    <Select.Option key={version} value={version}>
+                      {version === 'no'
+                        ? formatMessage({ id: 'firmdware.upgrade.nothave' })
+                        : version}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </>
         )}
         <Form.Item>
           <Button type="primary" onClick={logSearch}>

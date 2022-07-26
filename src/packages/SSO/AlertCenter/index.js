@@ -4,7 +4,11 @@ import { connect } from '@/utils/RmsDva';
 import AlertCenterSearch from './AlertCenterSearch';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
-import { allUpdateProblemHandling, batchUpdateAlertCenter, fetchAlertCenterList } from '@/services/XIHEService';
+import {
+  allUpdateProblemHandling,
+  batchUpdateAlertCenter,
+  fetchAlertCenterList,
+} from '@/services/XIHEService';
 import commonStyles from '@/common.module.less';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { DisconnectOutlined, ReloadOutlined } from '@ant-design/icons';
@@ -67,9 +71,14 @@ class QuestionCenter extends Component {
 
   handleTableChange = (page) => {
     const { pagination } = this.state;
-    this.setState({
-      pagination: { ...pagination, current: page?.current, pageSize: page?.pageSize },
-    });
+    this.setState(
+      {
+        pagination: { ...pagination, current: page?.current, pageSize: page?.pageSize },
+      },
+      () => {
+        this.getData();
+      },
+    );
   };
 
   onDetail = (record) => {
@@ -230,8 +239,8 @@ class QuestionCenter extends Component {
             >
               <DisconnectOutlined /> <FormattedMessage id={'app.alarmCenter.dismissedSelected'} />
             </Button>
-            <Button type='primary' onClick={this.getData}>
-              <ReloadOutlined /> <FormattedMessage id='app.button.refresh' />
+            <Button type="primary" onClick={this.getData}>
+              <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
             </Button>
           </Row>
         </div>
