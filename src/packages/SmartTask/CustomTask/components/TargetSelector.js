@@ -99,7 +99,7 @@ const TargetSelector = (props) => {
     if (!isStrictNull(limit)) {
       let _limit = limit;
       if (_limit.endsWith('_GROUP')) {
-        _limit.replace('_GROUP', '');
+        _limit = _limit.replace('_GROUP', '');
       }
       data = data.filter((item) => item.value.startsWith(_limit));
     }
@@ -120,7 +120,7 @@ const TargetSelector = (props) => {
       <Col flex={1}>
         {['CELL', 'ROTATE'].includes(currentValue.type) ? (
           <Select
-            mode='tags'
+            mode="tags"
             value={currentValue?.code || []}
             onChange={onCodeChange}
             style={{ width: '100%' }}
@@ -128,7 +128,7 @@ const TargetSelector = (props) => {
           />
         ) : (
           <Select
-            mode='multiple'
+            mode="multiple"
             value={currentValue?.code || []}
             onChange={onCodeChange}
             style={{ width: '100%' }}
