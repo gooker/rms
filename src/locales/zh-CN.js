@@ -20,6 +20,7 @@ import operationLog from './zh-CN/SSO/operationlog';
 import lockManage from './zh-CN/Resource/lockManage';
 import mapEditor from './zh-CN/Scene/editor';
 import mapMonitor from './zh-CN/Scene/monitor';
+import simulator from './zh-CN/Scene/simulator';
 import notification from './zh-CN/SSO/notification';
 import alert from './zh-CN/alarm';
 import latentTotStorage from './zh-CN/Resource/latentToteStorage';
@@ -36,6 +37,7 @@ export default {
   ...common,
   ...collection,
   ...requestor,
+  ...simulator,
   ...chargingStrategy,
   ...systemParameters,
   ...reportCenter,

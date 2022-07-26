@@ -305,20 +305,23 @@ export async function addSimulationVehicles(params) {
   });
 }
 
-// 更新模拟配置
-export async function fetchUpdateVehicleConfig(params) {
+/********* 模拟器配置 **************/
+// 获取模拟器配置
+export async function fetchSimulatorVehicleConfig(adapterType) {
+  return request(`/${NameSpace.Platform}/simulator/getVehicleConfig/${adapterType}`, {
+    method: 'GET',
+  });
+}
+
+// 更新模拟器配置
+export async function updateSimulatorVehicleConfig(params) {
   return request(`/${NameSpace.Platform}/simulator/saveVehicleConfig`, {
     method: 'POST',
     data: params,
   });
 }
 
-// 获取车型模拟车配置
-export async function fetchSimulatorVehicleConfig(vehicleType) {
-  return request(`/${NameSpace.Platform}/simulator/getVehicleConfig/${vehicleType}`, {
-    method: 'GET',
-  });
-}
+/********* 模拟器配置 **************/
 
 // 模拟小车松急停
 export async function fetchRunVehicle(vehicleId) {

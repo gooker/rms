@@ -1,7 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, Divider, message, Select, Switch, Tag } from 'antd';
-import { LeftOutlined, ReloadOutlined, RightOutlined, SettingOutlined } from '@ant-design/icons';
+import { Button, Col, Divider, message, Row, Select, Switch, Tag } from 'antd';
+import { LeftOutlined, PlusOutlined, ReloadOutlined, RightOutlined, SettingOutlined } from '@ant-design/icons';
+import { find } from 'lodash';
 import {
   closeSimulator,
   fetchCloseVehicle,
@@ -15,12 +16,11 @@ import FormattedMessage from '@/components/FormattedMessage';
 import SimulatorError from '../Modal/Simulator/SimulatorError';
 import AddSimulatorVehicle from '../Modal/Simulator/AddSimulatorVehicle';
 import ClearPodsAndBatchAdd from '../Modal/Simulator/ClearPodsAndBatchAdd';
-import SimulatorConfigPanel from '../Modal/Simulator/SimulatorConfigPanel';
+import SimulatorConfigModal from '../Modal/Simulator/SimulatorConfigModal';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import styles from '@/packages/Scene/popoverPanel.module.less';
 import simulatorStyle from './simulator.module.less';
 import commonStyles from '@/common.module.less';
-import { find } from 'lodash';
 
 const size = 'small';
 
@@ -36,8 +36,6 @@ const SimulatorPanel = (props) => {
 
   // 选中的车辆类型
   const [vehicleType, setVehicleType] = useState(null);
-  // 模拟器配置信息
-  const [simulatorConfiguration, setSimulatorConfiguration] = useState(null);
   // 参数配置
   const [configurationVisible, setConfigurationVisible] = useState(false);
   // 添加模拟车
@@ -123,27 +121,6 @@ const SimulatorPanel = (props) => {
       });
   }
 
-  function renderContent() {
-    if (configurationVisible) {
-      return (
-        <SimulatorConfigPanel
-          simulatorConfig={simulatorConfiguration}
-          submit={(obj) => {
-            dispatch({
-              type: 'simulator/fetchUpdateVehicleConfig',
-              payload: obj,
-            }).then((result) => {
-              result && setConfigurationVisible(false);
-            });
-          }}
-          onCancel={() => {
-            setConfigurationVisible(false);
-          }}
-        />
-      );
-    }
-  }
-
   // 判断是否打开了二级菜单
   function isExistVisibleDisplay() {
     return addVisit || addPodVisible || errorVisible;
@@ -172,8 +149,6 @@ const SimulatorPanel = (props) => {
 
   return (
     <div style={{ width: 330 }} className={commonStyles.categoryPanel}>
-      {renderContent()}
-
       {/* 标题栏 */}
       <div>
         {isExistVisibleDisplay() ? (
@@ -233,9 +208,9 @@ const SimulatorPanel = (props) => {
               </div>
             </div>
 
-            {/* 车辆类型选择 & 新增  */}
+            {/* 车辆类型选择 & 新增车辆  */}
             <div style={{ marginTop: 10 }} className={styles.panelBlockBase}>
-              <div style={{ padding: '0 0 0px 5px' }}>
+              <div>
                 <span
                   style={{ marginRight: 10, fontWeight: 600, fontSize: 15 }}
                   className={commonStyles.popoverFontColor}
@@ -252,35 +227,33 @@ const SimulatorPanel = (props) => {
                 >
                   {getVehicleTypeOptions()}
                 </Select>
-                <SettingOutlined
-                  style={{ color: '#fff', fontSize: 17, marginLeft: 10 }}
-                  onClick={() => {
-                    dispatch({
-                      type: 'simulator/fetchSimulatorGetVehicleConfig',
-                      payload: null,
-                    }).then((result) => {
-                      if (result) {
-                        setSimulatorConfiguration(result);
-                        setConfigurationVisible(true);
-                      }
-                    });
-                  }}
-                />
               </div>
 
-              {/* 小车添加 & 刷新 */}
-              <div style={{ marginTop: 10 }} className={styles.panelBlockBase}>
-                <Button
-                  disabled={isNull(vehicleType)}
-                  size={size}
-                  onClick={() => {
-                    setAddVisit(true);
-                  }}
-                >
-                  <FormattedMessage id="app.button.add" />
-                  <FormattedMessage id={'app.vehicle'} />
-                </Button>
-              </div>
+              {/* 小车添加 & 模拟车配置 */}
+              <Row style={{ marginTop: 16 }} gutter={16}>
+                <Col>
+                  <Button
+                    disabled={isNull(vehicleType)}
+                    size={size}
+                    onClick={() => {
+                      setConfigurationVisible(true);
+                    }}
+                  >
+                    <SettingOutlined /> <FormattedMessage id={'simulator.config.title'} />
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    disabled={isNull(vehicleType)}
+                    size={size}
+                    onClick={() => {
+                      setAddVisit(true);
+                    }}
+                  >
+                    <PlusOutlined /> <FormattedMessage id='simulator.add.vehicle' />
+                  </Button>
+                </Col>
+              </Row>
             </div>
 
             {/* 车辆操作 */}
@@ -418,6 +391,15 @@ const SimulatorPanel = (props) => {
           </>
         )}
       </div>
+
+      {/* 模拟车参数配置 */}
+      <SimulatorConfigModal
+        visible={configurationVisible}
+        adapterType={vehicleType ? vehicleType.split('@')[0] : null}
+        onCancel={() => {
+          setConfigurationVisible(false);
+        }}
+      />
     </div>
   );
 };
