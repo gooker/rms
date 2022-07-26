@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Progress, Tag, Row, Button, Col, Typography } from 'antd';
+import { Progress, Tag, Row, Button, Col, Typography, message } from 'antd';
 import {
   PlusOutlined,
   RedoOutlined,
@@ -7,6 +7,7 @@ import {
   CloseOutlined,
   UnorderedListOutlined,
   HistoryOutlined,
+  CloudSyncOutlined,
 } from '@ant-design/icons';
 import { dealResponse, formatMessage, getVehicleStatusTag, isNull } from '@/utils/util';
 import TableWithPages from '@/components/TableWithPages';
@@ -43,7 +44,6 @@ const VehicleUpgrade = () => {
   const [creationVisible, setCreationVisible] = useState(false);
 
   const [historyVisible, setHistoryVisible] = useState(false);
-  const [upgradeRows, setUpgradeRows] = useState([]); // 升级的
 
   const columns = [
     {
@@ -211,7 +211,6 @@ const VehicleUpgrade = () => {
     setLoading(false);
     setSelectedRows([]);
     setSelectedRowKeys([]);
-    setUpgradeRows([]);
   }
 
   function filterData(data, searchParams) {
@@ -220,7 +219,7 @@ const VehicleUpgrade = () => {
       setDatasource(nowAllVehicles);
       return;
     }
-    const { ids, vehicleStatus, vehicleType, progress } = searchParams;
+    const { ids, vehicleStatus, vehicleType, progress, softVersion } = searchParams;
     if (ids?.length > 0) {
       nowAllVehicles = nowAllVehicles.filter(({ id }) => ids.includes(id));
     }
@@ -244,13 +243,20 @@ const VehicleUpgrade = () => {
       );
     }
 
+    if (softVersion?.length > 0) {
+      nowAllVehicles = nowAllVehicles.filter((item) => softVersion.includes(item.softVersion));
+      if (softVersion.includes('no')) {
+        nowAllVehicles = nowAllVehicles.filter((item) => isNull(item.softVersion));
+      }
+    }
+
     setDatasource(nowAllVehicles);
   }
 
   // 开始升级
   async function upgrade(record) {
     const { vehicleId, adapterType, fileName } = record;
-    const response = await upgradeVehicle({ vehicleId, adapterType, fileName });
+    const response = await upgradeVehicle([{ vehicleId, adapterType, fileName }]);
     if (!dealResponse(response, 1)) {
       init();
     }
@@ -279,13 +285,34 @@ const VehicleUpgrade = () => {
     });
   }
 
+  async function batchRestart() {
+    const currentData = selectedRows?.filter(
+      ({ vehicleFileTaskType, fileStatus }) =>
+        vehicleFileTaskType === 'UPLOAD' && fileStatus === '0',
+    );
+    if (currentData.length === 0) {
+      message.info(formatMessage({ id: 'firmdware.upgrade.message' }));
+      return;
+    }
+
+    const params = [];
+    currentData.map(({ vehicleId, adapterType, fileName }) => {
+      params.push({
+        vehicleId,
+        adapterType,
+        fileName,
+      });
+    });
+
+    const response = await upgradeVehicle(params);
+    if (!dealResponse(response, 1)) {
+      init();
+    }
+  }
+
   function onSelectChange(selectedRowKeys, selectedRows) {
     setSelectedRows(selectedRows);
     setSelectedRowKeys(selectedRowKeys);
-
-    // 取出 正在下载固件/正在升级的/的 小车，不传
-    const availableVehicle = selectedRows.filter(({ fileStatus }) => fileStatus !== '1');
-    setUpgradeRows(availableVehicle);
   }
 
   return (
@@ -311,7 +338,7 @@ const VehicleUpgrade = () => {
             </Button>
             <Button
               type={'primary'}
-              disabled={upgradeRows.length === 0 || allFireWareFiles?.length === 0}
+              disabled={selectedRows.length === 0 || allFireWareFiles?.length === 0}
               onClick={() => {
                 setCreationVisible(true);
               }}
@@ -334,6 +361,10 @@ const VehicleUpgrade = () => {
               disabled={selectedRowKeys.length === 0}
             >
               <CloseOutlined /> <FormattedMessage id="firmdware.button.cancelMainten" />
+            </Button>
+
+            <Button disabled={selectedRowKeys.length === 0} onClick={batchRestart}>
+              <CloudSyncOutlined /> <FormattedMessage id="firmdware.download.restartEffective" />
             </Button>
 
             <Button
@@ -380,7 +411,7 @@ const VehicleUpgrade = () => {
         onCancel={() => {
           setCreationVisible(false);
         }}
-        upgradeRows={upgradeRows}
+        selectedRows={selectedRows}
         onRefresh={init}
       />
 

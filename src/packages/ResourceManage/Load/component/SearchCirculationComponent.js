@@ -69,7 +69,7 @@ const SearchCirculationComponent = (props) => {
 
           {/* 日期 */}
           <Col span={7}>
-            <Form.Item name={'createDate'} label={<FormattedMessage id="app.form.dateRange" />}>
+            <Form.Item name={'createDate'} label={<FormattedMessage id="resource.load.changeTime" />}>
               <RangePicker showTime style={{ width: '100%' }} />
             </Form.Item>
           </Col>

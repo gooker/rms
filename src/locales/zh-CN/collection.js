@@ -46,6 +46,9 @@ export default {
   'firmdware.restarting': '重启中',
   'firmdware.upgrade.success': '重启成功',
   'firmdware.upgrade.history': '升级历史',
+  'firmdware.upgrade.notAvailable': '以下车辆状态或维护状态不符合条件,不可以升级',
+  'firmdware.upgrade.message': '暂无符合条件的数据',
+  'firmdware.upgrade.nothave': '无',
 
   // 故障相关
   'app.fault.code': '故障码',

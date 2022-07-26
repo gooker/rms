@@ -1,13 +1,20 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Form, Modal, Select } from 'antd';
+import { Col, Divider, Form, message, Modal, Row, Select, Tag } from 'antd';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import { updateVehicleFirmWareFile } from '@/services/resourceService';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const { formItemLayout } = getFormLayout(4, 18);
 const CreateUpgradeOrderModal = (props) => {
-  const { visible, onCancel, upgradeRows, hardWareData, onRefresh } = props;
+  const { visible, onCancel, selectedRows, hardWareData, onRefresh } = props;
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const upgradeRows = selectedRows?.filter(
+    ({ vehicleStatus, disabled }) => vehicleStatus === 'Idle' && disabled,
+  );
+  const notAvailable = selectedRows
+    ?.filter(({ vehicleStatus, disabled }) => vehicleStatus !== 'Idle' || !disabled)
+    .map(({ vehicleId }) => vehicleId);
 
   useEffect(() => {
     if (!visible) {
@@ -16,6 +23,10 @@ const CreateUpgradeOrderModal = (props) => {
   }, [visible]);
 
   function onSubmit() {
+    if (upgradeRows?.length === 0) {
+      message.info(formatMessage({ id: 'firmdware.upgrade.message' }));
+      return false;
+    }
     form.validateFields().then(async (values) => {
       setLoading(true);
       const { fileName } = values;
@@ -57,6 +68,24 @@ const CreateUpgradeOrderModal = (props) => {
             ))}
           </Select>
         </Form.Item>
+        {notAvailable?.length > 0 && (
+          <>
+            <Divider dashed plain>
+              <FormattedMessage id="firmdware.upgrade.notAvailable" />
+            </Divider>
+            <Row>
+              <Col offset={4}>
+                {notAvailable.map((item) => {
+                  return (
+                    <Tag color="blue" key={item}>
+                      {item}
+                    </Tag>
+                  );
+                })}
+              </Col>
+            </Row>
+          </>
+        )}
       </Form>
     </Modal>
   );
