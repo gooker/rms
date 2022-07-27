@@ -9,14 +9,19 @@ import {
   HistoryOutlined,
   CloudSyncOutlined,
 } from '@ant-design/icons';
-import { dealResponse, formatMessage, getVehicleStatusTag, isNull } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  getVehicleStatusTag,
+  isEmptyPlainObject,
+  isNull,
+} from '@/utils/util';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import VehicleLogSearch from './VehicleLog/component/VehicleLogSearch';
 import commonStyles from '@/common.module.less';
 import {
-  fetchAllAdaptor,
   fetchFireWareFileList,
   fetchFireWareList,
   upgradeVehicle,
@@ -28,21 +33,25 @@ import CreateUpgradeOrderModal from './components/CreateUpgradeOrderModal';
 import UpgradeHistoryModal from './components/UpgradeHistoryModal';
 import { transformFireProgress } from './upgradeConst';
 import RmsConfirm from '@/components/RmsConfirm';
+import { VehicleUpgradeProgress, VehicleLisPolling } from '@/workers/WebWorkerManager';
 
 const StatusLabelStyle = { marginLeft: 15, fontSize: 15, fontWeight: 600 };
 
-const VehicleUpgrade = () => {
+const VehicleUpgrade = (props) => {
   const [loading, setLoading] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [allAdaptors, setAllAdaptors] = useState({});
+  const [formValues, setFormValues] = useState({});
+
+  const [vehicleList, setVehicleList] = useState([]);
+  const [taskProgressOrder, setTaskProgressOrder] = useState([]);
+
   const [dataSource, setDatasource] = useState([]);
   const [allData, setAllData] = useState([]);
   const [allFireWareFiles, setAllFireWareFiles] = useState([]); // 固件
 
   const [fileManageVisible, setFileManageVisible] = useState(false);
   const [creationVisible, setCreationVisible] = useState(false);
-
   const [historyVisible, setHistoryVisible] = useState(false);
 
   const columns = [
@@ -90,7 +99,7 @@ const VehicleUpgrade = () => {
               <Tag color={'#f50'}>
                 <ToolOutlined />
                 <span style={{ marginLeft: 3 }}>
-                  <FormattedMessage id="vehicle.maintenanceState" />
+                  <FormattedMessage id="vehicle.maintenanceState.true" />
                 </span>
               </Tag>
             ) : (
@@ -165,45 +174,35 @@ const VehicleUpgrade = () => {
 
   useEffect(() => {
     init();
+
+    // 小车列表轮询 是为了获取到softVersion
+    VehicleLisPolling.start((vehicles) => {
+      setVehicleList(vehicles);
+    });
+
+    VehicleUpgradeProgress.start((values) => {
+      setTaskProgressOrder(values);
+    });
+
+    return () => {
+      VehicleUpgradeProgress.terminate();
+      VehicleLisPolling.terminate();
+    };
   }, []);
+
+  useEffect(() => {
+    convertData(vehicleList, taskProgressOrder);
+  }, [vehicleList, taskProgressOrder]);
 
   async function init() {
     setLoading(true);
-    const [allVehicles, allAdaptors, allFireWaresFile, taskProgressOrder] = await Promise.all([
+    const [allVehicles, allFireWaresFile, taskProgressOrder] = await Promise.all([
       fetchAllVehicleList(),
-      fetchAllAdaptor(),
       fetchFireWareFileList(),
       fetchFireWareList(),
     ]);
-    if (
-      !dealResponse(allVehicles) &&
-      !dealResponse(allAdaptors) &&
-      !dealResponse(taskProgressOrder)
-    ) {
-      const newData = [];
-      allVehicles?.map(({ vehicleId, vehicleType, vehicle, vehicleInfo, vehicleWorkStatusDTO }) => {
-        if (vehicle?.register) {
-          const currentTask = taskProgressOrder?.filter(
-            (item) =>
-              item.vehicleId === vehicleId &&
-              vehicleType === item.vehicleType &&
-              ['UPLOAD', 'UPGRADE'].includes(item.vehicleFileTaskType),
-          );
-          newData.push({
-            vehicleId,
-            vehicleType,
-            ...vehicle,
-            ...vehicleInfo,
-            ...vehicleWorkStatusDTO,
-            ...currentTask[0],
-            softVersion: vehicle?.others?.softVersion,
-          });
-        }
-      });
-      setDatasource(newData);
-      setAllData(newData);
-      setAllAdaptors(allAdaptors);
-      filterData(newData);
+    if (!dealResponse(allVehicles) && !dealResponse(taskProgressOrder)) {
+      convertData(allVehicles, taskProgressOrder); // 数据merge
     }
     if (!dealResponse(allFireWaresFile)) {
       setAllFireWareFiles(allFireWaresFile);
@@ -213,13 +212,42 @@ const VehicleUpgrade = () => {
     setSelectedRowKeys([]);
   }
 
-  function filterData(data, searchParams) {
+  function convertData(allVehicles, taskProgressOrder) {
+    const newData = [];
+    allVehicles?.map(({ vehicleId, vehicleType, vehicle, vehicleInfo, vehicleWorkStatusDTO }) => {
+      if (vehicle?.register) {
+        const currentTask = taskProgressOrder?.filter(
+          (item) =>
+            item.vehicleId === vehicleId &&
+            vehicleType === item.vehicleType &&
+            ['UPLOAD', 'UPGRADE'].includes(item.vehicleFileTaskType),
+        );
+        newData.push({
+          vehicleId,
+          vehicleType,
+          ...vehicle,
+          ...vehicleInfo,
+          ...vehicleWorkStatusDTO,
+          ...currentTask[0],
+          softVersion: vehicle?.others?.softVersion,
+        });
+      }
+    });
+
+    setAllData(newData);
+    filterData(newData);
+  }
+
+  // 搜索
+  function filterData(data, params) {
     let nowAllVehicles = [...data];
-    if (isNull(searchParams)) {
+    const searchParams = params ? params : formValues;
+    if (isNull(searchParams) || isEmptyPlainObject(searchParams)) {
       setDatasource(nowAllVehicles);
       return;
     }
-    const { ids, vehicleStatus, vehicleType, progress, softVersion } = searchParams;
+    const { ids, vehicleStatus, vehicleType, progress, softVersion, maintenanceState } =
+      searchParams;
     if (ids?.length > 0) {
       nowAllVehicles = nowAllVehicles.filter(({ id }) => ids.includes(id));
     }
@@ -241,6 +269,10 @@ const VehicleUpgrade = () => {
         ({ fileStatus, vehicleFileTaskType }) =>
           fileStatus === currentStatus[0] && vehicleFileTaskType === currentStatus[1],
       );
+    }
+
+    if (!isNull(maintenanceState)) {
+      nowAllVehicles = nowAllVehicles.filter((item) => maintenanceState === item.disabled);
     }
 
     if (softVersion?.length > 0) {
@@ -323,10 +355,12 @@ const VehicleUpgrade = () => {
       <>
         <VehicleLogSearch
           allData={allData}
-          onSearch={filterData}
+          onSearch={(data, formValues) => {
+            setFormValues(formValues);
+            filterData(data, formValues);
+          }}
           refreshLog={init}
           selectedRows={selectedRows}
-          allAdaptors={allAdaptors}
           type="fireware"
         />
 
@@ -429,4 +463,5 @@ const VehicleUpgrade = () => {
     </TablePageWrapper>
   );
 };
+
 export default memo(VehicleUpgrade);

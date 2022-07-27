@@ -2,6 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
 import { DownloadOutlined, RedoOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Dictionary from '@/utils/Dictionary';
+import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleLogDownload from './VehicleLogDownload';
@@ -104,6 +105,21 @@ const VehicleLogSearch = (props) => {
         {type === 'fireware' && (
           <>
             <Col span={6}>
+              <Form.Item
+                label={formatMessage({ id: 'vehicle.maintenanceState' })}
+                name="maintenanceState"
+              >
+                <Select allowClear>
+                  <Select.Option value={true}>
+                    <FormattedMessage id="vehicle.maintenanceState.true" />
+                  </Select.Option>
+                  <Select.Option value={false}>
+                    <FormattedMessage id="app.common.normal" />
+                  </Select.Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={6}>
               <Form.Item label={formatMessage({ id: 'firmdware.progress' })} name="progress">
                 <Select allowClear>
                   {Object.keys(VehicleUpgradeState)?.map((key) => (
@@ -170,4 +186,6 @@ const VehicleLogSearch = (props) => {
     </Form>
   );
 };
-export default memo(VehicleLogSearch);
+export default connect(({ global }) => ({
+  allAdaptors: global.allAdaptors,
+}))(memo(VehicleLogSearch));
