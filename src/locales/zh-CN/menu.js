@@ -9,6 +9,15 @@ export default {
   'app.module.DevOps': '运维',
   'app.module.SSO': '用户',
 
+  // 描述
+  'app.module.Map.desc': '地图工具',
+  'app.module.ResourceManage.desc': '资源管理',
+  'app.module.SmartTask.desc': '任务管理',
+  'app.module.Report.desc': '报表管理',
+  'app.module.Configuration.desc': '系统配置',
+  'app.module.DevOps.desc': '运维工具',
+  'app.module.SSO.desc': '用户管理',
+
   // 'app.module.LatentPod': '潜伏货架存取',
   // 'app.module.LatentTote': '潜伏料箱存取',
   // 'app.module.ForkLift': '叉车存取',

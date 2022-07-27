@@ -20,13 +20,11 @@ export default [
     path: '/pod',
     name: 'pod',
     icon: 'pod',
-    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     hooks: ['dev'],
     routes: [
       {
         path: `/${AppCode.LatentTote}/podManagement`,
         name: 'podManagement',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         component: '/LatentTote/PodManagement',
         hooks: ['dev'],
       },

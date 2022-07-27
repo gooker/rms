@@ -69,7 +69,6 @@ export default [
       {
         path: `/${AppCode.Configuration}/system/richEditor`,
         name: 'richEditor',
-        authority: ['ADMIN', 'SUPERMANAGER'],
         component: '/Configuration/RichEditor/index',
         hooks: ['dev'],
       },
