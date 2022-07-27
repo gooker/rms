@@ -57,9 +57,13 @@ export default {
   'app.header.option.switchSectionSuccess': 'Section切换成功',
   'app.header.option.switchLanguageSuccess': '语言切换成功',
   'app.header.refreshGlobal': '刷新全局资源',
+  'app.header.helpDoc': '帮助文档',
+  'app.header.timezone': '时区',
   'app.header.timezoneDetail': '时区详情',
   'app.header.timezoneDetail.fetchFail': '获取时区详情失败',
-  'app.header.helpDoc': '帮助文档',
+  'app.header.timezoneDetail.local': '本地时区',
+  'app.header.timezoneDetail.system': '系统时区',
+  'app.header.timezoneDetail.user': '用户时区',
 
   'app.selectLang.editMode': '编辑模式',
 

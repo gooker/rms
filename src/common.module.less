@@ -206,3 +206,20 @@
 .popoverFontColor {
   color: #ffffff;
 }
+
+@keyframes spinFrame {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spinFrame 1.4s infinite linear;
+}
+
+.resetSpin {
+  transform: rotate(0deg);
+}

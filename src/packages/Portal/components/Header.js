@@ -16,9 +16,9 @@ import SelectEnvironment from './SelectEnvironment';
 import UserCenter from './UserCenter';
 import SelectSection from './SelectSection';
 import SelectLang from './SelectLang';
+import HeaderTimezone from './HeaderTimezone';
+import HeaderHelpDoc from './HeaderHelpDoc';
 import styles from './Header.module.less';
-import HeaderTimezone from '@/packages/Portal/components/HeaderTimezone';
-import HelpDoc from '@/packages/Portal/components/HelpDoc';
 
 @withRouter
 @connect(({ global, user }) => ({
@@ -117,7 +117,7 @@ class Header extends React.Component {
           <ReloadGlobalResource />
 
           {/* 帮助文档 */}
-          <HelpDoc />
+          <HeaderHelpDoc />
 
           {/* 展示时区详情信息 */}
           <HeaderTimezone />

@@ -4,7 +4,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { formatMessage } from '@/utils/util';
 import styles from './Header.module.less';
 
-const HelpDoc = () => {
+const HeaderHelpDoc = () => {
   return (
     <Tooltip
       title={formatMessage({ id: 'app.header.helpDoc' })}
@@ -17,4 +17,4 @@ const HelpDoc = () => {
     </Tooltip>
   );
 };
-export default memo(HelpDoc);
+export default memo(HeaderHelpDoc);
