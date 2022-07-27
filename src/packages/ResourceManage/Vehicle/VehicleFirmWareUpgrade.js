@@ -244,9 +244,12 @@ const VehicleUpgrade = () => {
     }
 
     if (softVersion?.length > 0) {
-      nowAllVehicles = nowAllVehicles.filter((item) => softVersion.includes(item.softVersion));
       if (softVersion.includes('no')) {
-        nowAllVehicles = nowAllVehicles.filter((item) => isNull(item.softVersion));
+        nowAllVehicles = nowAllVehicles.filter((item) => {
+          return isNull(item.softVersion) || softVersion.includes(item.softVersion);
+        });
+      } else {
+        nowAllVehicles = nowAllVehicles.filter((item) => softVersion.includes(item.softVersion));
       }
     }
 

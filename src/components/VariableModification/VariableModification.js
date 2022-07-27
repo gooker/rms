@@ -1,4 +1,4 @@
-import React, { Fragment, memo } from 'react';
+import React, { Fragment, memo, useState } from 'react';
 import { Button, Col, Divider, Form, InputNumber, Row, Select } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { isPlainObject } from 'lodash';
@@ -93,7 +93,7 @@ const VariableModification = (props) => {
 
   function renderSubTaskVariable() {
     let { customStart, customAction } = variable;
-    let vehicleSelection = convertMapToArrayMap(customStart.vehicle, 'type', 'code')[0];
+    const vehicleName = prefix ? [prefix, 'customStart', 'vehicle'] : ['customStart', 'vehicle'];
     if (customAction && !isEmptyPlainObject(customAction)) {
       return Object.entries(customAction)
         .map(([nodeType, variables]) => {
@@ -123,7 +123,7 @@ const VariableModification = (props) => {
                   }
                   initialValue={{ type: variableKey, code: variableValue }}
                 >
-                  <TargetSelector vehicleSelection={vehicleSelection} limit={variableKey} />
+                  <TargetSelector form={form} vehicleName={vehicleName} limit={variableKey} />
                 </Form.Item>,
               ),
             );
@@ -142,7 +142,7 @@ const VariableModification = (props) => {
                 label={<FormattedMessage id={'app.common.targetCell'} />}
                 initialValue={{ type: variableKey, code: variableValue }}
               >
-                <TargetSelector vehicleSelection={vehicleSelection} limit={variableKey} />
+                <TargetSelector form={form} vehicleName={vehicleName} limit={variableKey} />
               </Form.Item>,
             ),
           );
