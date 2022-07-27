@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Form, Input, Modal, Row } from 'antd';
+import { Col, Form, Input, InputNumber, Modal, Row } from 'antd';
 import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchSimulatorVehicleConfig, updateSimulatorVehicleConfig } from '@/services/monitorService';
@@ -18,10 +18,11 @@ export default function SimulatorConfigModal(props) {
       fetchSimulatorVehicleConfig(adapterType).then((response) => {
         if (!dealResponse(response)) {
           formRef.setFieldsValue({
+            speed: response.speed,
             consumePowerSpeed: response.consumePowerSpeed,
             actionConsumePowerSpeed: response.actionConsumePowerSpeed,
             chargeSpeed: response.chargeSpeed,
-            actionSpeed: response.actionSpeed.actionSpeedConfig,
+            actionSpeed: response.actionSpeedConfig,
           });
         }
       });
@@ -29,15 +30,19 @@ export default function SimulatorConfigModal(props) {
   }, [visible]);
 
   function submit() {
-    setLoading(true);
-    formRef.validateFields().then((value) => {
-      updateSimulatorVehicleConfig(value).then((response) => {
-        if (!dealResponse(response, true)) {
-          onCancel();
-        }
-        setLoading(false);
+    formRef
+      .validateFields()
+      .then((value) => {
+        setLoading(true);
+        updateSimulatorVehicleConfig(value).then((response) => {
+          if (!dealResponse(response, true)) {
+            onCancel();
+          }
+          setLoading(false);
+        });
+      })
+      .catch(() => {
       });
-    });
   }
 
   return (
@@ -60,6 +65,7 @@ export default function SimulatorConfigModal(props) {
             <Form.Item
               name={'consumePowerSpeed'}
               label={formatMessage({ id: 'simulator.config.consumePowerSpeed' })}
+              rules={[{ required: true }]}
             >
               <Input suffix={'ms/%'} />
             </Form.Item>
@@ -70,6 +76,7 @@ export default function SimulatorConfigModal(props) {
             <Form.Item
               name={'actionConsumePowerSpeed'}
               label={formatMessage({ id: 'simulator.config.actionConsumePowerSpeed' })}
+              rules={[{ required: true }]}
             >
               <Input suffix={'ms/%'} />
             </Form.Item>
@@ -80,16 +87,29 @@ export default function SimulatorConfigModal(props) {
             <Form.Item
               name={'chargeSpeed'}
               label={formatMessage({ id: 'simulator.config.chargeSpeed' })}
+              rules={[{ required: true }]}
             >
               <Input suffix={'ms/%'} />
+            </Form.Item>
+          </Col>
+
+          {/* 倍速模拟 */}
+          <Col span={8}>
+            <Form.Item
+              name={'speed'}
+              label={formatMessage({ id: 'simulator.config.simulationRate' })}
+              rules={[{ required: true }]}
+            >
+              <InputNumber />
             </Form.Item>
           </Col>
 
           {/* 车辆启停耗时 */}
           <Col span={8}>
             <Form.Item
-              name={['actionSpeed', 'startStopSpeed']}
+              name={['actionSpeedConfig', 'startStopSpeed']}
               label={formatMessage({ id: 'simulator.config.startStopSpeed' })}
+              rules={[{ required: true }]}
             >
               <Input suffix={'ms'} />
             </Form.Item>
@@ -98,8 +118,9 @@ export default function SimulatorConfigModal(props) {
           {/* 加速度 */}
           <Col span={8}>
             <Form.Item
-              name={['actionSpeed', 'accelerateSpeed']}
+              name={['actionSpeedConfig', 'accelerateSpeed']}
               label={formatMessage({ id: 'simulator.config.accelerateSpeed' })}
+              rules={[{ required: true }]}
             >
               <Input suffix={'mm/s²'} />
             </Form.Item>
@@ -108,8 +129,9 @@ export default function SimulatorConfigModal(props) {
           {/* 减速度 */}
           <Col span={8}>
             <Form.Item
-              name={['actionSpeed', 'decelerateSpeed']}
+              name={['actionSpeedConfig', 'decelerateSpeed']}
               label={formatMessage({ id: 'simulator.config.decelerateSpeed' })}
+              rules={[{ required: true }]}
             >
               <Input suffix={'mm/s²'} />
             </Form.Item>
@@ -118,8 +140,9 @@ export default function SimulatorConfigModal(props) {
           {/* 空车旋转速度 */}
           <Col span={8}>
             <Form.Item
-              name={['actionSpeed', 'vehicleEmptyRotateSpeed']}
+              name={['actionSpeedConfig', 'vehicleEmptyRotateSpeed']}
               label={formatMessage({ id: 'simulator.config.vehicleEmptyRotateSpeed' })}
+              rules={[{ required: true }]}
             >
               <Input suffix={'ms/°'} />
             </Form.Item>
@@ -128,8 +151,9 @@ export default function SimulatorConfigModal(props) {
           {/* 重车旋转速度 */}
           <Col span={8}>
             <Form.Item
-              name={['actionSpeed', 'vehicleHeavyRotateSpeed']}
+              name={['actionSpeedConfig', 'vehicleHeavyRotateSpeed']}
               label={formatMessage({ id: 'simulator.config.vehicleHeavyRotateSpeed' })}
+              rules={[{ required: true }]}
             >
               <Input suffix={'ms/°'} />
             </Form.Item>
@@ -138,8 +162,9 @@ export default function SimulatorConfigModal(props) {
           {/* 取货时间 */}
           <Col span={8}>
             <Form.Item
-              name={['actionSpeed', 'pickSpeed']}
+              name={['actionSpeedConfig', 'pickSpeed']}
               label={formatMessage({ id: 'simulator.config.pickSpeed' })}
+              rules={[{ required: true }]}
             >
               <Input suffix={'ms'} />
             </Form.Item>
@@ -148,48 +173,9 @@ export default function SimulatorConfigModal(props) {
           {/* 放货时间 */}
           <Col span={8}>
             <Form.Item
-              name={['actionSpeed', 'putSpeed']}
+              name={['actionSpeedConfig', 'putSpeed']}
               label={formatMessage({ id: 'simulator.config.putSpeed' })}
-            >
-              <Input suffix={'ms'} />
-            </Form.Item>
-          </Col>
-
-          {/* 小车旋转90度时间 */}
-          <Col span={8}>
-            <Form.Item
-              name={['actionSpeed', 'turn90Time']}
-              label={formatMessage({ id: 'simulator.config.turn90Time' })}
-            >
-              <Input suffix={'ms'} />
-            </Form.Item>
-          </Col>
-
-          {/* 小车旋转180度时间 */}
-          <Col span={8}>
-            <Form.Item
-              name={['actionSpeed', 'turn180Time']}
-              label={formatMessage({ id: 'simulator.config.turn180Time' })}
-            >
-              <Input suffix={'ms'} />
-            </Form.Item>
-          </Col>
-
-          {/* 货架旋转90度时间 */}
-          <Col span={8}>
-            <Form.Item
-              name={['actionSpeed', 'podTurn90Time']}
-              label={formatMessage({ id: 'simulator.config.podTurn90Time' })}
-            >
-              <Input suffix={'ms'} />
-            </Form.Item>
-          </Col>
-
-          {/* 货架旋转180度时间 */}
-          <Col span={8}>
-            <Form.Item
-              name={['actionSpeed', 'podTurn180Time']}
-              label={formatMessage({ id: 'simulator.config.podTurn180Time' })}
+              rules={[{ required: true }]}
             >
               <Input suffix={'ms'} />
             </Form.Item>
@@ -198,8 +184,9 @@ export default function SimulatorConfigModal(props) {
           {/* 货架旋转速度 */}
           <Col span={8}>
             <Form.Item
-              name={['actionSpeed', 'podRotateSpeed']}
+              name={['actionSpeedConfig', 'podRotateSpeed']}
               label={formatMessage({ id: 'simulator.config.podRotateSpeed' })}
+              rules={[{ required: true }]}
             >
               <Input suffix={'ms/°'} />
             </Form.Item>
@@ -223,8 +210,9 @@ export default function SimulatorConfigModal(props) {
               <Col span={8}>
                 <Form.Item
                   {...layout2}
-                  name={['actionSpeed', 'runSpeed', '1']}
+                  name={['actionSpeedConfig', 'runSpeed', '1']}
                   label={formatMessage({ id: 'monitor.simulator.config.1Gear' })}
+                  rules={[{ required: true }]}
                 >
                   <Input suffix={'mm/s'} />
                 </Form.Item>
@@ -233,8 +221,9 @@ export default function SimulatorConfigModal(props) {
               <Col span={8}>
                 <Form.Item
                   {...layout2}
-                  name={['actionSpeed', 'runSpeed', '2']}
+                  name={['actionSpeedConfig', 'runSpeed', '2']}
                   label={formatMessage({ id: 'monitor.simulator.config.2Gear' })}
+                  rules={[{ required: true }]}
                 >
                   <Input suffix={'mm/s'} />
                 </Form.Item>
@@ -243,8 +232,9 @@ export default function SimulatorConfigModal(props) {
               <Col span={8}>
                 <Form.Item
                   {...layout2}
-                  name={['actionSpeed', 'runSpeed', '3']}
+                  name={['actionSpeedConfig', 'runSpeed', '3']}
                   label={formatMessage({ id: 'monitor.simulator.config.3Gear' })}
+                  rules={[{ required: true }]}
                 >
                   <Input suffix={'mm/s'} />
                 </Form.Item>
@@ -253,8 +243,9 @@ export default function SimulatorConfigModal(props) {
               <Col span={8}>
                 <Form.Item
                   {...layout2}
-                  name={['actionSpeed', 'runSpeed', '4']}
+                  name={['actionSpeedConfig', 'runSpeed', '4']}
                   label={formatMessage({ id: 'monitor.simulator.config.4Gear' })}
+                  rules={[{ required: true }]}
                 >
                   <Input suffix={'mm/s'} />
                 </Form.Item>
@@ -263,8 +254,9 @@ export default function SimulatorConfigModal(props) {
               <Col span={8}>
                 <Form.Item
                   {...layout2}
-                  name={['actionSpeed', 'runSpeed', '5']}
+                  name={['actionSpeedConfig', 'runSpeed', '5']}
                   label={formatMessage({ id: 'monitor.simulator.config.5Gear' })}
+                  rules={[{ required: true }]}
                 >
                   <Input suffix={'mm/s'} />
                 </Form.Item>
@@ -273,8 +265,9 @@ export default function SimulatorConfigModal(props) {
               <Col span={8}>
                 <Form.Item
                   {...layout2}
-                  name={['actionSpeed', 'runSpeed', '6']}
+                  name={['actionSpeedConfig', 'runSpeed', '6']}
                   label={formatMessage({ id: 'monitor.simulator.config.6Gear' })}
+                  rules={[{ required: true }]}
                 >
                   <Input suffix={'mm/s'} />
                 </Form.Item>
