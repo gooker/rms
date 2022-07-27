@@ -6,8 +6,9 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
 
 const TargetSelector = (props) => {
-  const { dataSource, vehicleSelection, value, onChange, limit } = props;
+  const { dataSource, value, onChange, limit, form, vehicleName } = props;
   const currentValue = value || { type: null, code: [] }; // {type:xxx, code:[]}
+  const vehicleSelection = form.getFieldValue(vehicleName) ?? {};
 
   function onTypeChange(_value) {
     currentValue.type = _value;
@@ -64,9 +65,9 @@ const TargetSelector = (props) => {
           const loadGroup = dataSource.LOAD_GROUP?.filter((item) =>
             isSubArray(item.types, validLoadTypes),
           );
-          return loadGroup.map(({ code }) => (
+          return loadGroup.map(({ name, code }) => (
             <Select.Option key={code} value={code}>
-              {code}
+              {name}
             </Select.Option>
           ));
         }
