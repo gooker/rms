@@ -58,6 +58,7 @@ export default {
   'app.header.option.switchLanguageSuccess': '语言切换成功',
   'app.header.refreshGlobal': '刷新全局资源',
   'app.header.timezoneDetail': '时区详情',
+  'app.header.timezoneDetail.fetchFail': '获取时区详情失败',
   'app.header.helpDoc': '帮助文档',
 
   'app.selectLang.editMode': '编辑模式',
