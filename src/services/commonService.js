@@ -205,14 +205,6 @@ export async function updateSystemParams(vehicleType, params) {
   });
 }
 
-//// 更新系统时区
-export async function updateSystemTimezone(timeZone) {
-  return request(`/${NameSpace.Platform}/formTemplate/updateFormTemplateValue`, {
-    method: 'POST',
-    data: { client_timezone_id: timeZone },
-  });
-}
-
 // 获取打分算法模版
 export async function fetchLatentToteParamFormData(vehicleType, params) {
   return request(`/${NameSpace[vehicleType]}/paramTemplate/getParamTemplate`, {
@@ -275,7 +267,6 @@ export async function fetchManualMode(vehicleType, params) {
     data: params,
   });
 }
-
 
 // 下载固件--提交
 export async function fetchUpgradeFirmwareFile(vehicleType, params) {
@@ -550,13 +541,6 @@ export async function fetchChargerFaultList(params) {
   });
 }
 
-// 系统管理-时区设置
-export async function fetchSystemParamByKey(key) {
-  return request(`/${NameSpace.Platform}/formTemplate/getParameter/${key}`, {
-    method: 'GET',
-  });
-}
-
 // 查询所有MQ Queue
 export async function getAllQueues() {
   return request(`/${NameSpace.Platform}/webHook/getAllQueue`, {
@@ -725,7 +709,7 @@ export async function fetchTaskLoad(params) {
   });
 }
 
-// 清扫模块
+/************************ 清扫模块 ************************/
 // 保存扫地策略
 export async function saveCleanLatentStrategy(params, id) {
   let _urlStitching = '';
@@ -821,5 +805,28 @@ export async function saveRichText(param) {
   return request(`/${NameSpace.Platform}/richText/saveRichText`, {
     method: 'POST',
     data: param,
+  });
+}
+
+/************************** 时区 **************************/
+// 获取系统时区
+export async function fetchSystemTimeZone() {
+  return request(`/${NameSpace.Platform}/sso/environment/getSystemTimeZone`, {
+    method: 'GET',
+  });
+}
+
+// 修改系统时区
+export async function setSystemTimeZone(timeZone) {
+  return request(`/${NameSpace.Platform}/sso/environment/setSystemTimeZone`, {
+    method: 'POST',
+    data: { timeZone },
+  });
+}
+
+// 获取所有的时区时间
+export async function fetchAllTimeZone() {
+  return request(`/${NameSpace.Platform}/sso/environment/getAllTimeZone`, {
+    method: 'GET',
   });
 }

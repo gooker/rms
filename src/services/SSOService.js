@@ -206,37 +206,6 @@ export async function saveRoleAssignAuthority(parms) {
   });
 }
 
-//自定义环境--列表
-export async function fetchAllEnvironmentList() {
-  return request(`/${Platform}/sso/environment/getAllEnvironment`, {
-    method: 'GET',
-  });
-}
-
-//自定义环境--新增
-export async function fetchAddEnvironment(parms) {
-  return request(`/${Platform}/sso/environment/saveEnvironment`, {
-    method: 'POST',
-    data: parms,
-  });
-}
-
-//自定义环境--更新
-export async function fetchUpdateEnvironment(parms) {
-  return request(`/${Platform}/sso/environment/updateEnvironment`, {
-    method: 'POST',
-    data: parms,
-  });
-}
-
-//自定义环境--删除
-export async function deleteEnvironmentById(parms) {
-  return request(`/${Platform}/sso/environment/deleteEnvironment`, {
-    method: 'GET',
-    data: parms,
-  });
-}
-
 // 根据Token获取用户，验证成功返回用户信息，验证失败就返回code -1
 export async function queryUserByToken() {
   return request(`/${Platform}/sso/user/queryUserByToken`, { method: 'GET' });

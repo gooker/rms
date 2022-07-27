@@ -1,6 +1,7 @@
 **/*.svg
 /dist
 /build
+/public
 .dockerignore
 .DS_Store
 .eslintignore

@@ -1,8 +1,8 @@
 // 前端模块编码
 export const AppCode = {
   Map: 'Map',
-  ResourceManage: 'ResourceManage',
   SmartTask: 'SmartTask',
+  ResourceManage: 'ResourceManage',
   Report: 'Report',
   Configuration: 'Configuration',
   DevOps: 'DevOps',
