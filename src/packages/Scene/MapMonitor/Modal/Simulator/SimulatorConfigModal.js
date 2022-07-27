@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Form, Input, InputNumber, Modal, Row } from 'antd';
+import { Col, Form, InputNumber, Modal, Row } from 'antd';
 import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchSimulatorVehicleConfig, updateSimulatorVehicleConfig } from '@/services/monitorService';
@@ -22,7 +22,7 @@ export default function SimulatorConfigModal(props) {
             consumePowerSpeed: response.consumePowerSpeed,
             actionConsumePowerSpeed: response.actionConsumePowerSpeed,
             chargeSpeed: response.chargeSpeed,
-            actionSpeed: response.actionSpeedConfig,
+            actionSpeedConfig: response.actionSpeedConfig,
           });
         }
       });
@@ -34,7 +34,7 @@ export default function SimulatorConfigModal(props) {
       .validateFields()
       .then((value) => {
         setLoading(true);
-        updateSimulatorVehicleConfig(value).then((response) => {
+        updateSimulatorVehicleConfig({ ...value, adapterType }).then((response) => {
           if (!dealResponse(response, true)) {
             onCancel();
           }
@@ -67,7 +67,7 @@ export default function SimulatorConfigModal(props) {
               label={formatMessage({ id: 'simulator.config.consumePowerSpeed' })}
               rules={[{ required: true }]}
             >
-              <Input suffix={'ms/%'} />
+              <InputNumber addonAfter={'ms/%'} />
             </Form.Item>
           </Col>
 
@@ -78,7 +78,7 @@ export default function SimulatorConfigModal(props) {
               label={formatMessage({ id: 'simulator.config.actionConsumePowerSpeed' })}
               rules={[{ required: true }]}
             >
-              <Input suffix={'ms/%'} />
+              <InputNumber addonAfter={'ms/%'} />
             </Form.Item>
           </Col>
 
@@ -89,7 +89,7 @@ export default function SimulatorConfigModal(props) {
               label={formatMessage({ id: 'simulator.config.chargeSpeed' })}
               rules={[{ required: true }]}
             >
-              <Input suffix={'ms/%'} />
+              <InputNumber addonAfter={'ms/%'} />
             </Form.Item>
           </Col>
 
@@ -111,7 +111,7 @@ export default function SimulatorConfigModal(props) {
               label={formatMessage({ id: 'simulator.config.startStopSpeed' })}
               rules={[{ required: true }]}
             >
-              <Input suffix={'ms'} />
+              <InputNumber addonAfter={'ms'} />
             </Form.Item>
           </Col>
 
@@ -122,7 +122,7 @@ export default function SimulatorConfigModal(props) {
               label={formatMessage({ id: 'simulator.config.accelerateSpeed' })}
               rules={[{ required: true }]}
             >
-              <Input suffix={'mm/s²'} />
+              <InputNumber addonAfter={'mm/s²'} />
             </Form.Item>
           </Col>
 
@@ -133,7 +133,7 @@ export default function SimulatorConfigModal(props) {
               label={formatMessage({ id: 'simulator.config.decelerateSpeed' })}
               rules={[{ required: true }]}
             >
-              <Input suffix={'mm/s²'} />
+              <InputNumber addonAfter={'mm/s²'} />
             </Form.Item>
           </Col>
 
@@ -144,7 +144,7 @@ export default function SimulatorConfigModal(props) {
               label={formatMessage({ id: 'simulator.config.vehicleEmptyRotateSpeed' })}
               rules={[{ required: true }]}
             >
-              <Input suffix={'ms/°'} />
+              <InputNumber addonAfter={'ms/°'} />
             </Form.Item>
           </Col>
 
@@ -155,7 +155,7 @@ export default function SimulatorConfigModal(props) {
               label={formatMessage({ id: 'simulator.config.vehicleHeavyRotateSpeed' })}
               rules={[{ required: true }]}
             >
-              <Input suffix={'ms/°'} />
+              <InputNumber addonAfter={'ms/°'} />
             </Form.Item>
           </Col>
 
@@ -166,7 +166,7 @@ export default function SimulatorConfigModal(props) {
               label={formatMessage({ id: 'simulator.config.pickSpeed' })}
               rules={[{ required: true }]}
             >
-              <Input suffix={'ms'} />
+              <InputNumber addonAfter={'ms'} />
             </Form.Item>
           </Col>
 
@@ -177,7 +177,7 @@ export default function SimulatorConfigModal(props) {
               label={formatMessage({ id: 'simulator.config.putSpeed' })}
               rules={[{ required: true }]}
             >
-              <Input suffix={'ms'} />
+              <InputNumber addonAfter={'ms'} />
             </Form.Item>
           </Col>
 
@@ -188,7 +188,7 @@ export default function SimulatorConfigModal(props) {
               label={formatMessage({ id: 'simulator.config.podRotateSpeed' })}
               rules={[{ required: true }]}
             >
-              <Input suffix={'ms/°'} />
+              <InputNumber addonAfter={'ms/°'} />
             </Form.Item>
           </Col>
         </Row>
@@ -214,7 +214,7 @@ export default function SimulatorConfigModal(props) {
                   label={formatMessage({ id: 'monitor.simulator.config.1Gear' })}
                   rules={[{ required: true }]}
                 >
-                  <Input suffix={'mm/s'} />
+                  <InputNumber addonAfter={'mm/s'} />
                 </Form.Item>
               </Col>
 
@@ -225,7 +225,7 @@ export default function SimulatorConfigModal(props) {
                   label={formatMessage({ id: 'monitor.simulator.config.2Gear' })}
                   rules={[{ required: true }]}
                 >
-                  <Input suffix={'mm/s'} />
+                  <InputNumber addonAfter={'mm/s'} />
                 </Form.Item>
               </Col>
 
@@ -236,7 +236,7 @@ export default function SimulatorConfigModal(props) {
                   label={formatMessage({ id: 'monitor.simulator.config.3Gear' })}
                   rules={[{ required: true }]}
                 >
-                  <Input suffix={'mm/s'} />
+                  <InputNumber addonAfter={'mm/s'} />
                 </Form.Item>
               </Col>
 
@@ -247,7 +247,7 @@ export default function SimulatorConfigModal(props) {
                   label={formatMessage({ id: 'monitor.simulator.config.4Gear' })}
                   rules={[{ required: true }]}
                 >
-                  <Input suffix={'mm/s'} />
+                  <InputNumber addonAfter={'mm/s'} />
                 </Form.Item>
               </Col>
 
@@ -258,7 +258,7 @@ export default function SimulatorConfigModal(props) {
                   label={formatMessage({ id: 'monitor.simulator.config.5Gear' })}
                   rules={[{ required: true }]}
                 >
-                  <Input suffix={'mm/s'} />
+                  <InputNumber addonAfter={'mm/s'} />
                 </Form.Item>
               </Col>
 
@@ -269,7 +269,7 @@ export default function SimulatorConfigModal(props) {
                   label={formatMessage({ id: 'monitor.simulator.config.6Gear' })}
                   rules={[{ required: true }]}
                 >
-                  <Input suffix={'mm/s'} />
+                  <InputNumber addonAfter={'mm/s'} />
                 </Form.Item>
               </Col>
             </Row>

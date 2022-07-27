@@ -44,7 +44,7 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
-        path: `/${AppCode.Configuration}/channel/broadcastChannel`, // 广播频道
+        path: `/${AppCode.SSO}/channel/broadcastChannel`, // 广播频道
         name: 'broadcastChannel',
         component: '/SSO/NotificationCenter/BroadcastChannel',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],

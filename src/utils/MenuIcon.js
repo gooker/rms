@@ -18,6 +18,7 @@ import {
   LockOutlined,
   MediumOutlined,
   MessageOutlined,
+  NotificationOutlined,
   ProfileOutlined,
   ProjectOutlined,
   SafetyCertificateOutlined,
@@ -83,4 +84,5 @@ export default {
   feedback: <MessageOutlined />,
   setting: <SettingOutlined />,
   authorization: <SafetyCertificateOutlined />,
+  notification: <NotificationOutlined />,
 };

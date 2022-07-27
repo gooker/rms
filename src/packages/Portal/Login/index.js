@@ -2,6 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, Form, Input, Modal, Row, Select } from 'antd';
 import { LoadingOutlined, LockOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
+import { useEventListener } from 'ahooks';
 import { dealResponse, extractNameSpaceInfoFromEnvs, formatMessage, getAllEnvironments, isNull } from '@/utils/util';
 import requestAPI from '@/utils/requestAPI';
 import { selectAllDB, updateDB } from '@/utils/IndexDBUtil';
@@ -34,13 +35,33 @@ const Login = (props) => {
       window.localStorage.setItem('dev', 'true');
     }
 
-    init();
+    getAllEnvironments(window.dbContext).then(({ allEnvs, activeEnv }) => {
+      setAllEnvironments(allEnvs);
+      if (window.localStorage.getItem('dev') === 'true') {
+        formRef.setFieldsValue({ environment: activeEnv });
+      }
+    });
+  }, []);
 
-    /********************* 一个彩蛋 *********************/
-    function mousedownCb(ev) {
-      eggValue.current.clientX = ev.clientX;
+  /********************* 回车执行登录 *********************/
+  useEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter') {
+      goLogin();
     }
-    function dragendCb(ev) {
+  });
+
+  /********************* 一个彩蛋 *********************/
+  useEventListener(
+    'pointerdown',
+    (ev) => {
+      eggValue.current.clientX = ev.clientX;
+    },
+    { target: eggRef },
+  );
+
+  useEventListener(
+    'dragend',
+    (ev) => {
       const { left, right } = eggRef.current.getBoundingClientRect();
       if (
         eggValue.current.clientX > ev.clientX &&
@@ -61,25 +82,9 @@ const Login = (props) => {
         }, 800);
       }
       eggValue.current = {};
-    }
-
-    const targetNode = eggRef.current;
-    targetNode.addEventListener('pointerdown', mousedownCb);
-    targetNode.addEventListener('dragend', dragendCb);
-    return () => {
-      targetNode.removeEventListener('pointerdown', mousedownCb);
-      targetNode.removeEventListener('dragend', dragendCb);
-    };
-  }, []);
-
-  // 获取所有自定义环境
-  async function init() {
-    const { allEnvs, activeEnv } = await getAllEnvironments(window.dbContext);
-    setAllEnvironments(allEnvs);
-    if (window.localStorage.getItem('dev') === 'true') {
-      formRef.setFieldsValue({ environment: activeEnv });
-    }
-  }
+    },
+    { target: eggRef },
+  );
 
   async function updateSelectOptions() {
     const _options = await selectAllDB(window.dbContext);
@@ -87,12 +92,11 @@ const Login = (props) => {
     setVisible(false);
   }
 
-  async function goLogin() {
+  function goLogin() {
     formRef.validateFields().then(async (values) => {
       controllerRef.current = new AbortController();
       setLoading(true);
       if (isNull(values.environment)) {
-        // 防止存在本地nginx部署问题
         const { activeEnv } = await getAllEnvironments(window.dbContext);
         values.environment = activeEnv;
       }
