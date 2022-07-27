@@ -6,7 +6,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import VehicleLogSearch from './component/VehicleLogSearch';
 import commonStyles from '@/common.module.less';
-import { fetchAllAdaptor, fetchVehicleLogsList } from '@/services/resourceService';
+import { fetchVehicleLogsList } from '@/services/resourceService';
 import { fetchAllVehicleList } from '@/services/commonService';
 import { find } from 'lodash';
 // import ViewVehicleLog from './component/ViewVehicleLog';
@@ -17,7 +17,6 @@ const VehicleLog = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [dataSource, setDatasource] = useState([]);
   const [allData, setAllData] = useState([]);
-  const [allAdaptors, setAllAdaptors] = useState({});
   // const [viewing, setViewing] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -89,12 +88,11 @@ const VehicleLog = () => {
 
   async function init() {
     setLoading(true);
-    const [allVehicles, allAdaptors, logList] = await Promise.all([
+    const [allVehicles, logList] = await Promise.all([
       fetchAllVehicleList(),
-      fetchAllAdaptor(),
       fetchVehicleLogsList(),
     ]);
-    if (!dealResponse(allVehicles) && !dealResponse(allAdaptors) && !dealResponse(logList)) {
+    if (!dealResponse(allVehicles) && !dealResponse(logList)) {
       const newData = [];
       allVehicles?.map(({ vehicleId, vehicleType, vehicle, vehicleInfo, vehicleWorkStatusDTO }) => {
         if (vehicle?.register) {
@@ -111,7 +109,6 @@ const VehicleLog = () => {
       });
       setDatasource(newData);
       setAllData(newData);
-      setAllAdaptors(allAdaptors);
       filterData(newData);
     }
     setLoading(false);
@@ -156,7 +153,6 @@ const VehicleLog = () => {
         onSearch={filterData}
         refreshData={init}
         selectedRows={selectedRows}
-        allAdaptors={allAdaptors}
         type={'log'}
       />
       <TableWithPages

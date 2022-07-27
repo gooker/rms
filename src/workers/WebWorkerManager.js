@@ -13,6 +13,8 @@ const CommonStationStatePolling = {}; // 获取通用站点雇佣车
 const WorkStationStatePolling = {}; // 获取工作站雇佣车
 const CostHeatPollingManager = {}; // 点位热度轮询
 const StationRatePolling = {}; // 站点速率轮询
+const VehicleUpgradeProgress = {}; // 车辆固件升级进度轮询
+const VehicleLisPolling = {}; // 获取所有小车 轮询
 
 // @@@ 告警中心告警信息数量轮询
 AlertCountPolling.getInstance = function (dispatcher) {
@@ -312,6 +314,84 @@ StationRatePolling.terminate = function () {
   }
 };
 
+// @@@ 车辆固件升级进度
+VehicleUpgradeProgress.getInstance = function (dispatcher) {
+  if (isNull(VehicleUpgradeProgress.instance)) {
+    const worker = new Worker(
+      new URL('./vehicleFirmWareUpgradePolling.worker.js', import.meta.url),
+    );
+    worker.onmessage = function ({ data }) {
+      if (data && Array.isArray(data)) {
+        dispatcher(data);
+      }
+    };
+    VehicleUpgradeProgress.instance = worker;
+  }
+  return VehicleUpgradeProgress.instance;
+};
+
+VehicleUpgradeProgress.start = function (dispatcher) {
+  if (isNull(VehicleUpgradeProgress.instance)) {
+    VehicleUpgradeProgress.getInstance(dispatcher);
+  }
+  const fireWareURL = getDomainNameByUrl(`/${NameSpace.Platform}/vehicle/file/getFirmwareList`);
+  VehicleUpgradeProgress.instance.postMessage({
+    state: 'start',
+    url: fireWareURL,
+    token: window.sessionStorage.getItem('token'),
+    sectionId: window.localStorage.getItem('sectionId'),
+  });
+};
+
+VehicleUpgradeProgress.terminate = function () {
+  if (!isNull(VehicleUpgradeProgress.instance)) {
+    VehicleUpgradeProgress.instance.postMessage({
+      state: 'end',
+    });
+    VehicleUpgradeProgress.instance.terminate();
+    VehicleUpgradeProgress.instance = null;
+  }
+};
+
+// @@@VehicleLisPolling
+VehicleLisPolling.getInstance = function (dispatcher) {
+  if (isNull(VehicleLisPolling.instance)) {
+    const worker = new Worker(
+      new URL('./vehicleFirmWareUpgradePolling.worker.js', import.meta.url),
+    );
+    worker.onmessage = function ({ data }) {
+      if (data && Array.isArray(data)) {
+        dispatcher(data);
+      }
+    };
+    VehicleLisPolling.instance = worker;
+  }
+  return VehicleLisPolling.instance;
+};
+
+VehicleLisPolling.start = function (dispatcher) {
+  if (isNull(VehicleLisPolling.instance)) {
+    VehicleLisPolling.getInstance(dispatcher);
+  }
+  const fireWareURL = getDomainNameByUrl(`/${NameSpace.Platform}/vehicle/getAllVehicles`);
+  VehicleLisPolling.instance.postMessage({
+    state: 'start',
+    url: fireWareURL,
+    token: window.sessionStorage.getItem('token'),
+    sectionId: window.localStorage.getItem('sectionId'),
+  });
+};
+
+VehicleLisPolling.terminate = function () {
+  if (!isNull(VehicleLisPolling.instance)) {
+    VehicleLisPolling.instance.postMessage({
+      state: 'end',
+    });
+    VehicleLisPolling.instance.terminate();
+    VehicleLisPolling.instance = null;
+  }
+};
+
 export {
   AlertCountPolling,
   VehiclePollingTaskPathManager,
@@ -320,4 +400,6 @@ export {
   WorkStationStatePolling,
   CostHeatPollingManager,
   StationRatePolling,
+  VehicleUpgradeProgress,
+  VehicleLisPolling,
 };
