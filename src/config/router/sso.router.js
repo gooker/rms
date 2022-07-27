@@ -30,17 +30,31 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
   {
-    path: `/${AppCode.SSO}/channelSubscription`, // 频道订阅
-    name: 'channelSubscription',
-    icon: 'subscription',
-    component: '/SSO/NotificationCenter/ChannelSubscription',
-    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-  },
-  {
     path: `/${AppCode.SSO}/accountCenter`, // 个人中心
     name: 'accountCenter',
     icon: 'home',
     component: '/SSO/AccountCenter',
     authority: ['SUPERMANAGER', 'MANAGER', 'USER'],
+  },
+
+  {
+    path: `/${AppCode.SSO}/channel`,
+    name: 'channel',
+    icon: 'notification',
+    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+    routes: [
+      {
+        path: `/${AppCode.Configuration}/channel/broadcastChannel`, // 广播频道
+        name: 'broadcastChannel',
+        component: '/SSO/NotificationCenter/BroadcastChannel',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      },
+      {
+        path: `/${AppCode.SSO}/channel/channelSubscription`, // 频道订阅
+        name: 'channelSubscription',
+        component: '/SSO/NotificationCenter/ChannelSubscription',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      },
+    ],
   },
 ];

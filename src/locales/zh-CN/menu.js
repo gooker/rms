@@ -43,7 +43,9 @@ export default {
   'menu.userLoginHistory': '登录历史',
   'menu.accountCenter': '个人中心',
   'menu.environmentManger': '自定义环境',
-  'menu.channelSubscription': '频道订阅',
+  'menu.channel': '频道',
+  'menu.channel.broadcastChannel': '广播频道',
+  'menu.channel.channelSubscription': '频道订阅',
 
   // 载具
   'menu.load': '载具',
@@ -122,9 +124,12 @@ export default {
   'menu.cleaningRecord': '清扫记录',
 
   // 配置
+  'menu.authorizationCenter': '授权中心',
   'menu.strategy': '策略',
   'menu.strategy.chargingStrategy': '充电策略',
   'menu.systemConfig': '系统配置',
+  'menu.systemConfig.oem': 'OEM',
+  'menu.systemConfig.customMenuManager': '自定义菜单',
   'menu.systemConfig.parameters': '参数配置',
   'menu.systemConfig.requestor': '接口请求库',
   'menu.systemConfig.richEditor': '富文本编辑',
@@ -132,10 +137,6 @@ export default {
   'menu.systemConfig.i18n': '国际化',
   'menu.integration': '系统集成',
   'menu.integration.webHook': 'Webhook',
-  'menu.integration.customLogo': '自定义LOGO',
-  'menu.integration.authorizationCenter': '授权中心',
-  'menu.integration.customMenuManager': '自定义菜单',
-  'menu.integration.broadcastChannel': '广播频道',
 
   // 报表数据
   'menu.healthReport': '健康报表',
