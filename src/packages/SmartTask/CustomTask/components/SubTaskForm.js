@@ -209,7 +209,7 @@ const SubTaskForm = (props) => {
           return value;
         }}
       >
-        <TargetSelector vehicleSelection={form.getFieldValue(['START', 'vehicle'])} />
+        <TargetSelector form={form} vehicleSelection={form.getFieldValue(['START', 'vehicle'])} />
       </Form.Item>
 
       {/* 载具方向 */}

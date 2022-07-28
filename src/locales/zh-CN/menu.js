@@ -1,15 +1,15 @@
 export default {
   // 模块名称
   'app.module': '应用',
-  'app.module.Map': '地图',
-  'app.module.ResourceManage': '资源',
-  'app.module.SmartTask': '任务',
-  'app.module.Report': '报表',
-  'app.module.Configuration': '配置',
-  'app.module.DevOps': '运维',
-  'app.module.SSO': '用户',
+  'app.module.Map': '地图', //Ma
+  'app.module.ResourceManage': '资源', //Re
+  'app.module.SmartTask': '任务', //Ta
+  'app.module.Report': '报表', //Rp
+  'app.module.Configuration': '配置', //Cf
+  'app.module.DevOps': '运维', //Op
+  'app.module.SSO': '用户', //Ur
 
-  // 描述
+  // 模块描述
   'app.module.Map.desc': '地图工具',
   'app.module.ResourceManage.desc': '资源管理',
   'app.module.SmartTask.desc': '任务管理',

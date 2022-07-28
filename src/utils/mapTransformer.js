@@ -96,7 +96,6 @@ export function convertLandAngle2Pixi(landAngle) {
 export function convertNaviCoordinate2Land(coordinate) {
   const matrixParams = [];
   matrixParams.push(flipX());
-  matrixParams.push(rotateDEG(90));
   const matrix = compose(...matrixParams);
   const matrixResult = applyToPoint(matrix, coordinate);
   const x = Math.round(matrixResult.x);
@@ -107,7 +106,6 @@ export function convertNaviCoordinate2Land(coordinate) {
 // 将物理坐标转换为导航坐标
 export function convertLandCoordinate2Navi(coordinate) {
   const matrixParams = [];
-  matrixParams.push(rotateDEG(-90));
   matrixParams.push(flipX());
   const matrix = compose(...matrixParams);
   const { x, y } = applyToPoint(matrix, coordinate);
