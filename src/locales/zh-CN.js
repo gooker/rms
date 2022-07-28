@@ -27,6 +27,7 @@ import latentTotStorage from './zh-CN/Resource/latentToteStorage';
 import resource from './zh-CN/Resource/resource';
 import vehicle from './zh-CN/vehicle';
 import message from './zh-CN/message';
+import devOps from './zh-CN/devOps';
 
 export default {
   ...map,
@@ -58,4 +59,5 @@ export default {
   ...resource,
   ...vehicle,
   ...message,
+  ...devOps,
 };
