@@ -123,7 +123,10 @@ const VariableModification = (props) => {
                   }
                   initialValue={{ type: variableKey, code: variableValue }}
                 >
-                  <TargetSelector form={form} vehicleName={vehicleName} limit={variableKey} />
+                  <TargetSelector
+                    limit={variableKey}
+                    vehicleSelection={form.getFieldsValue(vehicleName)}
+                  />
                 </Form.Item>,
               ),
             );

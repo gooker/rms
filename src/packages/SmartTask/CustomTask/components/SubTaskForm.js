@@ -11,7 +11,8 @@ import FormattedMessage from '@/components/FormattedMessage';
 import TitleCard from '@/components/TitleCard';
 
 const SubTaskForm = (props) => {
-  const { hidden, form, code, type, updateTab, routes, programing, preTasks } = props;
+  const { targetSource, programing, routes } = props;
+  const { hidden, form, code, type, updateTab, preTasks } = props;
   const groupedRoutes = groupBy(routes, 'logicId');
   const isPre = !!find(preTasks, { code });
 
@@ -209,7 +210,10 @@ const SubTaskForm = (props) => {
           return value;
         }}
       >
-        <TargetSelector form={form} vehicleSelection={form.getFieldValue(['START', 'vehicle'])} />
+        <TargetSelector
+          dataSource={targetSource}
+          vehicleSelection={form.getFieldValue(['START', 'vehicle'])}
+        />
       </Form.Item>
 
       {/* 载具方向 */}
@@ -442,4 +446,5 @@ const SubTaskForm = (props) => {
 export default connect(({ customTask, global }) => ({
   routes: extractRoutes(customTask.mapData),
   programing: global.programing,
+  targetSource: customTask.targetSource,
 }))(memo(SubTaskForm));

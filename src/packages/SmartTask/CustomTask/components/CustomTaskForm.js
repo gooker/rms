@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Dropdown, Form, Menu, message, Modal, Space } from 'antd';
+import { Alert, Button, Dropdown, Form, Menu, message, Modal, Space } from 'antd';
 import {
   BranchesOutlined,
   CloseOutlined,
@@ -21,6 +21,7 @@ import {
   generateSample,
   getFormLayout,
   getRandomString,
+  isNull,
   restoreCustomTaskForm,
 } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
@@ -233,6 +234,10 @@ const CustomTaskForm = (props) => {
   }
 
   async function submit() {
+    if (editingRow && editingRow.readOnly) {
+      message.warn(formatMessage({ id: 'customTasks.readOnly.tip' }));
+      return;
+    }
     // 去掉两个没用的任务节点
     const _taskSteps = [...taskSteps].filter(
       (item) => ![CustomNodeType.BASE, -1].includes(item.code),
@@ -341,14 +346,25 @@ const CustomTaskForm = (props) => {
 
   return (
     <div className={styles.customTaskForm}>
+      {editingRow && editingRow.readOnly && (
+        <div style={{ position: 'absolute', top: 16, left: 'calc(50vw - 197px)' }}>
+          <Alert
+            showIcon
+            type='warning'
+            message={formatMessage({ id: 'app.message.systemHint' })}
+            description={formatMessage({ id: 'customTasks.readOnly.tip' })}
+          />
+        </div>
+      )}
+
       <div className={styles.dndColumn}>
         <div className={styles.dndItem} style={{ flex: 5 }}>
           <div className={styles.dndTitle}>
             <IconFont type={'icon-flow'} style={{ fontSize: 20, marginRight: 5 }} />
-            <FormattedMessage id="app.task.flow" />
+            <FormattedMessage id='app.task.flow' />
           </div>
           <Container
-            groupName="dnd"
+            groupName='dnd'
             dropPlaceholder={{
               showOnTop: true,
               animationDuration: 150,
@@ -430,13 +446,16 @@ const CustomTaskForm = (props) => {
         </div>
         <div className={styles.topTool}>
           <Button danger onClick={gotoListPage}>
-            <CloseOutlined /> <FormattedMessage id="app.button.return" />
+            <CloseOutlined /> <FormattedMessage id='app.button.return' />
           </Button>
-          <Button type="primary" onClick={submit}>
-            <SaveOutlined /> <FormattedMessage id="app.button.save" />
-          </Button>
+          {(isNull(editingRow) || !editingRow.readOnly) && (
+            <Button type='primary' onClick={submit}>
+              <SaveOutlined /> <FormattedMessage id='app.button.save' />
+            </Button>
+          )}
         </div>
       </div>
+
       <Button
         type={'dashed'}
         style={{ position: 'absolute', top: 24, right: 30 }}

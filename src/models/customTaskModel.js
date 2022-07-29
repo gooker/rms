@@ -12,15 +12,12 @@ export default {
   namespace: 'customTask',
 
   state: {
-    // 地图相关
     mapData: null,
-    currentLogicArea: 0, // id
-    currentRouteMap: 'DEFAULT', // code
-    preRouteMap: null, // 记录上一个路线区数据, 用于切换路线区时候拿到上一次路线区的数据做清理工作
     listVisible: true,
     customTaskList: [],
     editingRow: null,
 
+    targetSource: [], // 目标点数据资源
     storageSpecification: [], // 车辆容器规格
     loadSpecification: [], // 载具规格
     modelLocks: null, // 业务可锁资源
@@ -37,6 +34,7 @@ export default {
       return {
         ...state,
         listVisible: true,
+        editingRow: null,
       };
     },
     saveCustomTaskList(state, { payload }) {
@@ -70,10 +68,10 @@ export default {
         return;
       }
       try {
-        const [modelLocks, loadSpecification, targetDatasource] = yield Promise.all([
-          getFormModelLockResource(),
-          fetchAllLoadSpecification(),
-          fetchCustomParamType(),
+        const [modelLocks, loadSpecification, targetSource] = yield Promise.all([
+          getFormModelLockResource(), // 业务模型可锁资源
+          fetchAllLoadSpecification(), // 载具规则
+          fetchCustomParamType(), // 目标点
         ]);
         const state = { mapData };
         if (!dealResponse(modelLocks)) {
@@ -83,8 +81,8 @@ export default {
         if (!dealResponse(loadSpecification)) {
           state.loadSpecification = loadSpecification;
         }
-        if (!dealResponse(targetDatasource)) {
-          yield put({ type: 'global/updateStateInBatch', payload: { targetDatasource } });
+        if (!dealResponse(targetSource)) {
+          state.targetSource = targetSource;
         }
         yield put({ type: 'saveState', payload: state });
       } catch (error) {

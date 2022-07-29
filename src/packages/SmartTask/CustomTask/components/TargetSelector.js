@@ -1,14 +1,19 @@
 import React, { memo } from 'react';
 import { Col, Row, Select } from 'antd';
-import { connect } from '@/utils/RmsDva';
+import { VehicleOptionType } from './VehicleSelector';
 import { isStrictNull, isSubArray } from '@/utils/util';
-import FormattedMessage from '@/components/FormattedMessage';
-import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
 
 const TargetSelector = (props) => {
-  const { dataSource, value, onChange, limit, form, vehicleName } = props;
+  const { value, onChange } = props;
+  const { dataSource, limit, vehicleSelection } = props;
+
   const currentValue = value || { type: null, code: [] }; // {type:xxx, code:[]}
-  const vehicleSelection = form.getFieldValue(vehicleName) ?? {};
+
+  // 为了便于取值，这里将目标点类型与相对应数据做个Mapping
+  const dataSourceMap = {};
+  dataSource.forEach(({ key, customTaskDTOS }) => {
+    dataSourceMap[key] = customTaskDTOS;
+  });
 
   function onTypeChange(_value) {
     currentValue.type = _value;
@@ -35,7 +40,7 @@ const TargetSelector = (props) => {
           vehicleSelection.type === VehicleOptionType.VEHICLE &&
           vehicleSelection.code.length > 0
         ) {
-          const vehicleType = dataSource.VEHICLE?.filter((item) =>
+          const vehicleType = dataSourceMap.VEHICLE?.filter((item) =>
             item.ids.includes(vehicleSelection.code[0]),
           );
           validLoadTypes = validLoadTypes.concat(vehicleType[0]?.types || []);
@@ -44,8 +49,8 @@ const TargetSelector = (props) => {
           vehicleSelection.type === VehicleOptionType.VEHICLE_GROUP &&
           vehicleSelection.code.length > 0
         ) {
-          if (Array.isArray(dataSource.Vehicle_GROUP)) {
-            for (const item of dataSource.Vehicle_GROUP) {
+          if (Array.isArray(dataSourceMap.Vehicle_GROUP)) {
+            for (const item of dataSourceMap.Vehicle_GROUP) {
               if (vehicleSelection.code.includes(item.code)) {
                 validLoadTypes.push(...(item.types ?? []));
               }
@@ -62,7 +67,7 @@ const TargetSelector = (props) => {
           ));
         } else {
           // 对 dataSource的LOAD_GROUP进行筛选，LOAD_GROUP所有数据的types必须为validLoadTypes的子集
-          const loadGroup = dataSource.LOAD_GROUP?.filter((item) =>
+          const loadGroup = dataSourceMap.LOAD_GROUP?.filter((item) =>
             isSubArray(item.types, validLoadTypes),
           );
           return loadGroup.map(({ name, code }) => (
@@ -73,13 +78,13 @@ const TargetSelector = (props) => {
         }
       }
       if (currentValue.type.endsWith('_GROUP')) {
-        return dataSource[currentValue.type]?.map(({ name, code }) => (
+        return dataSourceMap[currentValue.type]?.map(({ name, code }) => (
           <Select.Option key={name} value={code}>
             {name}
           </Select.Option>
         ));
       }
-      return dataSource[currentValue.type]?.map(({ name, ids }, index) => {
+      return dataSourceMap[currentValue.type]?.map(({ name, ids }, index) => {
         return (
           <Select.OptGroup key={index} label={name}>
             {Array.isArray(ids) &&
@@ -96,7 +101,7 @@ const TargetSelector = (props) => {
   }
 
   function renderSelectOptions() {
-    let data = TargetSelectorOptions;
+    let data = dataSource.map(({ key: value, label }) => ({ label, value }));
     if (!isStrictNull(limit)) {
       let _limit = limit;
       if (_limit.endsWith('_GROUP')) {
@@ -106,7 +111,7 @@ const TargetSelector = (props) => {
     }
     return data.map(({ value, label }) => (
       <Select.Option key={value} value={value}>
-        <FormattedMessage id={label} />
+        {label}
       </Select.Option>
     ));
   }
@@ -114,7 +119,7 @@ const TargetSelector = (props) => {
   return (
     <Row gutter={16}>
       <Col>
-        <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 150 }}>
+        <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 160 }}>
           {renderSelectOptions()}
         </Select>
       </Col>
@@ -141,49 +146,4 @@ const TargetSelector = (props) => {
     </Row>
   );
 };
-export default connect(({ global }) => ({
-  dataSource: global.targetDatasource || {},
-}))(memo(TargetSelector));
-
-export const TargetSelectorOptions = [
-  {
-    value: 'CELL',
-    label: 'app.map.cell',
-  },
-  {
-    value: 'CELL_GROUP',
-    label: 'app.map.cellGroup',
-  },
-  {
-    value: 'LOAD',
-    label: 'resource.load',
-  },
-  {
-    value: 'LOAD_GROUP',
-    label: 'resource.load.group',
-  },
-  {
-    value: 'ROTATE',
-    label: 'editor.cellType.rotation',
-  },
-  {
-    value: 'ROTATE_GROUP',
-    label: 'editor.cellType.rotationGroup',
-  },
-  {
-    value: 'STORE',
-    label: 'menu.storage',
-  },
-  {
-    value: 'STORE_GROUP',
-    label: 'resource.storage.group',
-  },
-  {
-    value: 'STATION',
-    label: 'app.map.station',
-  },
-  {
-    value: 'STATION_GROUP',
-    label: 'app.map.stationGroup',
-  },
-];
+export default memo(TargetSelector);
