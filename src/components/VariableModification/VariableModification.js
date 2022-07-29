@@ -10,6 +10,7 @@ import {
   isEmptyPlainObject,
   isNull,
 } from '@/utils/util';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleVariable from '@/components/VariableModification/VehicleVariable';
 import ResourceLimit from '@/packages/SmartTask/CustomTask/components/ResourceLimit';
@@ -18,7 +19,7 @@ import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZon
 
 const { formItemLayout } = getFormLayout(4, 18);
 const VariableModification = (props) => {
-  const { prefix, form, variable, customTask, loadSpecification } = props;
+  const { prefix, form, variable, customTask, loadSpecification, targetSource } = props;
 
   function renderPartTitle(nodeType) {
     if (nodeType.startsWith('step')) {
@@ -123,7 +124,11 @@ const VariableModification = (props) => {
                   }
                   initialValue={{ type: variableKey, code: variableValue }}
                 >
-                  <TargetSelector form={form} vehicleName={vehicleName} limit={variableKey} />
+                  <TargetSelector
+                    limit={variableKey}
+                    dataSource={targetSource}
+                    vehicleSelection={form.getFieldsValue(vehicleName)}
+                  />
                 </Form.Item>,
               ),
             );
@@ -142,7 +147,11 @@ const VariableModification = (props) => {
                 label={<FormattedMessage id={'app.common.targetCell'} />}
                 initialValue={{ type: variableKey, code: variableValue }}
               >
-                <TargetSelector form={form} vehicleName={vehicleName} limit={variableKey} />
+                <TargetSelector
+                  dataSource={targetSource}
+                  vehicleSelection={form.getFieldsValue(vehicleName)}
+                  limit={variableKey}
+                />
               </Form.Item>,
             ),
           );
@@ -345,7 +354,9 @@ const VariableModification = (props) => {
     </Form>
   );
 };
-export default memo(VariableModification);
+export default connect(({ quickTask }) => ({
+  targetSource: quickTask.targetSource,
+}))(memo(VariableModification));
 
 // 提取变量表单数据并转换成合适的结构
 export function formatVariableFormValues(values, hasPrefix = false) {

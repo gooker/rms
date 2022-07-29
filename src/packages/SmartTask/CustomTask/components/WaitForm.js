@@ -6,9 +6,10 @@ import StandbyConditions from '../FormComponent/StandbyConditions';
 import FormattedMessage from '@/components/FormattedMessage';
 import TargetSelector from '../components/TargetSelector';
 import styles from '../customTask.module.less';
+import { connect } from '@/utils/RmsDva';
 
 const WaitForm = (props) => {
-  const { code, form, type, hidden, updateTab } = props;
+  const { code, form, type, hidden, updateTab, targetSource } = props;
   const [goToPickupPoint, setGotoPickupPoint] = useState(false);
 
   useEffect(() => {
@@ -137,7 +138,10 @@ const WaitForm = (props) => {
       >
         {goToPickupPoint && (
           <Form.Item noStyle name={[code, 'waitTaskCell']} initialValue={null}>
-            <TargetSelector showVar={false} form={form} />
+            <TargetSelector
+              dataSource={targetSource}
+              vehicleSelection={form.getFieldValue(['START', 'vehicle'])}
+            />
           </Form.Item>
         )}
       </Form.Item>
@@ -154,4 +158,6 @@ const WaitForm = (props) => {
     </>
   );
 };
-export default memo(WaitForm);
+export default connect(({ customTask, global }) => ({
+  targetSource: customTask.targetSource,
+}))(memo(WaitForm));

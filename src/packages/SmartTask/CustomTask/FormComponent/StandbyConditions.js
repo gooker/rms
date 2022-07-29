@@ -4,13 +4,14 @@ import { connect } from '@/utils/RmsDva';
 import { Button, Col, Form, Row, Select } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { convertMapToArrayMap, formatMessage, getFormLayout } from '@/utils/util';
-import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
+import TargetSelector from '../components/TargetSelector';
 
 const { Option } = Select;
 const { formItemLayoutNoLabel, formItemLayout } = getFormLayout(4, 20);
 
 const StandbyConditions = (props) => {
-  const { hidden, form, allTaskTypes, value, onChange } = props;
+  const { targetSource, allTaskTypes, hidden, form } = props;
+  const { value, onChange } = props;
 
   function onValuesChange(changedValues, allValues) {
     onChange(allValues);
@@ -71,7 +72,10 @@ const StandbyConditions = (props) => {
                 <Row gutter={10}>
                   <Col span={fields.length > 1 ? 22 : 24}>
                     <Form.Item noStyle {...field}>
-                      <TargetSelector form={form} />
+                      <TargetSelector
+                        dataSource={targetSource}
+                        vehicleSelection={form.getFieldValue(['START', 'vehicle'])}
+                      />
                     </Form.Item>
                   </Col>
                   {fields.length > 1 ? (
@@ -94,6 +98,6 @@ const StandbyConditions = (props) => {
   );
 };
 export default connect(({ customTask, global }) => ({
-  modelTypes: customTask.modelTypes,
+  targetSource: customTask.targetSource,
   allTaskTypes: global.allTaskTypes,
 }))(memo(StandbyConditions));

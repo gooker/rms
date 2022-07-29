@@ -25,7 +25,8 @@ import {
 
 const { formItemLayout } = getFormLayout(4, 18);
 const ExecuteQuickTaskModal = (props) => {
-  const { dispatch, customTask, quickTask, executeModalVisible, loadSpecification } = props;
+  const { dispatch, customTask, quickTask, executeModalVisible, loadSpecification, targetSource } =
+    props;
 
   const [formRef] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -166,7 +167,11 @@ const ExecuteQuickTaskModal = (props) => {
                     initialValue={{ type: variableKey, code: variableValue }}
                     rules={[{ required: preParams.config.isRequired }]}
                   >
-                    <TargetSelector vehicleSelection={vehicleSelection} limit={variableKey} />
+                    <TargetSelector
+                      dataSource={targetSource}
+                      vehicleSelection={vehicleSelection}
+                      limit={variableKey}
+                    />
                   </Form.Item>,
                 );
               }
@@ -184,7 +189,11 @@ const ExecuteQuickTaskModal = (props) => {
                   initialValue={{ type: variableKey, code: variableValue }}
                   rules={[{ required: params.config.isRequired }]}
                 >
-                  <TargetSelector vehicleSelection={vehicleSelection} limit={variableKey} />
+                  <TargetSelector
+                    dataSource={targetSource}
+                    vehicleSelection={vehicleSelection}
+                    limit={variableKey}
+                  />
                 </Form.Item>,
               );
             }
@@ -426,8 +435,9 @@ const ExecuteQuickTaskModal = (props) => {
 };
 export default connect(({ quickTask }) => ({
   quickTask: quickTask.editing,
-  executeModalVisible: quickTask.executeModalVisible,
+  targetSource: quickTask.targetSource,
   loadSpecification: quickTask.loadSpecification,
+  executeModalVisible: quickTask.executeModalVisible,
 }))(memo(ExecuteQuickTaskModal));
 
 // 将快捷任务的变量字段转换成运行任务需要的结构

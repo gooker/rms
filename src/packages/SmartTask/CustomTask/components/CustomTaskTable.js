@@ -1,13 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Button, message, Modal } from 'antd';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  EyeOutlined,
-  FileTextOutlined,
-  RedoOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, EyeOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import { deleteCustomTasksById } from '@/services/commonService';
@@ -109,6 +103,9 @@ const CustomTaskTable = (props) => {
   const rowSelection = {
     selectedRowKeys,
     onChange: (rowKeys) => setSelectedRowKeys(rowKeys),
+    getCheckboxProps: (record) => ({
+      disabled: record.readOnly,
+    }),
   };
 
   function deleteListItem() {
@@ -187,7 +184,7 @@ const CustomTaskTable = (props) => {
         expandColumns={expandColumns}
         dataSource={listData}
         rowSelection={rowSelection}
-        rowKey={(record) => record.id}
+        rowKey={({ code }) => code}
         pagination={null}
       />
 
