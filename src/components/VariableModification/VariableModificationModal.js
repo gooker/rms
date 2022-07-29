@@ -256,7 +256,7 @@ const VariableModificationModal = (props) => {
                   label={<FormattedMessage id={'app.common.targetCell'} />}
                   initialValue={{ type: variableKey, code: variableValue }}
                 >
-                  <TargetSelector vehicleSelection={vehicleSelection} limit={variableKey} />
+                  <TargetSelector form={formRef} vehicleSelection={vehicleSelection} limit={variableKey} />
                 </Form.Item>
               </Card>,
             ),

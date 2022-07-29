@@ -3,8 +3,6 @@ import { Modal } from 'antd';
 import { formatMessage, isStrictNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 
-const basePath = '/Users/czhou/Desktop';
-
 const HelpDocViewerModal = (props) => {
   const { visible, onCancel } = props;
   let currentLang = props.currentLang;
@@ -22,7 +20,7 @@ const HelpDocViewerModal = (props) => {
       }
       fileName = `${fileName}.html`;
 
-      fetch(`${basePath}/${fileName}`)
+      fetch(`http://localhost:5000/static/${fileName}`)
         .then((response) => response.text())
         .then((response) => {
           console.log(response);
@@ -38,10 +36,16 @@ const HelpDocViewerModal = (props) => {
       onCancel={onCancel}
       width={'80vw'}
       style={{ top: 30, maxWidth: 1000 }}
-      bodyStyle={{ maxHeight: '80vh', overflow: 'auto' }}
+      bodyStyle={{ height: '80vh', overflow: 'auto' }}
       footer={null}
     >
-      1111
+      <iframe
+        src={`http://localhost:5000/static/standardOrderPool.html`}
+        seamless
+        width={'100%'}
+        height={'100%'}
+        frameBorder={0}
+      />
     </Modal>
   );
 };
