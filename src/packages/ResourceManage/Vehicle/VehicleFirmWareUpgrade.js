@@ -288,7 +288,7 @@ const VehicleUpgrade = (props) => {
     setDatasource(nowAllVehicles);
   }
 
-  // 开始升级
+  // 单个 重启生效
   async function upgrade(record) {
     const { vehicleId, adapterType, fileName } = record;
     const response = await upgradeVehicle([{ vehicleId, adapterType, fileName }]);
