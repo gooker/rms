@@ -13,6 +13,9 @@ export default {
   'app.button.addFound': '添加发现',
   'app.button.batchOperate': '批量操作',
 
+  // 帮助文档
+  'app.helpDoc': '帮助文档',
+
   // 自定义环境管理
   'environmentManager.envName': '环境名称',
   'environmentManager.tip.pasteTip': '请填入序列化字符串',

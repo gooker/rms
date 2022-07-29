@@ -32,7 +32,6 @@ export default {
   'menu.home': '首页',
   'menu.waitingQueue': '等待队列',
   'menu.executingQueue': '执行队列',
-  'menu.taskManagement': '任务查询',
 
   // DevOps
   'menu.systemLogWarehouse': '系统日志',
@@ -101,6 +100,7 @@ export default {
 
   // 任务
   'menu.standardTaskPool': '任务池',
+  'menu.taskHistory': '历史任务',
   'menu.customTask': '自定义任务',
   'menu.quickTask': '快捷任务',
   'menu.limitEqualizer': '限流均衡器',

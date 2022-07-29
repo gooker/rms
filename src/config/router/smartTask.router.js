@@ -9,10 +9,10 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
   {
-    path: `/${AppCode.SmartTask}/taskManagement`,
-    name: 'taskManagement',
-    icon: 'taskQueue',
-    component: '/SmartTask/TaskManagement',
+    path: `/${AppCode.SmartTask}/taskHistory`,
+    name: 'taskHistory',
+    icon: 'taskHistory',
+    component: '/SmartTask/TaskHistory',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
   {

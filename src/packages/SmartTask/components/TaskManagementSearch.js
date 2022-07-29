@@ -1,14 +1,11 @@
 import React, { memo, useEffect, useState } from 'react';
 import { DatePicker, Form, Input, Select } from 'antd';
-import Dictionary from '@/utils/Dictionary';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import { fetchAllVehicleList } from '@/services/commonService';
-import FormattedMessage from '@/components/FormattedMessage';
 import TaskSearch from '@/components/TaskSearch';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
-const TaskStatus = Dictionary('taskStatus');
 
 const TaskManagementSearch = (props) => {
   const { search, allTaskTypes } = props;
@@ -50,15 +47,6 @@ const TaskManagementSearch = (props) => {
     <TaskSearch form={form} gutter={24} span={6} vehicles={vehicles} onSearch={onSearch}>
       <Form.Item name={'taskId'} label={formatMessage({ id: 'app.task.id' })}>
         <Input allowClear />
-      </Form.Item>
-      <Form.Item name={'taskStatus'} label={formatMessage({ id: 'app.task.state' })}>
-        <Select mode="multiple" allowClear>
-          {Object.keys(TaskStatus).map((item) => (
-            <Option key={item} value={item}>
-              <FormattedMessage id={TaskStatus[item]} />
-            </Option>
-          ))}
-        </Select>
       </Form.Item>
       <Form.Item name={'createDate'} label={formatMessage({ id: 'app.taskDetail.queryTime' })}>
         <RangePicker showTime style={{ width: '100%' }} />

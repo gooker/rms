@@ -15,7 +15,7 @@ import { fetchCancelTask } from '@/services/commonService';
 @connect(({ global }) => ({
   allTaskTypes: global.allTaskTypes,
 }))
-class TaskManagement extends Component {
+class TaskHistory extends Component {
   state = {
     searchParam: {},
     pagination: {
@@ -225,4 +225,4 @@ class TaskManagement extends Component {
   }
 }
 
-export default TaskManagement;
+export default TaskHistory;

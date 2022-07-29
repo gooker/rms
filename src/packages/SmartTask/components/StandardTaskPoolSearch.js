@@ -44,6 +44,9 @@ const StandardTaskPoolSearch = (props) => {
           <Select.Option value={'Executing'}>
             <FormattedMessage id={'app.task.state.Executing'} />
           </Select.Option>
+          <Select.Option value={'Wait'}>
+            <FormattedMessage id={'app.task.state.Wait'} />
+          </Select.Option>
         </Select>
       </Form.Item>
     </TaskSearch>
