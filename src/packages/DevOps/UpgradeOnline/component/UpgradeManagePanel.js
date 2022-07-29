@@ -1,11 +1,15 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Progress, Table, Typography } from 'antd';
+import { InfoOutlined } from '@ant-design/icons';
 import { useMap } from 'ahooks';
 import axios from 'axios';
 import { formatMessage, getRandomString, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import UpgradeUploader from './UpgradeUploader';
+import { UpgradeTarget } from '../contants';
 import style from '../upgradeOnline.module.less';
+
+const { Text } = Typography;
 
 const UpgradeManagePanel = (props) => {
   const { type } = props;
@@ -20,7 +24,7 @@ const UpgradeManagePanel = (props) => {
       align: 'center',
     },
     {
-      title: formatMessage({ id: 'upgradeOnline.upload.lastModifyTime' }),
+      title: formatMessage({ id: 'upgradeOnline.lastModifyTime' }),
       dataIndex: 'lastModifyTime',
       align: 'center',
     },
@@ -82,9 +86,23 @@ const UpgradeManagePanel = (props) => {
       });
   }
 
+  function getUploadTip() {
+    if (type === UpgradeTarget.FE) {
+      return formatMessage({ id: 'upgradeOnline.frontend.tip' });
+    } else if (type === UpgradeTarget.Middle) {
+      return formatMessage({ id: 'upgradeOnline.middlePlatform.tip' });
+    } else {
+      return formatMessage({ id: 'upgradeOnline.plugin.tip' });
+    }
+  }
+
   return (
     <>
       <UpgradeUploader onFinish={refresh} />
+      <Text type='danger'>
+        <InfoOutlined />
+        {getUploadTip()}
+      </Text>
       <div className={style.packsList}>
         <div>
           <Typography.Link onClick={refresh}>

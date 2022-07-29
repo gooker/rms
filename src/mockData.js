@@ -1,4 +1,3 @@
-
 export const ProgramingConfigurationList = {
   SYSTEM: [
     {
@@ -1663,7 +1662,6 @@ export const VehicleList = [
   },
 ];
 
-
 // 资源绑定
 export const ChargerGroupResource = [
   {
@@ -1710,5 +1708,43 @@ export const ResourceBindData = [
     resourceType: 'CHARGER_GROUP',
     resourceName: '充电桩3',
     resourceCode: 'charger_group3',
+  },
+];
+
+// 在线升级
+export const UpgradeBackup = [
+  {
+    type: 'folder',
+    id: '1',
+    name: 'backend_backup_2022_0722_1124_12_000',
+    lastModifyTime: '2022_09_10',
+    children: [
+      {
+        type: 'file',
+        id: '11',
+        lastModifyTime: '2022_09_10',
+        name: 'middle-platform_v2.3.0.jar',
+      },
+      {
+        type: 'file',
+        id: '12',
+        lastModifyTime: '2022_09_10',
+        name: 'adaptor-mushiny_latent.jar',
+      },
+    ],
+  },
+  {
+    type: 'folder',
+    id: '2',
+    lastModifyTime: '2022_09_11',
+    name: 'backend_frontend_2022_0723_0903_10_000',
+    children: [
+      {
+        type: 'file',
+        id: '21',
+        lastModifyTime: '2022_09_11',
+        name: 'fe_v1.0.0.gz',
+      },
+    ],
   },
 ];

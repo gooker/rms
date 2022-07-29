@@ -1,19 +1,47 @@
 import React, { memo } from 'react';
-import TitleCard from '@/components/TitleCard';
+import { Button, Tabs } from 'antd';
+import { formatMessage } from '@/utils/util';
+import { UpgradeTarget } from './contants';
+import FormattedMessage from '@/components/FormattedMessage';
 import UpgradeManagePanel from './component/UpgradeManagePanel';
+import MiddlePlatformPanel from './component/MiddlePlatformPanel';
 import commonStyle from '@/common.module.less';
+import style from './upgradeOnline.module.less';
+import BackupPanel from '@/packages/DevOps/UpgradeOnline/component/BackupPanel';
+
+const { TabPane } = Tabs;
 
 const UpgradeOnline = () => {
   return (
     <div className={commonStyle.commonPageStyle}>
-      <TitleCard title={'前端'}>
-        <UpgradeManagePanel type={'FE'} />
-      </TitleCard>
-      <TitleCard title={'中台'}>
-        {/*<UpgradeManagePanel type={'Middle'} />*/}
-        {/*<UpgradeManagePanel type={'Plugin'} />*/}
-      </TitleCard>
-      <TitleCard title={'历史备份'}></TitleCard>
+      <Tabs type='card' size={'large'}>
+        <TabPane
+          key={UpgradeTarget.FE}
+          tab={formatMessage({ id: 'upgradeOnline.frontend' })}
+          style={{ paddingTop: 16 }}
+        >
+          <UpgradeManagePanel type={UpgradeTarget.FE} />
+          <div className={style.deployBtn}>
+            <Button danger>
+              <FormattedMessage id={'upgradeOnline.deploy'} />
+            </Button>
+          </div>
+        </TabPane>
+        <TabPane
+          key={UpgradeTarget.Middle}
+          tab={formatMessage({ id: 'upgradeOnline.middlePlatform' })}
+          style={{ paddingTop: 16 }}
+        >
+          <MiddlePlatformPanel />
+        </TabPane>
+        <TabPane
+          key='backup'
+          tab={formatMessage({ id: 'upgradeOnline.backup' })}
+          style={{ paddingTop: 16 }}
+        >
+          <BackupPanel />
+        </TabPane>
+      </Tabs>
     </div>
   );
 };
