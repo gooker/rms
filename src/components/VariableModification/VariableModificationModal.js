@@ -17,7 +17,7 @@ const cardStyle = {
 };
 const { formItemLayout } = getFormLayout(4, 18);
 const VariableModificationModal = (props) => {
-  const { quickTask, visible, customTask, onOk, onCancel, loadSpecification } = props;
+  const { quickTask, visible, customTask, onOk, onCancel, loadSpecification, targetSource } = props;
 
   const [formRef] = Form.useForm();
 
@@ -210,7 +210,11 @@ const VariableModificationModal = (props) => {
                     }
                     initialValue={{ type: variableKey, code: variableValue }}
                   >
-                    <TargetSelector vehicleSelection={vehicleSelection} limit={variableKey} />
+                    <TargetSelector
+                      dataSource={targetSource}
+                      vehicleSelection={vehicleSelection}
+                      limit={variableKey}
+                    />
                   </Form.Item>
                 </Card>,
               );
@@ -256,7 +260,11 @@ const VariableModificationModal = (props) => {
                   label={<FormattedMessage id={'app.common.targetCell'} />}
                   initialValue={{ type: variableKey, code: variableValue }}
                 >
-                  <TargetSelector form={formRef} vehicleSelection={vehicleSelection} limit={variableKey} />
+                  <TargetSelector
+                    dataSource={targetSource}
+                    limit={variableKey}
+                    vehicleSelection={vehicleSelection}
+                  />
                 </Form.Item>
               </Card>,
             ),
@@ -635,6 +643,7 @@ const VariableModificationModal = (props) => {
 };
 export default connect(({ quickTask }) => ({
   visible: quickTask.variableModalVisible,
+  targetSource: quickTask.targetSource,
   loadSpecification: quickTask.loadSpecification,
 }))(memo(VariableModificationModal));
 

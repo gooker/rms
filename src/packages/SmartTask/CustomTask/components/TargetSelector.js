@@ -11,9 +11,11 @@ const TargetSelector = (props) => {
 
   // 为了便于取值，这里将目标点类型与相对应数据做个Mapping
   const dataSourceMap = {};
-  dataSource.forEach(({ key, customTaskDTOS }) => {
-    dataSourceMap[key] = customTaskDTOS;
-  });
+  if (Array.isArray(dataSource)) {
+    dataSource.forEach(({ key, customTaskDTOS }) => {
+      dataSourceMap[key] = customTaskDTOS;
+    });
+  }
 
   function onTypeChange(_value) {
     currentValue.type = _value;
@@ -101,7 +103,10 @@ const TargetSelector = (props) => {
   }
 
   function renderSelectOptions() {
-    let data = dataSource.map(({ key: value, label }) => ({ label, value }));
+    let data = [];
+    if (Array.isArray(dataSource)) {
+      data = dataSource.map(({ key: value, label }) => ({ label, value }));
+    }
     if (!isStrictNull(limit)) {
       let _limit = limit;
       if (_limit.endsWith('_GROUP')) {

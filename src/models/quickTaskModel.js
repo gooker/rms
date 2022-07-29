@@ -1,5 +1,5 @@
 import { dealResponse } from '@/utils/util';
-import { fetchCustomTaskList } from '@/services/commonService';
+import { fetchCustomParamType, fetchCustomTaskList } from '@/services/commonService';
 import { fetchAllQuickTaskGroups, fetchVisibleQuickTasks } from '@/services/smartTaskService';
 import { fetchAllLoadSpecification } from '@/services/resourceService';
 
@@ -10,6 +10,7 @@ const initState = {
   customTasks: [],
   loadSpecification: [], // 载具规格
   storageSpecification: [], // 车辆容器规格
+  targetSource: [],
 
   taskModalVisible: false,
   groupModalVisible: false,
@@ -35,12 +36,13 @@ export default {
 
     * initQuickTaskPage(_, { call, put }) {
       const validateBindCustomTask = { own: false, customTask: false };
-      const [quickTasks, quickTaskGroups, customTasks, loadSpecification] =
+      const [quickTasks, quickTaskGroups, customTasks, loadSpecification, targetSource] =
         yield Promise.allSettled([
           fetchVisibleQuickTasks(),
           fetchAllQuickTaskGroups(),
           fetchCustomTaskList(),
           fetchAllLoadSpecification(),
+          fetchCustomParamType(), // 目标点
         ]);
       if (quickTasks.status === 'fulfilled' && !dealResponse(quickTasks.value)) {
         validateBindCustomTask.own = true;
@@ -57,6 +59,9 @@ export default {
       }
       if (loadSpecification.status === 'fulfilled' && !dealResponse(loadSpecification.value)) {
         payload.loadSpecification = loadSpecification.value;
+      }
+      if (targetSource.status === 'fulfilled' && !dealResponse(targetSource.value)) {
+        payload.targetSource = targetSource.value;
       }
       yield put({ type: 'updateState', payload });
 
