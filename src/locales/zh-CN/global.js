@@ -61,7 +61,7 @@ export default {
   'app.header.timezone': '时区',
   'app.header.timezoneDetail': '时区详情',
   'app.header.timezoneDetail.fetchFail': '获取时区详情失败',
-  'app.header.timezoneDetail.local': '本地时区',
+  'app.header.timezoneDetail.local': '服务器时区',
   'app.header.timezoneDetail.system': '系统时区',
   'app.header.timezoneDetail.user': '用户时区',
 
