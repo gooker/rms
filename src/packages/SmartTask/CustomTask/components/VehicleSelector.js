@@ -12,11 +12,18 @@ const VehicleSelector = (props) => {
   const [vehicleType, setVehicleType] = useState(null);
   const [secondaryVisible, setSecondaryVisible] = useState(false);
 
+  const dataSourceMap = {};
+  if (Array.isArray(dataSource)) {
+    dataSource.forEach(({ key, customTaskDTOS }) => {
+      dataSourceMap[key] = customTaskDTOS;
+    });
+  }
+
   useEffect(() => {
     setSecondaryVisible(currentValue.type !== 'AUTO');
     const vehicle = value.code[0];
     if (vehicle) {
-      for (const dataSourceElement of dataSource.vehicle) {
+      for (const dataSourceElement of dataSourceMap.VEHICLE) {
         if (dataSourceElement.ids.includes(vehicle)) {
           setVehicleType(dataSourceElement.code);
           break;
@@ -39,7 +46,7 @@ const VehicleSelector = (props) => {
 
   // 小车组第二个下拉框选项
   function renderVehicleGroupOptions() {
-    return dataSource.vehicleGroup.map(({ code }) => (
+    return dataSourceMap.Vehicle_GROUP.map(({ code }) => (
       <Select.Option key={code} value={code}>
         {code}
       </Select.Option>
@@ -54,9 +61,9 @@ const VehicleSelector = (props) => {
 
   // 小车类型下拉列表
   function renderCascadeFirstOption() {
-    return dataSource.vehicle.map(({ code }) => (
+    return dataSourceMap.VEHICLE.map(({ code,name }) => (
       <Select.Option key={code} value={code}>
-        {code}
+        {name}
       </Select.Option>
     ));
   }
@@ -64,7 +71,7 @@ const VehicleSelector = (props) => {
   // 类型小车下拉列表
   function renderCascadeSecondOption() {
     if (!isNull(vehicleType)) {
-      const vehicle = find(dataSource.vehicle, { code: vehicleType });
+      const vehicle = find(dataSourceMap.VEHICLE, { code: vehicleType });
       return vehicle.ids.map((vehicleId) => (
         <Select.Option key={vehicleId} value={vehicleId}>
           {vehicleId}
@@ -130,12 +137,7 @@ const VehicleSelector = (props) => {
   );
 };
 export default connect(({ global }) => {
-  const dataSource = { vehicle: [], vehicleGroup: [] };
-  if (global.targetDatasource) {
-    dataSource.vehicle = global.targetDatasource?.VEHICLE ?? [];
-    dataSource.vehicleGroup = global.targetDatasource?.VEHICLE_GROUP ?? [];
-  }
-  return { dataSource };
+  return { dataSource:global?.targetDatasource };
 })(memo(VehicleSelector));
 
 export const VehicleOptionType = {

@@ -2,13 +2,19 @@ import React, { memo, useEffect, useState } from 'react';
 import { Col, Row, Select } from 'antd';
 import { find } from 'lodash';
 import { formatMessage, isNull } from '@/utils/util';
-import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
 
 const VehicleVariable = (props) => {
   const { dataSource, value, onChange } = props;
   const currentValue = { ...value }; // {type:xxx, code:[]}
+
+  const dataSourceMap = {};
+  if (Array.isArray(dataSource)) {
+    dataSource.forEach(({ key, customTaskDTOS }) => {
+      dataSourceMap[key] = customTaskDTOS;
+    });
+  }
 
   const [vehicleType, setVehicleType] = useState(null);
   const [secondaryVisible, setSecondaryVisible] = useState(false);
@@ -22,7 +28,7 @@ const VehicleVariable = (props) => {
       setSecondaryVisible(true);
       const vehicle = value.code[0];
       if (vehicle) {
-        for (const dataSourceElement of dataSource.vehicle) {
+        for (const dataSourceElement of dataSourceMap.VEHICLE) {
           if (dataSourceElement.ids.includes(vehicle)) {
             setVehicleType(dataSourceElement.code);
             break;
@@ -46,7 +52,7 @@ const VehicleVariable = (props) => {
 
   // 小车组第二个下拉框选项
   function renderVehicleGroupOptions() {
-    return dataSource.vehicleGroup.map(({ code }) => (
+    return dataSourceMap.Vehicle_GROUP.map(({ code }) => (
       <Select.Option key={code} value={code}>
         {code}
       </Select.Option>
@@ -61,9 +67,9 @@ const VehicleVariable = (props) => {
 
   // 小车类型下拉列表
   function renderCascadeFirstOption() {
-    return dataSource.vehicle.map(({ code }) => (
+    return dataSourceMap.VEHICLE.map(({ code,name }) => (
       <Select.Option key={code} value={code}>
-        {code}
+        {name}
       </Select.Option>
     ));
   }
@@ -71,7 +77,7 @@ const VehicleVariable = (props) => {
   // 类型小车下拉列表
   function renderCascadeSecondOption() {
     if (!isNull(vehicleType)) {
-      const vehicle = find(dataSource.vehicle, { code: vehicleType });
+      const vehicle = find(dataSourceMap.VEHICLE, { code: vehicleType });
       return vehicle.ids.map((vehicleId) => (
         <Select.Option key={vehicleId} value={vehicleId}>
           {vehicleId}
@@ -151,10 +157,4 @@ const VehicleVariable = (props) => {
     </div>
   );
 };
-export default connect(({ global }) => {
-  const dataSource = {
-    vehicle: global.targetDatasource?.VEHICLE ?? [],
-    vehicleGroup: global.targetDatasource?.VEHICLE_GROUP ?? [],
-  };
-  return { dataSource };
-})(memo(VehicleVariable));
+export default memo(VehicleVariable);

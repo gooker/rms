@@ -73,7 +73,7 @@ const VariableModification = (props) => {
                 label={<FormattedMessage id="customTask.form.vehicle" />}
                 initialValue={{ type: variableKey, code: variableValue }}
               >
-                <VehicleVariable />
+                <VehicleVariable   dataSource={targetSource} />
               </Form.Item>
             );
           })}
@@ -127,7 +127,8 @@ const VariableModification = (props) => {
                   <TargetSelector
                     limit={variableKey}
                     dataSource={targetSource}
-                    vehicleSelection={form.getFieldsValue(vehicleName)}
+                    form={form}
+                    vehicleName={vehicleName}
                   />
                 </Form.Item>,
               ),
@@ -149,8 +150,9 @@ const VariableModification = (props) => {
               >
                 <TargetSelector
                   dataSource={targetSource}
-                  vehicleSelection={form.getFieldsValue(vehicleName)}
                   limit={variableKey}
+                  form={form}
+                  vehicleName={vehicleName}
                 />
               </Form.Item>,
             ),

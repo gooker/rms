@@ -74,7 +74,9 @@ const StandbyConditions = (props) => {
                     <Form.Item noStyle {...field}>
                       <TargetSelector
                         dataSource={targetSource}
-                        vehicleSelection={form.getFieldValue(['START', 'vehicle'])}
+                        // vehicleSelection={form.getFieldValue(['START', 'vehicle'])}
+                        form={form}
+                        vehicleName={['START', 'vehicle']}
                       />
                     </Form.Item>
                   </Col>

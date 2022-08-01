@@ -1357,6 +1357,5 @@ export function getTableScrollY({ extraHeight, ref } = {}) {
     headerBottom = headerHeight.getBoundingClientRect().bottom;
   }
   let height = `calc(100vh - ${headerBottom + extraHeight}px)`;
-  console.log(height);
   return height;
 }

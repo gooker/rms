@@ -150,11 +150,7 @@ const VehicleUpgrade = (props) => {
           } else if (nexText === 0) {
             if (record.vehicleFileTaskType === 'UPLOAD') {
               return (
-                <Typography.Link
-                  onClick={() => {
-                    upgrade(record);
-                  }}
-                >
+                <Typography.Link>
                   <FormattedMessage id="firmdware.download.restartEffective" />
                 </Typography.Link>
               );
@@ -288,14 +284,6 @@ const VehicleUpgrade = (props) => {
     setDatasource(nowAllVehicles);
   }
 
-  // 单个 重启生效
-  async function upgrade(record) {
-    const { vehicleId, adapterType, fileName } = record;
-    const response = await upgradeVehicle([{ vehicleId, adapterType, fileName }]);
-    if (!dealResponse(response, 1)) {
-      init();
-    }
-  }
 
   /*
    *维护/取消维护
@@ -320,18 +308,10 @@ const VehicleUpgrade = (props) => {
     });
   }
 
+  // 重启生效
   async function batchRestart() {
-    const currentData = selectedRows?.filter(
-      ({ vehicleFileTaskType, fileStatus }) =>
-        vehicleFileTaskType === 'UPLOAD' && fileStatus === '0',
-    );
-    if (currentData.length === 0) {
-      message.info(formatMessage({ id: 'firmdware.upgrade.message' }));
-      return;
-    }
-
     const params = [];
-    currentData.map(({ vehicleId, adapterType, fileName }) => {
+    selectedRows.map(({ vehicleId, adapterType, fileName }) => {
       params.push({
         vehicleId,
         adapterType,
@@ -380,7 +360,7 @@ const VehicleUpgrade = (props) => {
                 setCreationVisible(true);
               }}
             >
-              <PlusOutlined /> <FormattedMessage id="firmdware.upgradeTask.add" />
+              <PlusOutlined /> <FormattedMessage id="firmdware.upgrade" />
             </Button>
             <Button
               onClick={() => {

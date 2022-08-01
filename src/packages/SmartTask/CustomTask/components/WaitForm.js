@@ -140,7 +140,9 @@ const WaitForm = (props) => {
           <Form.Item noStyle name={[code, 'waitTaskCell']} initialValue={null}>
             <TargetSelector
               dataSource={targetSource}
-              vehicleSelection={form.getFieldValue(['START', 'vehicle'])}
+              // vehicleSelection={form.getFieldValue(['START', 'vehicle'])}
+              form={form}
+              vehicleName={['START', 'vehicle']}
             />
           </Form.Item>
         )}

@@ -1,13 +1,28 @@
 import React, { memo } from 'react';
 import { Col, Row, Select } from 'antd';
 import { VehicleOptionType } from './VehicleSelector';
-import { isStrictNull, isSubArray } from '@/utils/util';
+import { isEmptyPlainObject, isStrictNull, isSubArray } from '@/utils/util';
 
 const TargetSelector = (props) => {
   const { value, onChange } = props;
-  const { dataSource, limit, vehicleSelection } = props;
+  const { dataSource, limit, form, vehicleName } = props;
 
   const currentValue = value || { type: null, code: [] }; // {type:xxx, code:[]}
+
+  let vehicleSelection = {};
+  const formData = form?.getFieldsValue();
+  if (vehicleName && !isEmptyPlainObject(formData)) {
+    if (vehicleName.length === 3) {
+      const [prefix, start, name] = vehicleName;
+      vehicleSelection = formData?.[prefix][start][name];
+    }
+    if (vehicleName.length === 2) {
+      const [start, name] = vehicleName;
+      vehicleSelection = formData?.[start][name];
+    }
+  } else {
+    vehicleSelection = props?.vehicleSelection ?? {};
+  }
 
   // 为了便于取值，这里将目标点类型与相对应数据做个Mapping
   const dataSourceMap = {};
@@ -62,6 +77,7 @@ const TargetSelector = (props) => {
 
         // 生成返回值
         if (currentValue.type === 'LOAD') {
+          console.log(validLoadTypes);
           return validLoadTypes.map((loadType) => (
             <Select.Option key={loadType} value={loadType}>
               {loadType}
@@ -142,6 +158,7 @@ const TargetSelector = (props) => {
             mode="multiple"
             value={currentValue?.code || []}
             onChange={onCodeChange}
+            getPopupContainer={triggerNode => triggerNode.parentNode}
             style={{ width: '100%' }}
           >
             {renderSecondaryOptions()}

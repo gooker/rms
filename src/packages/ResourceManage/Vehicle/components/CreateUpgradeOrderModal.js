@@ -46,7 +46,7 @@ const CreateUpgradeOrderModal = (props) => {
 
   return (
     <Modal
-      title={formatMessage({ id: 'firmdware.upgradeTask.add' })}
+      title={formatMessage({ id: 'firmdware.upgrade' })}
       visible={visible}
       closable={false}
       maskClosable={false}

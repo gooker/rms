@@ -51,7 +51,7 @@ const StartForm = (props) => {
         label={<FormattedMessage id='customTask.form.vehicle' />}
         rules={[{ validator: validateVehicle }]}
       >
-        <VehicleSelector />
+        <VehicleSelector/>
       </Form.Item>
 
       {/* 资源约束：customLimit */}

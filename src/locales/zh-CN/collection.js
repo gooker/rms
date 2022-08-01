@@ -41,7 +41,7 @@ export default {
 
   'firmdware.button.mainten': '维护',
   'firmdware.button.cancelMainten': '取消维护',
-  'firmdware.upgradeTask.add': '升级',
+  'firmdware.upgrade': '升级',
   'firmdware.inDownloading': '升级中',
   'firmdware.downloadFail': '升级失败',
   'firmdware.download.restartEffective': '重启生效',
