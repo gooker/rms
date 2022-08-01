@@ -11,7 +11,6 @@ export default {
   'app.alarmCenter.undismissed': '未解除',
   'app.alarmCenter.dismissedAll': '解除全部',
   'app.alarmCenter.dismissedSelected': '解除已选中',
-  'app.alarmCenter.updateTime': '更新时间',
   'app.alarmCenter.reportStaus': '上报状态',
   'app.alarmCenter.reported': '已上报',
   'app.alarmCenter.notreport': '未上报',

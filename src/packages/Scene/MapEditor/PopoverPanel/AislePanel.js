@@ -1,16 +1,17 @@
 import React, { memo, useState } from 'react';
-import { Button, Empty } from 'antd';
-import { LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
+import { Button, Col, Empty, Tag } from 'antd';
+import { LeftOutlined, PlusOutlined, RightOutlined, SwapRightOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getRandomString, isNull } from '@/utils/util';
-import { getCurrentRouteMapData } from '@/utils/mapUtil';
+import { getCurrentRouteMapData, getIdByNaviId, getNaviIdById } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import AisleForm from './AisleForm';
 import FunctionListItem from '../components/FunctionListItem';
 import commonStyles from '@/common.module.less';
+import LabelComponent from '@/components/LabelComponent';
 
 const AislePanel = (props) => {
-  const { dispatch, height, aisles, mapContext } = props;
+  const { dispatch, height, aisles, cellMap, mapContext } = props;
 
   const [addFlag, setAddFlag] = useState(-1);
   const [editing, setEditing] = useState(null);
@@ -32,38 +33,42 @@ const AislePanel = (props) => {
     });
   }
 
+  function renderGiveWay(data) {
+    return (
+      <Col key={getRandomString(6)} span={24}>
+        <LabelComponent label={<FormattedMessage id={'editor.tunnel.giveWay'} />}>
+          {Object.entries(data).map(([source, target], index) => {
+            // 将 source 和 target转成导航ID
+            const naviSource = getIdByNaviId(source, cellMap);
+            const naviTarget = getIdByNaviId(`${target}`, cellMap);
+            return (
+              <Tag key={index} color='blue'>
+                {naviSource}
+                <SwapRightOutlined />
+                {naviTarget}
+              </Tag>
+            );
+          })}
+        </LabelComponent>
+      </Col>
+    );
+  }
+
   function getListData() {
     return aisles.map((item, index) => {
-      const { tunnelName, cells, tunnelInUnLockCell, in: entrance, out } = item;
+      const { tunnelName, cells, giveWayCellMap } = item;
       return {
         name: tunnelName,
         index,
         rawData: item,
         fields: [
           {
-            field: 'tunnelName',
-            label: <FormattedMessage id={'app.common.name'} />,
-            value: tunnelName,
-          },
-          {
-            field: 'cells',
             label: <FormattedMessage id={'app.map.cell'} />,
-            value: cells,
+            value: cells.map((cell) => getNaviIdById(cell, cellMap)),
           },
           {
-            field: 'tunnelInUnLockCell',
-            label: <FormattedMessage id={'editor.aisle.unLockCells'} />,
-            value: tunnelInUnLockCell,
-          },
-          {
-            field: 'entrance',
-            label: <FormattedMessage id={'editor.cellType.entrance'} />,
-            value: entrance,
-          },
-          {
-            field: 'out',
-            label: <FormattedMessage id={'editor.cellType.exit'} />,
-            value: out,
+            label: <FormattedMessage id={'editor.tunnel.giveWay'} />,
+            node: renderGiveWay(giveWayCellMap),
           },
         ],
       };
@@ -115,7 +120,7 @@ const AislePanel = (props) => {
             </div>
 
             {listData.length === 0 ? (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ color: '#fff' }} />
             ) : (
               listData.map((item) => (
                 <FunctionListItem
@@ -133,8 +138,8 @@ const AislePanel = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { mapContext } = editor;
+  const { mapContext, currentMap } = editor;
   const currentScopeMapData = getCurrentRouteMapData();
   const tunnels = currentScopeMapData?.tunnels ?? [];
-  return { mapContext, aisles: tunnels };
+  return { cellMap: currentMap.cellMap, mapContext, aisles: tunnels };
 })(memo(AislePanel));

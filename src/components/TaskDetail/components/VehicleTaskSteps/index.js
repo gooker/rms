@@ -97,23 +97,27 @@ const VehicleTaskSteps = (props) => {
           <FormattedMessage id={'app.taskDetail.subTaskDetail'} />:
         </h4>
         <Descriptions bordered>
-          <Descriptions.Item label="最后发送时间">
+          <Descriptions.Item label={formatMessage({ id: 'app.taskDetail.lastSendTime' })}>
             {subTask.lastSendTime
               ? convertToUserTimezone(subTask.lastSendTime).format('MM-DD HH:mm:ss')
               : null}
           </Descriptions.Item>
-          <Descriptions.Item label="更新时间">
+          <Descriptions.Item label={formatMessage({ id: 'app.common.updateTime' })}>
             {subTask.updateTime
               ? convertToUserTimezone(subTask.updateTime).format('MM-DD HH:mm:ss')
               : null}
           </Descriptions.Item>
-          <Descriptions.Item label="路线区">{subTask.routeMap ?? '--'}</Descriptions.Item>
-          <Descriptions.Item label="目标点">{subTask.targetCellId}</Descriptions.Item>
-          <Descriptions.Item label="目标点方向">
+          <Descriptions.Item label={formatMessage({ id: 'app.map.routeArea' })}>
+            {subTask.routeMap ?? '--'}
+          </Descriptions.Item>
+          <Descriptions.Item label={formatMessage({ id: 'app.common.targetCell' })}>
+            {subTask.targetCellId}
+          </Descriptions.Item>
+          <Descriptions.Item label={formatMessage({ id: 'app.taskDetail.dirOfTarget' })}>
             {!isNull(subTask.targetAngle) && `${subTask.targetAngle}°`}
           </Descriptions.Item>
           {!isStrictNull(subTask.skipReason) && (
-            <Descriptions.Item span={3} label="任务跳过原因">
+            <Descriptions.Item span={3} label={formatMessage({ id: 'app.taskDetail.skipReason' })}>
               {subTask.skipReason}
             </Descriptions.Item>
           )}
