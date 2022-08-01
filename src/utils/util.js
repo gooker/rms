@@ -6,7 +6,10 @@ import intl from 'react-intl-universal';
 import { getApiURL } from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import { ToteOffset, VehicleStateColor } from '@/config/consts';
-import { CustomNodeType, CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
+import {
+  CustomNodeType,
+  CustomNodeTypeFieldMap,
+} from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
 import { selectAllDB } from '@/utils/IndexDBUtil';
@@ -1275,7 +1278,7 @@ export function generateResourceGroups(record) {
 
   const names = [];
   allNames?.map((name) => {
-    names.push(<Tag color='blue'>{name}</Tag>);
+    names.push(<Tag color="blue">{name}</Tag>);
   });
 
   return names;
@@ -1332,4 +1335,28 @@ export function mathComputation(num1, num2, symbol) {
       break;
   }
   return result;
+}
+
+/**
+ * @param extraHeight 额外高度
+ * @param ref 组件ref
+ */
+export function getTableScrollY({ extraHeight, ref } = {}) {
+  if (isNull(extraHeight)) {
+    extraHeight = 64 + 24 * 2; // 分页组件高度
+  }
+  let dom = document;
+  if (ref?.current) {
+    dom = ref.current;
+  }
+  const headerHeight = dom.getElementsByClassName('ant-table-thead')[0];
+
+  //header到视窗上边的距离;
+  let headerBottom = 0;
+  if (headerHeight) {
+    headerBottom = headerHeight.getBoundingClientRect().bottom;
+  }
+  let height = `calc(100vh - ${headerBottom + extraHeight}px)`;
+  console.log(height);
+  return height;
 }
