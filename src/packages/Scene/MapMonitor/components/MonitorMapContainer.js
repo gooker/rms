@@ -4,7 +4,7 @@ import { connect } from '@/utils/RmsDva';
 import EventManager from '@/utils/EventManager';
 import { getRandomString, isNull } from '@/utils/util';
 import { convertLandCoordinate2Navi, transformXYByParams } from '@/utils/mapTransformer';
-import { EditorMapSizeKey, MonitorMapSizeKey, ZoneMarkerType } from '@/config/consts';
+import { MonitorMapSizeKey, ZoneMarkerType } from '@/config/consts';
 import MonitorMapView from './MonitorMapView';
 import MonitorMask from '@/packages/Scene/MapMonitor/components/MonitorMask';
 import MonitorFooter from '@/packages/Scene/MapMonitor/components/MonitorFooter';
@@ -85,7 +85,7 @@ const MonitorMapContainer = (props) => {
 
   function avoidOffScreen() {
     return throttle(function() {
-      const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem(EditorMapSizeKey));
+      const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem(MonitorMapSizeKey));
       const topLimit = y + (height - CLAMP_VALUE);
       if (this.top >= topLimit) {
         this.top = topLimit;
