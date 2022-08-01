@@ -116,14 +116,14 @@ class Header extends React.Component {
           {/* 刷新基础数据 */}
           <ReloadGlobalResource />
 
+          {/* 环境切换 */}
+          <SelectEnvironment />
+
           {/* 帮助文档 */}
           <HeaderHelpDoc />
 
           {/* 展示时区详情信息 */}
           <HeaderTimezone />
-
-          {/* 环境切换 */}
-          <SelectEnvironment />
 
           {/* 用户中心 */}
           <UserCenter />

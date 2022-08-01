@@ -13,7 +13,7 @@ const HeaderHelpDoc = ({ currentLang }) => {
   function viewPageHelpDoc() {
     const { pathname } = window.location;
     if (pathname === '/') {
-      //
+      // TODO: 展示完整的帮助文档
     } else {
       let fileName = pathname.split('/').at(-1);
       if (isStrictNull(currentLang)) {

@@ -236,10 +236,10 @@ const SimulatorPanel = (props) => {
                     disabled={isNull(vehicleType)}
                     size={size}
                     onClick={() => {
-                      setConfigurationVisible(true);
+                      setAddVisit(true);
                     }}
                   >
-                    <SettingOutlined /> <FormattedMessage id={'simulator.config.title'} />
+                    <PlusOutlined /> <FormattedMessage id='simulator.add.vehicle' />
                   </Button>
                 </Col>
                 <Col>
@@ -247,10 +247,10 @@ const SimulatorPanel = (props) => {
                     disabled={isNull(vehicleType)}
                     size={size}
                     onClick={() => {
-                      setAddVisit(true);
+                      setConfigurationVisible(true);
                     }}
                   >
-                    <PlusOutlined /> <FormattedMessage id='simulator.add.vehicle' />
+                    <SettingOutlined /> <FormattedMessage id={'simulator.config.title'} />
                   </Button>
                 </Col>
               </Row>

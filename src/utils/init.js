@@ -7,27 +7,19 @@ import { getTranslationByCode } from '@/services/translationService';
 import { getSystemLanguage } from '@/packages/Configuration/LanguageManage/translateUtils';
 import { fetchTaskTypes } from '@/services/taskService';
 import { fetchAllPrograming } from '@/services/XIHEService';
-import { fetchCustomParamType } from '@/services/commonService';
-import { fetchAllAdaptor, fetchResourceGroupType } from '@/services/resourceService';
+import { fetchAllAdaptor } from '@/services/resourceService';
 import { mockData } from '@/packages/Configuration/CustomMenuManager/components/mockData';
 
 export async function fetchGlobalExtraData() {
   const dispatch = window.$$dispatch;
   try {
     dispatch({ type: 'global/updateGlobalFetching', payload: true });
-    // 所有的任务类型、地图编程元数据、所有适配器数据、目标点源数据、资源组类型
-    const response = await Promise.all([
-      fetchTaskTypes(),
-      fetchAllPrograming(),
-      fetchAllAdaptor(),
-      fetchCustomParamType(),
-      fetchResourceGroupType(),
-    ]);
-    const [allTaskTypes, allPrograming, allAdaptors, targetDatasource, resourceGroupTypes] =
-      response;
+    // 所有的任务类型、地图编程元数据、所有适配器数据
+    const response = await Promise.all([fetchTaskTypes(), fetchAllPrograming(), fetchAllAdaptor()]);
+    const [allTaskTypes, allPrograming, allAdaptors] = response;
     const states = { globalFetching: false };
 
-    // 小车类型
+    // 任务类型
     if (!dealResponse(allTaskTypes)) {
       states.allTaskTypes = allTaskTypes;
     } else {
@@ -63,29 +55,6 @@ export async function fetchGlobalExtraData() {
       );
     }
 
-    // 适配器
-    if (!dealResponse(targetDatasource)) {
-      states.targetDatasource = targetDatasource;
-    } else {
-      message.error(
-        `${formatMessage(
-          { id: 'app.message.fetchFailTemplate' },
-          { type: formatMessage({ id: 'app.common.targetCell' }) },
-        )}`,
-      );
-    }
-
-    // 资源组类型
-    if (!dealResponse(resourceGroupTypes)) {
-      states.resourceGroupTypes = resourceGroupTypes;
-    } else {
-      message.error(
-        `${formatMessage(
-          { id: 'app.message.fetchFailTemplate' },
-          { type: formatMessage({ id: 'group.groupType' }) },
-        )}`,
-      );
-    }
     dispatch({ type: 'global/updateStateInBatch', payload: states });
   } catch (e) {
     console.error(e);

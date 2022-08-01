@@ -131,21 +131,19 @@ const VehicleTaskSteps = (props) => {
   return (
     <div>
       {/* 如果是自定义任务，那么需要显示自定义任务的Code和运单号 */}
-      {vehicleTask.vehicleTaskType === 'CUSTOM' && (
-        <Row gutter={24}>
-          <Col span={8}>
-            <Form.Item label={formatMessage({ id: 'menu.customTask' })}>
-              {`${vehicleTask.customName} (${vehicleTask.customCode})`}
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label={formatMessage({ id: 'app.taskDetail.externalCode' })}>
-              {vehicleTask.customTaskCode}
-            </Form.Item>
-          </Col>
-        </Row>
-      )}
-      <Steps direction="vertical">{renderSteps()}</Steps>
+      <Row gutter={24}>
+        <Col span={8}>
+          <Form.Item label={formatMessage({ id: 'menu.customTask' })}>
+            {`${vehicleTask.customName} (${vehicleTask.customCode})`}
+          </Form.Item>
+        </Col>
+        <Col span={8}>
+          <Form.Item label={formatMessage({ id: 'app.taskDetail.externalCode' })}>
+            {vehicleTask.customTaskCode}
+          </Form.Item>
+        </Col>
+      </Row>
+      <Steps direction='vertical'>{renderSteps()}</Steps>
     </div>
   );
 };

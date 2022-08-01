@@ -48,8 +48,6 @@ export default {
     allTaskTypes: {}, // 任务类型
     allAdaptors: {}, // 所有的适配器
     programing: [], // 所有地图编程元数据
-    targetDatasource: {}, // 目标点
-    resourceGroupTypes: [], // 资源组类型
   },
 
   reducers: {
