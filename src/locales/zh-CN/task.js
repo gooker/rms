@@ -13,7 +13,7 @@ export default {
   'app.task.detail': '任务详情',
   'app.task.info': '任务数据',
   'app.task.record': '任务记录',
-  'app.task.type': '任务类型',
+  'app.task.type': '任务名称', //任务类型
   'app.task.log': '任务日志',
 
   // 任务状态

@@ -328,6 +328,25 @@ const CustomTaskForm = (props) => {
     return ![CustomNodeType.BASE, CustomNodeType.START, CustomNodeType.END].includes(item.type);
   }
 
+  function onValuesChange(changedValue, allValues) {
+    if (changedValue?.[CustomNodeType.START]?.['vehicle']) {
+      // 分车数据改变且子任务的目标是载具，则需要重置目标值
+      Object.keys(allValues)
+        .filter((item) => item.startsWith(CustomNodeType.ACTION))
+        .forEach((actionKey) => {
+          const configLoad = allValues[actionKey];
+          const target = configLoad.targetAction.target;
+          if (!isNull(target) && target.type.startsWith('LOAD')) {
+            form.setFieldsValue({
+              [actionKey]: {
+                targetAction: { target: null },
+              },
+            });
+          }
+        });
+    }
+  }
+
   const plusMenu = (
     <Menu onClick={addTaskFlowNode}>
       <Menu.Item key={CustomNodeType.ACTION}>
@@ -440,7 +459,7 @@ const CustomTaskForm = (props) => {
         style={{ height: `calc(100vh - ${PageContentPadding}px)` }}
       >
         <div style={{ flex: 1 }}>
-          <Form labelWrap form={form} {...formItemLayout}>
+          <Form labelWrap form={form} onValuesChange={onValuesChange} {...formItemLayout}>
             {renderFormBody()}
           </Form>
         </div>

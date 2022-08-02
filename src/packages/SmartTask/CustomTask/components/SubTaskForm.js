@@ -212,9 +212,7 @@ const SubTaskForm = (props) => {
       >
         <TargetSelector
           dataSource={targetSource}
-          // vehicleSelection={form.getFieldValue(['START', 'vehicle'])}
-          form={form}
-          vehicleName={['START', 'vehicle']}
+          vehicleSelection={form.getFieldValue(['START', 'vehicle'])}
         />
       </Form.Item>
 

@@ -19,7 +19,7 @@ const RmsConfirm = ({ content, okType, onOk, okButtonProps, onCancel, okText, ca
   const confirmConfig = {
     title: formatMessage({ id: 'app.message.systemHint' }),
     icon: <ExclamationCircleOutlined />,
-    content,
+    content: content || formatMessage({ id: 'app.message.doubleConfirm' }),
     onOk,
     okButtonProps,
   };

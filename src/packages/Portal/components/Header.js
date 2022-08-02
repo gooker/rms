@@ -11,7 +11,6 @@ import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
 import HA from './HA';
 import ExpiredTip from './ExpiredTip';
-import ReloadGlobalResource from './ReloadGlobalResource';
 import SelectEnvironment from './SelectEnvironment';
 import UserCenter from './UserCenter';
 import SelectSection from './SelectSection';
@@ -114,7 +113,7 @@ class Header extends React.Component {
           {sysAuthInfo <= 30 && <ExpiredTip days={sysAuthInfo} />}
 
           {/* 刷新基础数据 */}
-          <ReloadGlobalResource />
+          {/*<ReloadGlobalResource />*/}
 
           {/* 环境切换 */}
           <SelectEnvironment />

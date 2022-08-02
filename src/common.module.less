@@ -61,7 +61,6 @@
 // 表格页面样式
 .tableWrapper {
   flex: 1;
-  overflow: auto;
 
   :global {
     .ant-table-wrapper {
@@ -77,15 +76,14 @@
 
       .ant-table {
         flex: 1;
-        overflow: auto;
 
         .ant-table-container {
           display: flex;
           flex-flow: column nowrap;
           height: 100%;
 
-          .ant-table-content {
-            overflow: auto !important;
+          .ant-table-body {
+            overflow-y: auto !important;
           }
         }
       }

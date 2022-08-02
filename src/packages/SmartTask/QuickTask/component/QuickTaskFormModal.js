@@ -139,22 +139,22 @@ function generateVariable({ codes, sample }) {
   // 任务开始
   const { vehicle, vehicleLimit } = customStart;
   result.customStart.vehicle = {
-    config: { visible: true, isRequired: true },
+    config: { visible: false, isRequired: false },
     value: vehicle,
   };
   result.customStart.vehicleLimit = {
-    config: { visible: true, isRequired: false },
+    config: { visible: false, isRequired: false },
     value: vehicleLimit,
   };
 
   // 任务结束
   const { backZone, loadBackZone } = customEnd;
   result.customEnd.backZone = {
-    config: { visible: true, isRequired: false },
+    config: { visible: false, isRequired: false },
     value: backZone,
   };
   result.customEnd.loadBackZone = {
-    config: { visible: true, isRequired: false },
+    config: { visible: false, isRequired: false },
     value: loadBackZone,
   };
 
@@ -164,7 +164,7 @@ function generateVariable({ codes, sample }) {
     result['customAction'][codes[codeIndex]] = {};
     Object.entries(stepConfig).forEach(([field, value]) => {
       result['customAction'][codes[codeIndex]][field] = {
-        config: { visible: true, isRequired: false },
+        config: { visible: false, isRequired: false },
         value: value,
       };
     });

@@ -1,9 +1,9 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Divider, Switch, Tag, Typography } from 'antd';
+import { Divider, message, Switch, Tag, Typography } from 'antd';
 import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
-import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { saveQuickTask } from '@/services/smartTaskService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
@@ -14,6 +14,8 @@ import QuickTaskTool from './component/QuickTaskTool';
 import ShardDrawer from './component/ShardDrawer';
 import RmsConfirm from '@/components/RmsConfirm';
 import styles from './quickTask.module.less';
+import { checkQuickVariable, convertQuickTaskVarToRequestStruct } from '@/packages/SmartTask/QuickTask/quickTaskUtil';
+import { executeCustomTask } from '@/services/commonService';
 
 const Colors = Dictionary().color;
 const drawerWidth = 378;
@@ -150,13 +152,60 @@ const QuickTask = (props) => {
     });
   }
 
+  /**
+   * 先检查该快捷任务是否需要弹窗
+   * 1. 首先只需要检查"可见"的项
+   * 2. "必填"的项必须有值
+   */
   function execute(record) {
-    dispatch({
-      type: 'quickTask/updateState',
-      payload: {
-        editing: record,
-        executeModalVisible: true,
-      },
+    const showFormModal = checkQuickVariable(record.variable);
+    if (showFormModal) {
+      dispatch({
+        type: 'quickTask/updateState',
+        payload: {
+          editing: record,
+          executeModalVisible: true,
+        },
+      });
+    } else {
+      // 因为不需要填写表单，所以参数直接使用默认的
+      const requestParam = convertQuickTaskVarToRequestStruct(record.variable);
+      doExecution(requestParam, record.isNeedConfirm);
+    }
+  }
+
+  function doExecution(requestParam, isNeedConfirm) {
+    if (isNeedConfirm) {
+      RmsConfirm({
+        onOk: () => {
+          sendTask(requestParam);
+        },
+      });
+    } else {
+      sendTask(requestParam);
+    }
+  }
+
+  function sendTask(requestParam) {
+    const customTask = find(customTasks, { code: requestParam.code });
+    if (isNull(customTask)) {
+      message.error(formatMessage({ id: 'variable.customTaskData.missing' }));
+      return;
+    }
+
+    // 将customAction的key转换成step
+    let customAction = {};
+    Object.entries(requestParam.customAction).forEach(([nodeCode, data]) => {
+      const index = customTask.codes.indexOf(nodeCode);
+      customAction[`step${index}`] = data;
+    });
+    requestParam.customAction = customAction;
+    executeCustomTask(requestParam).then((response) => {
+      if (!dealResponse(response)) {
+        message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+      } else {
+        message.error(formatMessage({ id: 'app.message.operateFailed' }));
+      }
     });
   }
 

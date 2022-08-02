@@ -4,7 +4,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { connect } from '@/utils/RmsDva';
 
 const BackZoneSelector = (props) => {
-  const { cellGroup, value, onChange,divstyle } = props;
+  const { cellGroup, value, onChange, style } = props;
   const currentValue = { ...value }; // {type:xxx, code:[]}
 
   function onTypeChange(_value) {
@@ -49,7 +49,7 @@ const BackZoneSelector = (props) => {
   }
 
   return (
-    <div style={{...divstyle}}>
+    <div style={{ ...style }}>
       <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 150 }}>
         <Select.Option value={'CELL'}>
           <FormattedMessage id={'app.map.cell'} />
