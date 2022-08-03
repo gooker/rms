@@ -1097,7 +1097,7 @@ export default {
       const currentFunctionIndex = currentFunction.flag - 1;
       delete currentFunction.flag;
       // 方法返回并渲染到地图的数据
-      let viewReturn;
+      let viewReturn = currentFunction;
 
       if (type === 'chargerList') {
         // 需要将停止点由导航ID替换为业务ID,当然地图渲染也是基于业务ID
@@ -1118,9 +1118,9 @@ export default {
         scopeData[type] = mapScopeTypeData;
         return { type: 'add', payload: viewReturn };
       } else {
-        mapScopeTypeData.splice(currentFunctionIndex, 1, currentFunction);
+        const [pre] = mapScopeTypeData.splice(currentFunctionIndex, 1, currentFunction);
         scopeData[type] = mapScopeTypeData;
-        return { type: 'update', current: viewReturn };
+        return { type: 'update', current: viewReturn, pre };
       }
     },
 

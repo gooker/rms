@@ -306,17 +306,16 @@ const EditorMapContainer = (props) => {
     if (Array.isArray(nonStopCellIds)) {
       mapContext.renderNonStopCells(nonStopCellIds);
     }
-    // 通道
-    if (Array.isArray(tunnels)) {
-      mapContext.renderTunnel(tunnels);
-    }
     // 渲染线条
     mapContext.renderCostLines(
       relations || [],
       shownCellCoordinateType,
       currentMap.transform || {},
     );
-
+    // 通道
+    if (Array.isArray(tunnels)) {
+      mapContext.renderTunnel(tunnels);
+    }
     // 标记地图编程
     const { programing } = currentRouteMapData;
     if (isPlainObject(programing)) {

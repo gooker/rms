@@ -153,18 +153,24 @@ const CustomTaskForm = (props) => {
   }
 
   function gotoListPage() {
-    Modal.confirm({
-      title: formatMessage({ id: 'customTask.backToList' }),
-      content: formatMessage({ id: 'customTasks.form.clear.warn' }),
-      onOk: () => {
-        const initialTaskSteps = getInitialTaskSteps();
-        setTaskSteps(initialTaskSteps);
-        setCurrentCode(initialTaskSteps[0].code);
-        form.resetFields();
-        dispatch({ type: 'customTask/saveEditingRow', payload: null });
-        dispatch({ type: 'customTask/saveState', payload: { listVisible: !listVisible } });
-      },
-    });
+    function back() {
+      const initialTaskSteps = getInitialTaskSteps();
+      setTaskSteps(initialTaskSteps);
+      setCurrentCode(initialTaskSteps[0].code);
+      form.resetFields();
+      dispatch({ type: 'customTask/saveEditingRow', payload: null });
+      dispatch({ type: 'customTask/saveState', payload: { listVisible: !listVisible } });
+    }
+
+    if (isNull(editingRow) || (!editingRow.readOnly && !editingRow.viewMode)) {
+      Modal.confirm({
+        title: formatMessage({ id: 'customTask.backToList' }),
+        content: formatMessage({ id: 'customTasks.form.clear.warn' }),
+        onOk: back,
+      });
+    } else {
+      back();
+    }
   }
 
   function renderFormBody() {
@@ -328,6 +334,25 @@ const CustomTaskForm = (props) => {
     return ![CustomNodeType.BASE, CustomNodeType.START, CustomNodeType.END].includes(item.type);
   }
 
+  function onValuesChange(changedValue, allValues) {
+    if (changedValue?.[CustomNodeType.START]?.['vehicle']) {
+      // 分车数据改变且子任务的目标是载具，则需要重置目标值
+      Object.keys(allValues)
+        .filter((item) => item.startsWith(CustomNodeType.ACTION))
+        .forEach((actionKey) => {
+          const configLoad = allValues[actionKey];
+          const target = configLoad.targetAction.target;
+          if (!isNull(target) && target.type.startsWith('LOAD')) {
+            form.setFieldsValue({
+              [actionKey]: {
+                targetAction: { target: null },
+              },
+            });
+          }
+        });
+    }
+  }
+
   const plusMenu = (
     <Menu onClick={addTaskFlowNode}>
       <Menu.Item key={CustomNodeType.ACTION}>
@@ -353,6 +378,7 @@ const CustomTaskForm = (props) => {
             type='warning'
             message={formatMessage({ id: 'app.message.systemHint' })}
             description={formatMessage({ id: 'customTasks.readOnly.tip' })}
+            style={{ width: 350 }}
           />
         </div>
       )}
@@ -440,7 +466,7 @@ const CustomTaskForm = (props) => {
         style={{ height: `calc(100vh - ${PageContentPadding}px)` }}
       >
         <div style={{ flex: 1 }}>
-          <Form labelWrap form={form} {...formItemLayout}>
+          <Form labelWrap form={form} onValuesChange={onValuesChange} {...formItemLayout}>
             {renderFormBody()}
           </Form>
         </div>
@@ -448,7 +474,7 @@ const CustomTaskForm = (props) => {
           <Button danger onClick={gotoListPage}>
             <CloseOutlined /> <FormattedMessage id='app.button.return' />
           </Button>
-          {(isNull(editingRow) || !editingRow.readOnly) && (
+          {(isNull(editingRow) || (!editingRow.readOnly && !editingRow.viewMode)) && (
             <Button type='primary' onClick={submit}>
               <SaveOutlined /> <FormattedMessage id='app.button.save' />
             </Button>

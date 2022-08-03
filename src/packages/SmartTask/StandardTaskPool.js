@@ -3,7 +3,6 @@ import { Badge, Button, Divider, message, Row, Tooltip } from 'antd';
 import { DeleteOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
-import { VehicleType } from '@/config/config';
 import { TaskStateBageType, VehicleStateColor } from '@/config/consts';
 import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import { fetchExecutingTasks, fetchPipeLineTasks } from '@/services/taskService';
@@ -57,12 +56,8 @@ class StandardTaskPool extends React.Component {
     },
     {
       title: <FormattedMessage id='app.task.type' />,
-      dataIndex: 'vehicleTaskType',
+      dataIndex: 'customName',
       align: 'center',
-      render: (text) => {
-        const { allTaskTypes } = this.props;
-        return allTaskTypes?.[VehicleType.LatentLifting]?.[text] || text;
-      },
     },
     {
       title: <FormattedMessage id='vehicle.id' />,

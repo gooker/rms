@@ -8,18 +8,7 @@ import VehicleSelector from '../components/VehicleSelector';
 import ResourceLimit from './ResourceLimit';
 
 const StartForm = (props) => {
-  const { code, type, hidden, loadSpecification, storageSpecification } = props;
-
-  function validateVehicle(_, value) {
-    if (value.type === 'AUTO') {
-      return Promise.resolve();
-    } else {
-      if (value.code.length > 0) {
-        return Promise.resolve();
-      }
-      return Promise.reject(new Error(formatMessage({ id: 'customTask.require.vehicle' })));
-    }
-  }
+  const { code, type, hidden, storageSpecification, loadSpecification, targetSource } = props;
 
   return (
     <>
@@ -44,14 +33,13 @@ const StartForm = (props) => {
       {/* --------------------------------------------------------------- */}
       {/* 分小车: 当前执行任务的指定vehicle资源-->小车/小车组/无 */}
       <Form.Item
-        hidden={hidden}
         required
+        hidden={hidden}
         name={[code, 'vehicle']}
         initialValue={{ type: 'AUTO', code: [] }}
         label={<FormattedMessage id='customTask.form.vehicle' />}
-        rules={[{ validator: validateVehicle }]}
       >
-        <VehicleSelector/>
+        <VehicleSelector dataSource={targetSource} />
       </Form.Item>
 
       {/* 资源约束：customLimit */}
@@ -79,6 +67,7 @@ const StartForm = (props) => {
   );
 };
 export default connect(({ customTask }) => ({
+  targetSource: customTask?.targetSource,
   loadSpecification: customTask.loadSpecification,
   storageSpecification: customTask.storageSpecification,
 }))(memo(StartForm));

@@ -1,7 +1,6 @@
 import React, { Fragment, memo } from 'react';
 import { Button, Col, Divider, Form, InputNumber, Row, Select } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { isPlainObject } from 'lodash';
 import {
   convertMapToArrayMap,
   formatMessage,
@@ -16,6 +15,7 @@ import VehicleVariable from '@/components/VariableModification/VehicleVariable';
 import ResourceLimit from '@/packages/SmartTask/CustomTask/components/ResourceLimit';
 import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
+import commonStyle from '@/common.module.less';
 
 const { formItemLayout } = getFormLayout(4, 18);
 const VariableModification = (props) => {
@@ -55,7 +55,6 @@ const VariableModification = (props) => {
         }
       }
     }
-    // return <FormattedMessage id={`customTask.type.${nodeType}`} />;
   }
 
   function renderStartVariable() {
@@ -73,7 +72,7 @@ const VariableModification = (props) => {
                 label={<FormattedMessage id="customTask.form.vehicle" />}
                 initialValue={{ type: variableKey, code: variableValue }}
               >
-                <VehicleVariable   dataSource={targetSource} />
+                <VehicleVariable dataSource={targetSource} />
               </Form.Item>
             );
           })}
@@ -128,7 +127,7 @@ const VariableModification = (props) => {
                     limit={variableKey}
                     dataSource={targetSource}
                     form={form}
-                    vehicleName={vehicleName}
+                    vehiclePathName={vehicleName}
                   />
                 </Form.Item>,
               ),
@@ -152,7 +151,7 @@ const VariableModification = (props) => {
                   dataSource={targetSource}
                   limit={variableKey}
                   form={form}
-                  vehicleName={vehicleName}
+                  vehiclePathName={vehicleName}
                 />
               </Form.Item>,
             ),
@@ -266,6 +265,7 @@ const VariableModification = (props) => {
         <>
           <Divider orientation={'left'}>{renderPartTitle('END')}</Divider>
           <Fragment>
+            {/* 载具自动放回储位 */}
             <Form.Item label={formatMessage({ id: 'customTask.form.loadBackZone' })}>
               <Form.List
                 name={
@@ -285,12 +285,8 @@ const VariableModification = (props) => {
                         <Col style={{ display: 'flex', alignItems: 'center' }}>
                           <Button
                             onClick={() => remove(field.name)}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              width: '32px',
-                            }}
+                            className={commonStyle.flexCenter}
+                            style={{ width: '32px' }}
                           >
                             <MinusOutlined />
                           </Button>
@@ -305,11 +301,11 @@ const VariableModification = (props) => {
               </Form.List>
             </Form.Item>
 
-            {/* 返回区域 */}
+            {/* 自动找停车点 */}
             <Form.Item label={formatMessage({ id: 'customTask.form.backZone' })}>
               <Form.List
-                name={prefix ? [prefix, 'customEnd', 'backZone'] : ['customEnd', 'backZone']}
                 initialValue={backZoneInitValue}
+                name={prefix ? [prefix, 'customEnd', 'backZone'] : ['customEnd', 'backZone']}
               >
                 {(fields, { add, remove }) => (
                   <>
@@ -323,12 +319,8 @@ const VariableModification = (props) => {
                         <Col style={{ display: 'flex', alignItems: 'center' }}>
                           <Button
                             onClick={() => remove(field.name)}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              width: '32px',
-                            }}
+                            className={commonStyle.flexCenter}
+                            style={{ width: '32px' }}
                           >
                             <MinusOutlined />
                           </Button>
@@ -359,56 +351,6 @@ const VariableModification = (props) => {
 export default connect(({ quickTask }) => ({
   targetSource: quickTask.targetSource,
 }))(memo(VariableModification));
-
-// 提取变量表单数据并转换成合适的结构
-export function formatVariableFormValues(values, hasPrefix = false) {
-  function format(inputValue) {
-    const result = {};
-    const { customStart, customAction, customEnd } = inputValue;
-
-    // 任务开始
-    result.customStart = { vehicle: {}, vehicleLimit: {} };
-    const { vehicle, vehicleLimit } = customStart;
-    result.customStart['vehicle'][vehicle.type] = vehicle.code;
-    result.customStart.vehicleLimit = vehicleLimit;
-
-    // 子任务
-    result.customAction = {};
-    Object.entries(customAction).forEach(([step, stepLoad]) => {
-      if (result.customAction[step] === undefined) {
-        result.customAction[step] = {};
-      }
-      Object.entries(stepLoad).forEach(([fieldKey, fieldValue]) => {
-        if (result.customAction[step][fieldKey] === undefined) {
-          result.customAction[step][fieldKey] = {};
-        }
-        if (isPlainObject(fieldValue)) {
-          // 目标点只会有一种
-          const key = Object.keys(fieldValue)[0];
-          result.customAction[step][fieldKey][key] = fieldValue[key]['code'];
-        } else {
-          result.customAction[step][fieldKey] = fieldValue;
-        }
-      });
-    });
-
-    // 任务结束
-    result.customEnd = {};
-    const { backZone, loadBackZone } = customEnd;
-    result.customEnd.backZone = backZone.map(({ type, code }) => ({ [type]: code }));
-    result.customEnd.loadBackZone = loadBackZone.map(({ type, code }) => ({ [type]: code }));
-    return result;
-  }
-
-  if (hasPrefix) {
-    const result = {};
-    Object.entries(values).forEach(([prefix, inputValue]) => {
-      result[prefix] = format(inputValue);
-    });
-    return result;
-  }
-  return format(values);
-}
 
 export function convertBackZoneToFormValue(value) {
   if (Array.isArray(value)) {

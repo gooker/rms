@@ -1,11 +1,10 @@
 import React, { memo, useEffect } from 'react';
 import find from 'lodash/find';
 import { Card, Form, Modal } from 'antd';
-import { CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import { formatMessage } from '@/utils/util';
-import VariableModification, {
-  formatVariableFormValues,
-} from '@/components/VariableModification/VariableModification';
+import { CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
+import VariableModification from '@/components/VariableModification/VariableModification';
+import { formatVariableFormValues } from '@/packages/SmartTask/QuickTask/quickTaskUtil';
 
 const reversedModelTypeFieldMap = {};
 Object.keys(CustomNodeTypeFieldMap).forEach((key) => {

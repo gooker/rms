@@ -6,16 +6,18 @@ import { connect } from '@/utils/RmsDva';
 import { convertMapToArrayMap, formatMessage, getFormLayout, getRandomString, isNull } from '@/utils/util';
 import FormModal from '@/components/FormModal';
 import FormattedMessage from '@/components/FormattedMessage';
-import VehicleVariable from '@/components/VariableModification/VehicleVariable';
 import ResourceLimit from '@/packages/SmartTask/CustomTask/components/ResourceLimit';
 import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
+import VehicleSelector from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
 
 const cardStyle = {
   style: { marginBottom: 16, border: '1px solid #d4d4d4' },
   bodyStyle: { borderTop: '1px solid #d4d4d4' },
 };
-const { formItemLayout } = getFormLayout(4, 18);
+const { formItemLayout } = getFormLayout(4, 20);
+const formLayout = getFormLayout(2, 22);
+
 const VariableModificationModal = (props) => {
   const { quickTask, visible, customTask, onOk, onCancel, loadSpecification, targetSource } = props;
 
@@ -102,8 +104,9 @@ const VariableModificationModal = (props) => {
                   name={['customStart', 'vehicle', 'value']}
                   label={<FormattedMessage id='customTask.form.vehicle' />}
                   initialValue={{ type: variableKey, code: variableValue }}
+                  {...formLayout.formItemLayout}
                 >
-                  <VehicleVariable />
+                  <VehicleSelector dataSource={targetSource} width={590} />
                 </Form.Item>
               );
             })}
@@ -209,11 +212,13 @@ const VariableModificationModal = (props) => {
                       </>
                     }
                     initialValue={{ type: variableKey, code: variableValue }}
+                    {...formLayout.formItemLayout}
                   >
                     <TargetSelector
                       dataSource={targetSource}
                       vehicleSelection={vehicleSelection}
                       limit={variableKey}
+                      width={590}
                     />
                   </Form.Item>
                 </Card>,
@@ -259,11 +264,13 @@ const VariableModificationModal = (props) => {
                   name={['customAction', nodeType, 'params', 'value']}
                   label={<FormattedMessage id={'app.common.targetCell'} />}
                   initialValue={{ type: variableKey, code: variableValue }}
+                  {...formLayout.formItemLayout}
                 >
                   <TargetSelector
                     dataSource={targetSource}
                     limit={variableKey}
                     vehicleSelection={vehicleSelection}
+                    width={560}
                   />
                 </Form.Item>
               </Card>,

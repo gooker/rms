@@ -13,7 +13,7 @@ export default {
   'app.task.detail': '任务详情',
   'app.task.info': '任务数据',
   'app.task.record': '任务记录',
-  'app.task.type': '任务类型',
+  'app.task.type': '任务名称', //任务类型
   'app.task.log': '任务日志',
 
   // 任务状态
@@ -153,6 +153,9 @@ export default {
   'app.taskDetail.confirmHugTote': '确认料箱车抱夹信息',
   'app.taskDetail.confirmToteHolding': '请确定车体抱夹上的料箱信息',
   'app.taskDetail.taskStep': '任务步数',
+  'app.taskDetail.lastSendTime': '最后发送时间',
+  'app.taskDetail.dirOfTarget': '目标点方向',
+  'app.taskDetail.skipReason': '任务跳过原因',
 
   // 任务日志
   'app.taskLog.Vehicle': '车辆',

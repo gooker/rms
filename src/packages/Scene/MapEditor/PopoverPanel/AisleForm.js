@@ -1,66 +1,72 @@
 import React, { memo } from 'react';
 import { Form, Input } from 'antd';
-import { find, isEmpty } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { getCurrentRouteMapData } from '@/utils/mapUtil';
+import { getIdByNaviId, getNaviIdById } from '@/utils/mapUtil';
 import { formatMessage, getRandomString } from '@/utils/util';
 import { MapSelectableSpriteType } from '@/config/consts';
-import FormattedMessage from '@/components/FormattedMessage';
 import ButtonInput from '@/components/ButtonInput';
 import styles from '../../popoverPanel.module.less';
+import { isPlainObject } from 'lodash';
 
 const AisleForm = (props) => {
-  const { dispatch, flag, aisle, mapContext, selectCellIds, selectRelations } = props;
+  const { dispatch, flag, aisle, cellMap, mapContext, selectCellIds, selectRelations } = props;
   const [formRef] = Form.useForm();
 
-  function onValuesChange(changedValues, allValues) {
-    let currentTunnel = { ...allValues };
-    if (!currentTunnel.tunnelName || currentTunnel?.cells?.length === 0) return;
-    // TODO: 避让方向和避让规则选择的线条，必定有同一个起点
+  function onValuesChange() {
+    setTimeout(() => {
+      formRef
+        .validateFields()
+        .then((value) => {
+          const currentTunnel = { ...value };
+          // 这里的点位是导航ID，需要转换成业务ID
+          currentTunnel.cells = currentTunnel.cells.map((item) => getIdByNaviId(item, cellMap));
 
-    // 避让方向
-    let tmpData = null;
-    if (Array.isArray(currentTunnel.giveWayCellMap) && !isEmpty(currentTunnel.giveWayCellMap)) {
-      tmpData = {};
-      currentTunnel.giveWayCellMap.forEach((item) => {
-        const [begin, end] = item.split('-');
-        tmpData[begin] = parseInt(end);
-      });
-    }
-    currentTunnel.giveWayCellMap = tmpData;
+          // 避让方向
+          // TIPS: 注意这里使用的是业务ID
+          let tmpData = null;
+          if (Array.isArray(currentTunnel.giveWayCellMap)) {
+            tmpData = {};
+            currentTunnel.giveWayCellMap.forEach((item) => {
+              const [begin, end] = item.split('-');
+              tmpData[begin] = parseInt(end);
+            });
+          }
+          currentTunnel.giveWayCellMap = tmpData;
 
-    // 避让规则
-    tmpData = null;
-    const { relations } = getCurrentRouteMapData();
-    if (
-      Array.isArray(currentTunnel.giveWayRelationMap) &&
-      !isEmpty(currentTunnel.giveWayRelationMap)
-    ) {
-      tmpData = {};
-      currentTunnel.giveWayRelationMap.forEach((item) => {
-        const [source, target] = item.split('-');
-        tmpData[source] = find(relations, {
-          source: parseInt(source),
-          target: parseInt(target),
+          dispatch({
+            type: 'editor/updateFunction',
+            payload: { scope: 'route', type: 'tunnels', data: currentTunnel },
+          }).then((result) => {
+            if (result.type === 'add') {
+              mapContext.renderTunnel([result.payload], false, 'add');
+            }
+            if (result.type === 'update') {
+              const { pre, current } = result;
+              mapContext.renderTunnel([pre], false, 'remove');
+              mapContext.renderTunnel([current], false, 'add');
+            }
+            mapContext.refresh();
+          });
+        })
+        .catch(() => {
         });
-      });
-    }
-    currentTunnel.giveWayRelationMap = tmpData;
-
-    dispatch({
-      type: 'editor/updateFunction',
-      payload: { scope: 'route', type: 'tunnels', data: currentTunnel },
-    }).then((result) => {
-      if (result.type === 'add') {
-        mapContext.renderTunnel([result.payload], false, 'add');
-      }
-      if (result.type === 'update') {
-        const { pre, current } = result;
-        mapContext.renderTunnel([pre], false, 'remove');
-        mapContext.renderTunnel([current], false, 'add');
-      }
-      mapContext.refresh();
     });
+  }
+
+  // 将导航Id转回到业务id
+  function convertToLand(cellIds) {
+    if (Array.isArray(cellIds)) {
+      return cellIds.map((item) => getNaviIdById(item, cellMap));
+    }
+    return [];
+  }
+
+  //TIPS: 这里并没有
+  function getGiveWayCellMap(map) {
+    if (isPlainObject(map)) {
+      return Object.entries(map).map(([source, target]) => `${source}-${target}`);
+    }
+    return [];
   }
 
   return (
@@ -89,43 +95,28 @@ const AisleForm = (props) => {
         {/* 点位 */}
         <Form.Item
           name={'cells'}
-          initialValue={aisle?.cells || []}
+          initialValue={convertToLand(aisle?.cells)}
           rules={[{ required: true }]}
-          label={<FormattedMessage id="app.map.cell" />}
+          label={formatMessage({ id: 'app.map.cell' })}
         >
           <ButtonInput
+            multi
             maxTagCount={100}
-            multi={true}
             data={selectCellIds}
             btnDisabled={selectCellIds.length === 0}
           />
         </Form.Item>
 
-        {/* 避让点*/}
+        {/* 避让方向*/}
         <Form.Item
           name={'giveWayCellMap'}
-          // initialValue={aisle?.cells || []}
           rules={[{ required: true }]}
-          label={<FormattedMessage id="editor.tunnel.giveWay" />}
+          label={formatMessage({ id: 'editor.tunnel.giveWay' })}
+          initialValue={getGiveWayCellMap(aisle?.giveWayCellMap)}
         >
           <ButtonInput
+            multi
             maxTagCount={100}
-            multi={true}
-            data={selectRelations}
-            btnDisabled={selectRelations.length === 0}
-          />
-        </Form.Item>
-
-        {/* 避让方向 */}
-        <Form.Item
-          name={'giveWayRelationMap'}
-          // initialValue={aisle?.cells || []}
-          rules={[{ required: true }]}
-          label={<FormattedMessage id="editor.tunnel.giveWayDirection" />}
-        >
-          <ButtonInput
-            maxTagCount={100}
-            multi={true}
             data={selectRelations}
             btnDisabled={selectRelations.length === 0}
           />
@@ -135,15 +126,15 @@ const AisleForm = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { selections, mapContext } = editor;
+  const { selections, mapContext, currentMap } = editor;
 
   const selectCellIds = selections
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
-    .map(({ id }) => id);
+    .map(({ naviId }) => naviId);
 
   const selectRelations = selections
     .filter((item) => item.type === MapSelectableSpriteType.ROUTE)
     .map(({ id }) => id);
 
-  return { mapContext, selectCellIds, selectRelations };
+  return { cellMap: currentMap.cellMap, mapContext, selectCellIds, selectRelations };
 })(memo(AisleForm));

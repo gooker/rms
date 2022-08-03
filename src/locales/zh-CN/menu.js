@@ -33,17 +33,6 @@ export default {
   'menu.waitingQueue': '等待队列',
   'menu.executingQueue': '执行队列',
 
-  // DevOps
-  'menu.systemLogWarehouse': '系统日志',
-  'menu.operationLog': '操作日志',
-  'menu.alertCenter': '告警中心',
-  'menu.pda': '虚拟PDA',
-  'menu.upgradeOnline': '在线升级',
-  'menu.performanceMonitoring': '性能监控',
-  'menu.feedback': '问题反馈',
-  'menu.utilBox': '实用工具',
-  'menu.db': '数据库操作',
-
   // SSO
   'menu.userManager': '用户管理',
   'menu.sectionManger': '区域管理',
@@ -113,7 +102,7 @@ export default {
   'menu.carryTaskPool': '任务排程池',
   'menu.carryTaskManagement': '任务查询',
 
-  // 场景
+  // 地图
   'menu.editor': '地图编辑',
   'menu.monitor': '地图监控',
   'menu.recorder': '地图回放',
@@ -132,20 +121,13 @@ export default {
   'menu.cleaningPlan': '清扫计划',
   'menu.cleaningRecord': '清扫记录',
 
-  // 配置
-  'menu.authorizationCenter': '授权中心',
-  'menu.strategy': '策略',
-  'menu.strategy.chargingStrategy': '充电策略',
-  'menu.systemConfig': '系统配置',
-  'menu.systemConfig.oem': 'OEM',
-  'menu.systemConfig.customMenuManager': '自定义菜单',
-  'menu.systemConfig.parameters': '参数配置',
-  'menu.systemConfig.requestor': '接口请求库',
-  'menu.systemConfig.richEditor': '富文本编辑',
-  'menu.systemConfig.timeZone': '系统时区',
-  'menu.systemConfig.i18n': '国际化',
-  'menu.integration': '系统集成',
-  'menu.integration.webHook': 'Webhook',
+  // 潜伏料箱
+  'menu.latentToteTaskManagement': '任务管理',
+  'menu.mockTask': '模拟任务',
+  'menu.pod': '货架',
+  'menu.pod.podManagement': '货架管理',
+  'menu.scoringAlgorithm': '打分算法',
+  'menu.latentToteStationList': '工作站列表',
 
   // 报表数据
   'menu.healthReport': '健康报表',
@@ -169,11 +151,31 @@ export default {
   'menu.waitingReport': '空等报表',
   'menu.flowReport': '流量报表',
 
-  // 潜伏料箱
-  'menu.latentToteTaskManagement': '任务管理',
-  'menu.mockTask': '模拟任务',
-  'menu.pod': '货架',
-  'menu.pod.podManagement': '货架管理',
-  'menu.scoringAlgorithm': '打分算法',
-  'menu.latentToteStationList': '工作站列表',
+  // 配置
+  'menu.authorizationCenter': '授权中心',
+  'menu.strategy': '策略',
+  'menu.strategy.chargingStrategy': '充电策略',
+  'menu.integration': '系统集成',
+  'menu.integration.webHook': 'Webhook',
+  'menu.systemConfig': '系统配置',
+  'menu.systemConfig.sectionConfig': '区域级配置',
+  'menu.systemConfig.sectionConfig.parameters': '参数配置',
+  'menu.systemConfig.globalConfig': '全域级配置',
+  'menu.systemConfig.globalConfig.oem': 'OEM',
+  'menu.systemConfig.globalConfig.customMenuManager': '自定义菜单',
+  'menu.systemConfig.globalConfig.richEditor': '富文本编辑',
+  'menu.systemConfig.globalConfig.timeZone': '系统时区',
+  'menu.systemConfig.globalConfig.i18n': '国际化',
+
+  // DevOps
+  'menu.systemLogWarehouse': '系统日志',
+  'menu.operationLog': '操作日志',
+  'menu.alertCenter': '告警中心',
+  'menu.pda': '虚拟PDA',
+  'menu.upgradeOnline': '在线升级',
+  'menu.performanceMonitoring': '性能监控',
+  'menu.feedback': '问题反馈',
+  'menu.utilBox': '实用工具',
+  'menu.db': '数据库操作',
+  'menu.requestor': '接口请求库',
 };

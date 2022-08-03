@@ -6,10 +6,7 @@ import intl from 'react-intl-universal';
 import { getApiURL } from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import { ToteOffset, VehicleStateColor } from '@/config/consts';
-import {
-  CustomNodeType,
-  CustomNodeTypeFieldMap,
-} from '@/packages/SmartTask/CustomTask/customTaskConfig';
+import { CustomNodeType, CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
 import { selectAllDB } from '@/utils/IndexDBUtil';
@@ -1356,6 +1353,5 @@ export function getTableScrollY({ extraHeight, ref } = {}) {
   if (headerHeight) {
     headerBottom = headerHeight.getBoundingClientRect().bottom;
   }
-  let height = `calc(100vh - ${headerBottom + extraHeight}px)`;
-  return height;
+  return `calc(100vh - ${headerBottom + extraHeight}px)`;
 }

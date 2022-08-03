@@ -43,46 +43,55 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
-        path: `/${AppCode.Configuration}/oem`, // OEM
-        name: 'oem',
-        component: '/Configuration/OEM',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
-        path: `/${AppCode.Configuration}/customMenuManager`, // 自定义菜单
-        name: 'customMenuManager',
-        component: '/Configuration/CustomMenuManager',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
-        path: `/${AppCode.Configuration}/system/parameters`,
-        name: 'parameters',
+        path: `/${AppCode.Configuration}/system/global`, // 全域级配置
+        name: 'globalConfig',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-        component: '/Configuration/SystemParameters',
+        routes: [
+          {
+            path: `/${AppCode.Configuration}/system/global/oem`, // OEM
+            name: 'oem',
+            component: '/Configuration/OEM',
+            authority: ['ADMIN', 'SUPERMANAGER'],
+          },
+          {
+            path: `/${AppCode.Configuration}/system/global/customMenuManager`, // 自定义菜单
+            name: 'customMenuManager',
+            component: '/Configuration/CustomMenuManager',
+            authority: ['ADMIN', 'SUPERMANAGER'],
+          },
+
+          {
+            path: `/${AppCode.Configuration}/system/global/richEditor`, // 富文本编辑
+            name: 'richEditor',
+            component: '/Configuration/RichEditor/index',
+            hooks: ['dev'],
+          },
+          {
+            path: `/${AppCode.Configuration}/system/global/timeZone`, // 时区设置
+            name: 'timeZone',
+            component: '/Configuration/SystemTimezone/index',
+            authority: ['ADMIN', 'SUPERMANAGER'],
+          },
+          {
+            path: `/${AppCode.Configuration}/system/global/i18n`, // 国际化
+            name: 'i18n',
+            component: '/Configuration/LanguageManage/index',
+            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+          },
+        ],
       },
       {
-        path: `/${AppCode.Configuration}/system/requestor`,
-        name: 'requestor',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-        component: '/Configuration/Requestor/index',
-      },
-      {
-        path: `/${AppCode.Configuration}/system/richEditor`,
-        name: 'richEditor',
-        component: '/Configuration/RichEditor/index',
-        hooks: ['dev'],
-      },
-      {
-        path: `/${AppCode.Configuration}/system/timeZone`,
-        name: 'timeZone',
-        component: '/Configuration/SystemTimezone/index',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
-        path: `/${AppCode.Configuration}/system/i18n`,
-        name: 'i18n',
-        component: '/Configuration/LanguageManage/index',
+        path: `/${AppCode.Configuration}/system/section`, //
+        name: 'sectionConfig',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+        routes: [
+          {
+            path: `/${AppCode.Configuration}/system/section/parameters`, // 参数配置
+            name: 'parameters',
+            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+            component: '/Configuration/SystemParameters',
+          },
+        ],
       },
     ],
   },

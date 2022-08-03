@@ -1,7 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, Divider, Form, InputNumber, Row, Select } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { merge } from 'lodash';
 import {
   convertMapToArrayMap,
   dealResponse,
@@ -11,22 +10,23 @@ import {
   isNull,
 } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
+import { convertQuickTaskVarToRequestStruct, formatVariableFormValues, mergeQuickTaskVar } from '../quickTaskUtil';
 import { executeCustomTask } from '@/services/commonService';
 import FormModal from '@/components/FormModal';
 import FormattedMessage from '@/components/FormattedMessage';
-import VehicleVariable from '@/components/VariableModification/VehicleVariable';
 import ResourceLimit from '@/packages/SmartTask/CustomTask/components/ResourceLimit';
 import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
-import {
-  convertBackZoneToFormValue,
-  formatVariableFormValues,
-} from '@/components/VariableModification/VariableModification';
+import { convertBackZoneToFormValue } from '@/components/VariableModification/VariableModification';
+import VehicleSelector from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
+import commonStyle from '@/common.module.less';
 
-const { formItemLayout } = getFormLayout(4, 18);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 18);
+const formLayout = getFormLayout(2, 22);
+
 const ExecuteQuickTaskModal = (props) => {
-  const { dispatch, customTask, quickTask, executeModalVisible, loadSpecification, targetSource } =
-    props;
+  const { dispatch, customTask, quickTask } = props;
+  const { loadSpecification, targetSource, executeModalVisible } = props;
 
   const [formRef] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -38,27 +38,33 @@ const ExecuteQuickTaskModal = (props) => {
   }, [executeModalVisible]);
 
   function onOk() {
-    formRef.validateFields().then(async (value) => {
-      setLoading(true);
-      const requestBody = merge(
-        convertQuickTaskVarToRequestStruct(quickTask.variable),
-        formatVariableFormValues(value),
-      );
+    formRef
+      .validateFields()
+      .then(async (value) => {
+        setLoading(true);
+        const requestBody = mergeQuickTaskVar(
+          convertQuickTaskVarToRequestStruct(quickTask.variable),
+          formatVariableFormValues(value),
+        );
 
-      // 将customAction的key转换成step
-      let customAction = {};
-      Object.entries(requestBody.customAction).forEach(([nodeCode, data]) => {
-        const index = customTask.codes.indexOf(nodeCode);
-        customAction[`step${index}`] = data;
+        // 将customAction的key转换成step
+        let customAction = {};
+        Object.entries(requestBody.customAction).forEach(([nodeCode, data]) => {
+          const index = customTask.codes.indexOf(nodeCode);
+          customAction[`step${index}`] = data;
+        });
+        requestBody.customAction = customAction;
+
+        const response = await executeCustomTask(requestBody);
+        if (!dealResponse(response, true)) {
+          dispatch({ type: 'quickTask/updateExecuteModalVisible', payload: false });
+        }
+        setLoading(false);
+      })
+      .catch((reason) => {
+        console.log(`[RMS]: ${reason.message}`);
+        setLoading(false);
       });
-      requestBody.customAction = customAction;
-
-      const response = await executeCustomTask(requestBody);
-      if (!dealResponse(response, true)) {
-        dispatch({ type: 'quickTask/updateExecuteModalVisible', payload: false });
-      }
-      setLoading(false);
-    });
   }
 
   function onCancel() {
@@ -69,6 +75,30 @@ const ExecuteQuickTaskModal = (props) => {
         executeModalVisible: false,
       },
     });
+  }
+
+  function getValidator(required, messageKey) {
+    if (required) {
+      return {
+        validator: (_, value) => {
+          if (!Array.isArray(value) || value.length === 0) {
+            return Promise.reject(
+              new Error(
+                formatMessage(
+                  { id: 'app.message.ruleRequired' },
+                  {
+                    label: formatMessage({ id: messageKey }),
+                  },
+                ),
+              ),
+            );
+          } else {
+            return Promise.resolve();
+          }
+        },
+      };
+    }
+    return null;
   }
 
   function renderPartTitle(nodeCode) {
@@ -113,8 +143,9 @@ const ExecuteQuickTaskModal = (props) => {
             label={<FormattedMessage id='customTask.form.vehicle' />}
             initialValue={{ type: vehicleKey, code: vehicle.value[vehicleKey] }}
             rules={[{ required: vehicle.config.isRequired }]}
+            {...formLayout.formItemLayout}
           >
-            <VehicleVariable />
+            <VehicleSelector dataSource={targetSource} width={590} />
           </Form.Item>,
         );
       }
@@ -166,11 +197,13 @@ const ExecuteQuickTaskModal = (props) => {
                     }
                     initialValue={{ type: variableKey, code: variableValue }}
                     rules={[{ required: preParams.config.isRequired }]}
+                    {...formLayout.formItemLayout}
                   >
                     <TargetSelector
                       dataSource={targetSource}
                       vehicleSelection={vehicleSelection}
                       limit={variableKey}
+                      width={560}
                     />
                   </Form.Item>,
                 );
@@ -188,17 +221,20 @@ const ExecuteQuickTaskModal = (props) => {
                   label={<FormattedMessage id={'app.common.targetCell'} />}
                   initialValue={{ type: variableKey, code: variableValue }}
                   rules={[{ required: params.config.isRequired }]}
+                  {...formLayout.formItemLayout}
                 >
                   <TargetSelector
                     dataSource={targetSource}
                     vehicleSelection={vehicleSelection}
                     limit={variableKey}
+                    width={560}
                   />
                 </Form.Item>,
               );
             }
           });
 
+          // 载具方向
           if (!isNull(loadAngle)) {
             if (isNull(operateAngle)) {
               if (loadAngle.config.isRequired || loadAngle.config.visible) {
@@ -315,94 +351,97 @@ const ExecuteQuickTaskModal = (props) => {
       if (loadBackZone.config.isRequired || loadBackZone.config.visible) {
         const loadBackZoneInitValue = convertBackZoneToFormValue(loadBackZone.value);
         doms.push(
-          <Form.Item
-            required={loadBackZone.config.isRequired}
+          <Form.List
             key={getRandomString(10)}
-            label={formatMessage({ id: 'customTask.form.loadBackZone' })}
+            name={['customEnd', 'loadBackZone']}
+            initialValue={loadBackZoneInitValue}
+            rules={[getValidator(loadBackZone.config.isRequired, 'customTask.form.loadBackZone')]}
           >
-            <Form.List name={['customEnd', 'loadBackZone']} initialValue={loadBackZoneInitValue}>
-              {(fields, { add, remove }) => (
-                <>
-                  {fields.map((field, index) => (
-                    <Row key={field.key} gutter={10} style={{ marginBottom: 16 }}>
+            {(fields, { add, remove }, { errors }) => (
+              <>
+                {fields.map((field, index) => (
+                  <Form.Item
+                    key={field.key}
+                    required={false}
+                    {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
+                    label={index === 0 ? formatMessage({ id: 'customTask.form.loadBackZone' }) : ''}
+                  >
+                    <Row key={field.key} gutter={10}>
                       <Col>
-                        <Form.Item
-                          noStyle
-                          {...field}
-                          rules={[{ required: loadBackZone.config.isRequired }]}
-                        >
+                        <Form.Item noStyle {...field}>
                           <BackZoneSelector />
                         </Form.Item>
                       </Col>
                       <Col style={{ display: 'flex', alignItems: 'center' }}>
                         <Button
                           onClick={() => remove(field.name)}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: '32px',
-                          }}
+                          className={commonStyle.flexCenter}
+                          style={{ width: '32px' }}
                         >
                           <MinusOutlined />
                         </Button>
                       </Col>
                     </Row>
-                  ))}
-                  <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
-                    <PlusOutlined />
-                  </Button>
-                </>
-              )}
-            </Form.List>
-          </Form.Item>,
+                  </Form.Item>
+                ))}
+                <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
+                  <PlusOutlined />
+                </Button>
+                <Form.ErrorList errors={errors} />
+              </>
+            )}
+          </Form.List>,
         );
       }
 
       if (backZone.config.isRequired || backZone.config.visible) {
         const backZoneInitValue = convertBackZoneToFormValue(backZone.value);
         doms.push(
-          <Form.Item
-            required={backZone.config.isRequired}
+          <Form.List
             key={getRandomString(10)}
-            label={formatMessage({ id: 'customTask.form.backZone' })}
+            name={['customEnd', 'backZone']}
+            initialValue={backZoneInitValue}
+            rules={[getValidator(backZone.config.isRequired, 'customTask.form.backZone')]}
           >
-            <Form.List name={['customEnd', 'backZone']} initialValue={backZoneInitValue}>
-              {(fields, { add, remove }) => (
-                <>
-                  {fields.map((field, index) => (
-                    <Row key={field.key} gutter={10} style={{ marginBottom: 16 }}>
+            {(fields, { add, remove }, { errors }) => (
+              <>
+                {fields.map((field, index) => (
+                  <Form.Item
+                    key={field.key}
+                    required={false}
+                    {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
+                    label={index === 0 ? formatMessage({ id: 'customTask.form.backZone' }) : ''}
+                    style={{ marginTop: 24 }}
+                  >
+                    <Row key={field.key} gutter={10}>
                       <Col>
-                        <Form.Item
-                          noStyle
-                          {...field}
-                          rules={[{ required: backZone.config.isRequired }]}
-                        >
+                        <Form.Item noStyle {...field}>
                           <BackZoneSelector />
                         </Form.Item>
                       </Col>
                       <Col style={{ display: 'flex', alignItems: 'center' }}>
                         <Button
                           onClick={() => remove(field.name)}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: '32px',
-                          }}
+                          className={commonStyle.flexCenter}
+                          style={{ width: '32px' }}
                         >
                           <MinusOutlined />
                         </Button>
                       </Col>
                     </Row>
-                  ))}
-                  <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
-                    <PlusOutlined />
-                  </Button>
-                </>
-              )}
-            </Form.List>
-          </Form.Item>,
+                  </Form.Item>
+                ))}
+                <Button
+                  type='dashed'
+                  onClick={() => add()}
+                  style={{ width: 460, marginTop: fields.length === 0 ? 24 : 0 }}
+                >
+                  <PlusOutlined />
+                </Button>
+                <Form.ErrorList errors={errors} />
+              </>
+            )}
+          </Form.List>,
         );
       }
 
@@ -439,31 +478,3 @@ export default connect(({ quickTask }) => ({
   loadSpecification: quickTask.loadSpecification,
   executeModalVisible: quickTask.executeModalVisible,
 }))(memo(ExecuteQuickTaskModal));
-
-// 将快捷任务的变量字段转换成运行任务需要的结构
-export function convertQuickTaskVarToRequestStruct(quickTaskVariable) {
-  const { customStart, customAction, customEnd } = quickTaskVariable;
-  //
-  const _customStart = {};
-  _customStart.vehicle = customStart.vehicle.value;
-  _customStart.vehicleLimit = customStart.vehicleLimit.value;
-
-  const _customAction = {};
-  Object.entries(customAction).forEach(([nodeCode, nodeConfig]) => {
-    _customAction[nodeCode] = {};
-    Object.entries(nodeConfig).forEach(([field, { value }]) => {
-      _customAction[nodeCode][field] = value;
-    });
-  });
-
-  const _customEnd = {};
-  _customEnd.backZone = customEnd.backZone.value;
-  _customEnd.loadBackZone = customEnd.loadBackZone.value;
-
-  return {
-    ...quickTaskVariable,
-    customStart: _customStart,
-    customAction: _customAction,
-    customEnd: _customEnd,
-  };
-}

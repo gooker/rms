@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, message, Modal } from 'antd';
+import { Button, Divider, message, Modal, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, EyeOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
@@ -11,6 +11,7 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
 import styles from '../customTask.module.less';
+import { IconFont } from '@/components/IconFont';
 
 const CustomTaskTable = (props) => {
   const { dispatch, listVisible, listData, loading } = props;
@@ -55,12 +56,13 @@ const CustomTaskTable = (props) => {
       align: 'center',
       fixed: 'right',
       render: (text, record) => (
-        <span className={styles.tableIcon}>
-          <EyeOutlined
-            onClick={() => {
-              setExampleStructure(record.sample);
-            }}
-          />
+        <span
+          className={styles.tableIcon}
+          onClick={() => {
+            setExampleStructure(record.sample);
+          }}
+        >
+          <IconFont type={'icon-json'} style={{ fontSize: 23 }} />
         </span>
       ),
     },
@@ -70,13 +72,23 @@ const CustomTaskTable = (props) => {
       align: 'center',
       fixed: 'right',
       render: (text, record) => (
-        <span className={styles.tableIcon}>
-          <EditOutlined
-            onClick={() => {
-              editRow(record);
-            }}
-          />
-        </span>
+        <Space>
+          <span className={styles.tableIcon}>
+            <EyeOutlined
+              onClick={() => {
+                editRow({ ...record, viewMode: true }); // 标记当前是查看模式
+              }}
+            />
+          </span>
+          <Divider type={'vertical'} />
+          <span className={styles.tableIcon}>
+            <EditOutlined
+              onClick={() => {
+                editRow(record);
+              }}
+            />
+          </span>
+        </Space>
       ),
     },
   ];

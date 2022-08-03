@@ -136,7 +136,6 @@ export default {
   'editor.station.icon.width': '图标宽度',
   'editor.station.icon.height': '图标高度',
   'editor.station.icon.angle': '图标角度',
-  'editor.aisle.unLockCells': '解锁点',
   'editor.delivery': '投递点',
   'editor.delivery.basket': '投递框',
   'editor.delivery.baseCell': '基准点',
@@ -149,7 +148,6 @@ export default {
   'editor.elevator.location': '电梯点',
   'editor.elevator.singleDoor': '单门',
   'editor.tunnel.giveWay': '避让方向',
-  'editor.tunnel.giveWayDirection': '避让规则',
 
   // 急停区
   'editor.emergency.mode': '模式',

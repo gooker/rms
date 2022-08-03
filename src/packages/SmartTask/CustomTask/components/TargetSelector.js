@@ -1,27 +1,17 @@
 import React, { memo } from 'react';
 import { Col, Row, Select } from 'antd';
 import { VehicleOptionType } from './VehicleSelector';
-import { isEmptyPlainObject, isStrictNull, isSubArray } from '@/utils/util';
+import { isNull, isStrictNull, isSubArray } from '@/utils/util';
 
 const TargetSelector = (props) => {
   const { value, onChange } = props;
-  const { dataSource, limit, form, vehicleName } = props;
-
+  const { dataSource, limit, form, vehiclePathName, width = 640 } = props;
   const currentValue = value || { type: null, code: [] }; // {type:xxx, code:[]}
 
-  let vehicleSelection = {};
-  const formData = form?.getFieldsValue();
-  if (vehicleName && !isEmptyPlainObject(formData)) {
-    if (vehicleName.length === 3) {
-      const [prefix, start, name] = vehicleName;
-      vehicleSelection = formData?.[prefix][start][name];
-    }
-    if (vehicleName.length === 2) {
-      const [start, name] = vehicleName;
-      vehicleSelection = formData?.[start][name];
-    }
-  } else {
-    vehicleSelection = props?.vehicleSelection ?? {};
+  // 兼容处理vehicleSelection
+  let vehicleSelection = props.vehicleSelection;
+  if (!isNull(form) && !isNull(vehiclePathName)) {
+    vehicleSelection = form.getFieldsValue(vehiclePathName);
   }
 
   // 为了便于取值，这里将目标点类型与相对应数据做个Mapping
@@ -77,7 +67,6 @@ const TargetSelector = (props) => {
 
         // 生成返回值
         if (currentValue.type === 'LOAD') {
-          console.log(validLoadTypes);
           return validLoadTypes.map((loadType) => (
             <Select.Option key={loadType} value={loadType}>
               {loadType}
@@ -147,19 +136,20 @@ const TargetSelector = (props) => {
       <Col flex={1}>
         {['CELL', 'ROTATE'].includes(currentValue.type) ? (
           <Select
-            mode="tags"
+            allowClear
+            mode='tags'
             value={currentValue?.code || []}
             onChange={onCodeChange}
-            style={{ width: '100%' }}
+            style={{ width }}
             notFoundContent={null}
           />
         ) : (
           <Select
-            mode="multiple"
+            allowClear
+            mode='multiple'
             value={currentValue?.code || []}
             onChange={onCodeChange}
-            getPopupContainer={triggerNode => triggerNode.parentNode}
-            style={{ width: '100%' }}
+            style={{ width }}
           >
             {renderSecondaryOptions()}
           </Select>

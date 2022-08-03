@@ -23,6 +23,7 @@ import CostArrow from '@/entities/CostArrow';
 import { CoordinateType, LineType } from '@/config/config';
 import { MapScaleRatio, ZoneMarkerType } from '@/config/consts';
 import StraightPath from '@/entities/StraightPath';
+import { isPlainObject } from 'lodash';
 
 function initState(context) {
   // 多种导航点类型一起显示的时候，同一个点位必定会出现多个导航点，所以value使用数组形式；该对象近用于处理地图元素属性，比如存储点等
@@ -759,7 +760,7 @@ export default class BaseMap extends React.PureComponent {
    */
   renderTunnel = (newChannelList = [], interact = false, opt = 'add') => {
     newChannelList.forEach((channelData) => {
-      const { tunnelName, cells, giveWayCellMap, giveWayRelationMap } = channelData;
+      const { tunnelName, cells, giveWayCellMap } = channelData;
       cells.forEach((cellId) => {
         const cellEntity = this.idCellMap.get(cellId);
         const sprite = new BitText(tunnelName, 0, 0, 0xf4f9f9);
@@ -775,16 +776,14 @@ export default class BaseMap extends React.PureComponent {
           }
         }
       });
-      if (!isNull(giveWayCellMap)) {
+      if (isPlainObject(giveWayCellMap)) {
         Object.entries(giveWayCellMap).forEach(([source, target]) => {
           const arrowEntity = this.idArrowMap.get(`${source}-${target}`);
-          arrowEntity && arrowEntity.setProgramingFlag();
-        });
-      }
-      if (!isNull(giveWayRelationMap)) {
-        Object.values(giveWayRelationMap).forEach(({ source, target }) => {
-          const arrowEntity = this.idArrowMap.get(`${source}-${target}`);
-          arrowEntity && arrowEntity.setProgramingFlag();
+          if (opt === 'add') {
+            arrowEntity && arrowEntity.setProgramingFlag();
+          } else {
+            arrowEntity && arrowEntity.resetProgramingFlag();
+          }
         });
       }
     });

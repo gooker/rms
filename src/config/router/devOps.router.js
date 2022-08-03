@@ -58,6 +58,13 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
   {
+    path: `/${AppCode.DevOps}/system/requestor`, // 接口请求库
+    name: 'requestor',
+    icon: 'api',
+    authority: ['ADMIN', 'SUPERMANAGER'],
+    component: '/Configuration/Requestor/index',
+  },
+  {
     path: `/${AppCode.DevOps}/db`, // 数据库操作
     name: 'db',
     icon: 'db',
