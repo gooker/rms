@@ -4,7 +4,7 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { connect } from '@/utils/RmsDva';
 import MenuIcon from '@/utils/MenuIcon';
-import { formatMessage, isNull } from '@/utils/util';
+import { extractOpenKeys, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import Portal from '@/packages/Portal/components/Portal/Portal';
 import styles from '../layout/homeLayout.module.less';
@@ -44,38 +44,15 @@ const AppMenu = (prop) => {
   }, [currentApp]);
 
   useEffect(() => {
+    const { pathname } = window.location;
     dispatch({
       type: 'menu/saveState',
-      payload: { openKeys: extractOpenKeys(), selectedKeys: [pathname] },
+      payload: {
+        openKeys: extractOpenKeys(currentApp, allMenuData, pathname),
+        selectedKeys: [pathname],
+      },
     });
   }, [currentModuleMenu, updateOpenKeys]);
-
-  function extractOpenKeys() {
-    if (pathname === '/' || !Array.isArray(currentModuleMenu) || currentModuleMenu.length === 0) {
-      return [];
-    }
-
-    const openKeys = [];
-    const routeFirstLevelKeys = currentModuleMenu.map(({ path }) => path);
-    for (let i = 0; i < routeFirstLevelKeys.length; i++) {
-      if (pathname.startsWith(routeFirstLevelKeys[i])) {
-        openKeys.push(routeFirstLevelKeys[i]);
-
-        const suffix = `${routeFirstLevelKeys[i]}/`;
-        const restPath = pathname.replace(suffix, '').split('/');
-        if (restPath.length > 1) {
-          // 最后一个路由是页面路由要去掉
-          restPath.pop();
-          let openKey = '';
-          restPath.forEach((item) => {
-            openKey = `${suffix}${item}`;
-            openKeys.push(openKey);
-          });
-        }
-        return openKeys;
-      }
-    }
-  }
 
   function onOpenChange(keys) {
     const routeFirstLevelKeys = currentModuleMenu.map(({ path }) => path);

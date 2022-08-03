@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Modal } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { formatMessage, isStrictNull } from '@/utils/util';
+import { extractOpenKeys, formatMessage, isStrictNull } from '@/utils/util';
 import HelpDocPortal from './HelpDocPortal';
 import style from './Header.module.less';
 import styles from '@/layout/homeLayout.module.less';
@@ -29,7 +29,10 @@ const HelpDocViewerModal = (props) => {
 
         const currentApp = pathname.split('/')[1];
         dispatch({ type: 'help/updateCurrentApp', payload: currentApp });
-        dispatch({ type: 'help/saveOpenKeys', payload: extractOpenKeys(currentApp) });
+        dispatch({
+          type: 'help/saveOpenKeys',
+          payload: extractOpenKeys(currentApp, allMenuData, pathname),
+        });
       }
     }
   }, [visible]);
@@ -37,43 +40,12 @@ const HelpDocViewerModal = (props) => {
   useEffect(() => {
     const currentPathName = selectedKeys[0];
     if (currentPathName && currentPathName !== '/') {
+      setCurrentPage(currentPathName);
       openHelpDoc(currentPathName);
+    } else {
+      setCurrentPage('/');
     }
   }, [selectedKeys]);
-
-  function extractOpenKeys(currentApp) {
-    const { pathname } = window.location;
-
-    const currentAppRouter = allMenuData
-      .filter(({ appCode }) => appCode === currentApp)
-      .map(({ menu }) => menu);
-    const currentModuleMenu = currentAppRouter.length > 0 ? currentAppRouter[0] : [];
-
-    if (pathname === '/' || !Array.isArray(currentModuleMenu) || currentModuleMenu.length === 0) {
-      return [];
-    }
-
-    const openKeys = [];
-    const routeFirstLevelKeys = currentModuleMenu.map(({ path }) => path);
-    for (let i = 0; i < routeFirstLevelKeys.length; i++) {
-      if (pathname.startsWith(routeFirstLevelKeys[i])) {
-        openKeys.push(routeFirstLevelKeys[i]);
-
-        const suffix = `${routeFirstLevelKeys[i]}/`;
-        const restPath = pathname.replace(suffix, '').split('/');
-        if (restPath.length > 1) {
-          // 最后一个路由是页面路由要去掉
-          restPath.pop();
-          let openKey = '';
-          restPath.forEach((item) => {
-            openKey = `${suffix}${item}`;
-            openKeys.push(openKey);
-          });
-        }
-        return openKeys;
-      }
-    }
-  }
 
   function openHelpDoc(path) {
     let currentLang = props.currentLang;

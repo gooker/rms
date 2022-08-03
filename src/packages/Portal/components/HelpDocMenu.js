@@ -3,7 +3,7 @@ import { Menu, Typography } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import MenuIcon from '@/utils/MenuIcon';
-import { formatMessage, isNull } from '@/utils/util';
+import { extractOpenKeys, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import commonStyles from '@/common.module.less';
 import styles from '@/layout/homeLayout.module.less';
@@ -35,37 +35,12 @@ const HelpDocMenu = (props) => {
     }
   }
 
-  function extractOpenKeys() {
-    const { pathname } = window.location;
-
-    if (pathname === '/' || !Array.isArray(currentModuleMenu) || currentModuleMenu.length === 0) {
-      return [];
-    }
-
-    const openKeys = [];
-    const routeFirstLevelKeys = currentModuleMenu.map(({ path }) => path);
-    for (let i = 0; i < routeFirstLevelKeys.length; i++) {
-      if (pathname.startsWith(routeFirstLevelKeys[i])) {
-        openKeys.push(routeFirstLevelKeys[i]);
-
-        const suffix = `${routeFirstLevelKeys[i]}/`;
-        const restPath = pathname.replace(suffix, '').split('/');
-        if (restPath.length > 1) {
-          // 最后一个路由是页面路由要去掉
-          restPath.pop();
-          let openKey = '';
-          restPath.forEach((item) => {
-            openKey = `${suffix}${item}`;
-            openKeys.push(openKey);
-          });
-        }
-        return openKeys;
-      }
-    }
-  }
-
   function onSelectMenuItem(item) {
     dispatch({ type: 'help/saveSelectedKeys', payload: item.selectedKeys });
+    dispatch({
+      type: 'help/saveOpenKeys',
+      payload: extractOpenKeys(currentApp, allMenuData, item.selectedKeys[0]),
+    });
   }
 
   function switchMenuCollapsed() {

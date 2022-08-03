@@ -1355,3 +1355,36 @@ export function getTableScrollY({ extraHeight, ref } = {}) {
   }
   return `calc(100vh - ${headerBottom + extraHeight}px)`;
 }
+
+// 提取路由的openKey
+export function extractOpenKeys(currentApp, allMenuData, pathname) {
+  const currentAppRouter = allMenuData
+    .filter(({ appCode }) => appCode === currentApp)
+    .map(({ menu }) => menu);
+  const currentModuleMenu = currentAppRouter.length > 0 ? currentAppRouter[0] : [];
+
+  if (pathname === '/' || !Array.isArray(currentModuleMenu) || currentModuleMenu.length === 0) {
+    return [];
+  }
+
+  const openKeys = [];
+  const routeFirstLevelKeys = currentModuleMenu.map(({ path }) => path);
+  for (let i = 0; i < routeFirstLevelKeys.length; i++) {
+    if (pathname.startsWith(routeFirstLevelKeys[i])) {
+      openKeys.push(routeFirstLevelKeys[i]);
+
+      const suffix = `${routeFirstLevelKeys[i]}/`;
+      const restPath = pathname.replace(suffix, '').split('/');
+      if (restPath.length > 1) {
+        // 最后一个路由是页面路由要去掉
+        restPath.pop();
+        let openKey = '';
+        restPath.forEach((item) => {
+          openKey = `${suffix}${item}`;
+          openKeys.push(openKey);
+        });
+      }
+      return openKeys;
+    }
+  }
+}
