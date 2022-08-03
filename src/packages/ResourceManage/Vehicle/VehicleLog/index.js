@@ -9,14 +9,19 @@ import commonStyles from '@/common.module.less';
 import { fetchVehicleLogsList } from '@/services/resourceService';
 import { fetchAllVehicleList } from '@/services/commonService';
 import { find } from 'lodash';
+import { VehicleDownLoadLogPolling } from '@/workers/WebWorkerManager';
 // import ViewVehicleLog from './component/ViewVehicleLog';
 ////0：成功，1：升级中或下载中或上传中，2：失败
 
 const VehicleLog = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [vehicleList, setVehicleList] = useState([]);
+
+  const [logProgress, setLogProgress] = useState([]);
   const [dataSource, setDatasource] = useState([]);
   const [allData, setAllData] = useState([]);
+
   // const [viewing, setViewing] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -84,7 +89,18 @@ const VehicleLog = () => {
 
   useEffect(() => {
     init();
+    VehicleDownLoadLogPolling.start((values) => {
+      setLogProgress(values);
+    });
+
+    return () => {
+      VehicleDownLoadLogPolling.terminate();
+    };
   }, []);
+
+  useEffect(() => {
+    convertData(logProgress);
+  }, [logProgress]);
 
   async function init() {
     setLoading(true);
@@ -93,27 +109,37 @@ const VehicleLog = () => {
       fetchVehicleLogsList(),
     ]);
     if (!dealResponse(allVehicles) && !dealResponse(logList)) {
-      const newData = [];
-      allVehicles?.map(({ vehicleId, vehicleType, vehicle, vehicleInfo, vehicleWorkStatusDTO }) => {
-        if (vehicle?.register) {
-          const currentLog = find(logList ?? [], { vehicleId, vehicleType });
-          newData.push({
-            vehicleId,
-            vehicleType,
-            ...vehicle,
-            ...vehicleInfo,
-            ...vehicleWorkStatusDTO,
-            ...currentLog,
-          });
-        }
-      });
-      setDatasource(newData);
-      setAllData(newData);
-      filterData(newData);
+      convertData(logList, allVehicles);
+      setVehicleList(allVehicles);
     }
     setLoading(false);
     setSelectedRows([]);
     setSelectedRowKeys([]);
+  }
+
+  function convertData(logProgress, vehicleData) {
+    const newData = [];
+    let allVehicles = [];
+    if (isNull(vehicleData)) {
+      allVehicles = [...vehicleList];
+    } else {
+      allVehicles = [...vehicleData];
+    }
+    allVehicles?.map(({ vehicleId, vehicleType, vehicle, vehicleInfo, vehicleWorkStatusDTO }) => {
+      if (vehicle?.register) {
+        const currentLog = find(logProgress ?? [], { vehicleId, vehicleType });
+        newData.push({
+          vehicleId,
+          vehicleType,
+          ...vehicle,
+          ...vehicleInfo,
+          ...vehicleWorkStatusDTO,
+          ...currentLog,
+        });
+      }
+    });
+    setAllData(newData);
+    filterData(newData);
   }
 
   function filterData(data, searchParams) {

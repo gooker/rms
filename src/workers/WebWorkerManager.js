@@ -16,6 +16,8 @@ const StationRatePolling = {}; // 站点速率轮询
 const VehicleUpgradeProgress = {}; // 车辆固件升级进度轮询
 const VehicleLisPolling = {}; // 获取所有小车 轮询
 
+const VehicleDownLoadLogPolling = {}; // 查询小车下载的日志 -进度
+
 // @@@ 告警中心告警信息数量轮询
 AlertCountPolling.getInstance = function (dispatcher) {
   if (isNull(AlertCountPolling.instance)) {
@@ -392,6 +394,47 @@ VehicleLisPolling.terminate = function () {
   }
 };
 
+
+
+// @@@VehicleDownLoadLogPolling
+VehicleDownLoadLogPolling.getInstance = function (dispatcher) {
+  if (isNull(VehicleDownLoadLogPolling.instance)) {
+    const worker = new Worker(
+      new URL('./vehicleFirmWareUpgradePolling.worker.js', import.meta.url),
+    );
+    worker.onmessage = function ({ data }) {
+      if (data && Array.isArray(data)) {
+        dispatcher(data);
+      }
+    };
+    VehicleDownLoadLogPolling.instance = worker;
+  }
+  return VehicleDownLoadLogPolling.instance;
+};
+
+VehicleDownLoadLogPolling.start = function (dispatcher) {
+  if (isNull(VehicleDownLoadLogPolling.instance)) {
+    VehicleDownLoadLogPolling.getInstance(dispatcher);
+  }
+  const fireWareURL = getDomainNameByUrl(`/${NameSpace.Platform}/vehicle/file/getLogList`);
+  VehicleDownLoadLogPolling.instance.postMessage({
+    state: 'start',
+    url: fireWareURL,
+    token: window.sessionStorage.getItem('token'),
+    sectionId: window.localStorage.getItem('sectionId'),
+  });
+};
+
+VehicleDownLoadLogPolling.terminate = function () {
+  if (!isNull(VehicleDownLoadLogPolling.instance)) {
+    VehicleDownLoadLogPolling.instance.postMessage({
+      state: 'end',
+    });
+    VehicleDownLoadLogPolling.instance.terminate();
+    VehicleDownLoadLogPolling.instance = null;
+  }
+};
+
 export {
   AlertCountPolling,
   VehiclePollingTaskPathManager,
@@ -402,4 +445,5 @@ export {
   StationRatePolling,
   VehicleUpgradeProgress,
   VehicleLisPolling,
+  VehicleDownLoadLogPolling,
 };
