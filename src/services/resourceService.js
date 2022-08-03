@@ -505,7 +505,7 @@ export async function fetchVehicleLogs(param) {
   });
 }
 
-// 查询下载的日志
+// 查询下载的日志 -进度
 export async function fetchVehicleLogsList() {
   return request(`/${NameSpace.Platform}/vehicle/file/getLogList`, {
     method: 'GET',

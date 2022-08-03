@@ -5,7 +5,7 @@ import { isNull, isStrictNull, isSubArray } from '@/utils/util';
 
 const TargetSelector = (props) => {
   const { value, onChange } = props;
-  const { dataSource, limit, form, vehiclePathName, width = 640 } = props;
+  const { dataSource, limit, form, vehiclePathName } = props;
   const currentValue = value || { type: null, code: [] }; // {type:xxx, code:[]}
 
   // 兼容处理vehicleSelection
@@ -37,9 +37,12 @@ const TargetSelector = (props) => {
   function renderSecondaryOptions() {
     if (currentValue.type) {
       // 如果选择的载具, 则需要与对应的车型进行筛选
-      let isAuto =
-        vehicleSelection.type === VehicleOptionType.VEHICLE && vehicleSelection.code.length === 0;
-      isAuto = isAuto || vehicleSelection.type === VehicleOptionType.AUTO;
+      // TODO: 暂时去掉过滤
+      // let isAuto =
+      //   vehicleSelection.type === VehicleOptionType.VEHICLE && vehicleSelection.code.length === 0;
+      // isAuto = isAuto || vehicleSelection.type === VehicleOptionType.AUTO;
+
+      let isAuto = true;
       if (['LOAD', 'LOAD_GROUP'].includes(currentValue.type) && !isAuto) {
         // 获取分车所支持的所有的载具类型
         let validLoadTypes = [];
@@ -128,28 +131,28 @@ const TargetSelector = (props) => {
 
   return (
     <Row gutter={16}>
-      <Col>
-        <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 160 }}>
+      <Col flex="160px">
+        <Select value={currentValue?.type} onChange={onTypeChange}>
           {renderSelectOptions()}
         </Select>
       </Col>
-      <Col flex={1}>
+      <Col flex="auto">
         {['CELL', 'ROTATE'].includes(currentValue.type) ? (
           <Select
             allowClear
-            mode='tags'
+            mode="tags"
             value={currentValue?.code || []}
             onChange={onCodeChange}
-            style={{ width }}
+            // style={{ width }}
             notFoundContent={null}
           />
         ) : (
           <Select
             allowClear
-            mode='multiple'
+            mode="multiple"
             value={currentValue?.code || []}
             onChange={onCodeChange}
-            style={{ width }}
+            // style={{ width }}
           >
             {renderSecondaryOptions()}
           </Select>

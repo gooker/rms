@@ -115,8 +115,8 @@ const VehicleUpgrade = (props) => {
       dataIndex: 'fileStatus',
       align: 'center',
       render: (text, record) => {
-        if (!isNull(text)) {
-          const { vehicleFileTaskType } = record;
+        const { vehicleFileTaskType } = record;
+        if (!isNull(text) && vehicleFileTaskType === 'UPLOAD') {
           const nexText = Number(text);
           if (nexText === 1) {
             return (
@@ -127,41 +127,26 @@ const VehicleUpgrade = (props) => {
                   width={35}
                 />
                 <span style={{ color: 'orange', ...StatusLabelStyle }}>
-                  {vehicleFileTaskType === 'UPLOAD' ? (
-                    <FormattedMessage id={'firmdware.inDownloading'} />
-                  ) : (
-                    <></>
-                    // <FormattedMessage id={'firmdware.restarting'} />
-                  )}
+                  <FormattedMessage id={'firmdware.inDownloading'} />
                 </span>
               </>
             );
-          } else if (nexText === 2) {
+          }
+
+          if (nexText === 2) {
             return (
               <Tag color="error">
-                {vehicleFileTaskType === 'UPLOAD' ? (
-                  <FormattedMessage id={'firmdware.downloadFail'} />
-                ) : (
-                  <></>
-                  // <FormattedMessage id={'firmdware.upgradeFail'} />
-                )}
+                <FormattedMessage id={'firmdware.downloadFail'} />
               </Tag>
             );
-          } else if (nexText === 0) {
-            if (record.vehicleFileTaskType === 'UPLOAD') {
-              return (
-                <Typography.Link>
-                  <FormattedMessage id="firmdware.download.restartEffective" />
-                </Typography.Link>
-              );
-            }
-            // if (record.vehicleFileTaskType === 'UPGRADE') {
-            //   return (
-            //     <Tag color="#87d068">
-            //       <FormattedMessage id="firmdware.upgrade.success" />
-            //     </Tag>
-            //   );
-            // }
+          }
+
+          if (nexText === 0) {
+            return (
+              <Typography.Link>
+                <FormattedMessage id="firmdware.download.restartEffective" />
+              </Typography.Link>
+            );
           }
         }
       },
@@ -283,7 +268,6 @@ const VehicleUpgrade = (props) => {
 
     setDatasource(nowAllVehicles);
   }
-
 
   /*
    *维护/取消维护
