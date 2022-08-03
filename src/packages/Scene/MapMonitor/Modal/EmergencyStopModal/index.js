@@ -5,8 +5,8 @@ import EStopList from './EStopList';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../../monitorLayout.module.less';
 import EStopLog from '@/packages/Scene/MapMonitor/Modal/EmergencyStopModal/EStopLog';
+import { getMapModalPosition } from '@/utils/util';
 
-const height = 600;
 const width = 770;
 const TabSelectedStyle = {
   background: 'rgba(8, 8, 8, 0.2)',
@@ -40,9 +40,8 @@ const EmergencyManagerModal = (props) => {
   return (
     <div
       style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        left: `calc(50% - ${width / 2}px)`,
+        ...getMapModalPosition(width),
+        minHeight: 500,
       }}
       className={styles.monitorModal}
     >

@@ -30,9 +30,7 @@ class WaitingQueueComponent extends Component {
     dataSource: [],
     selectedRow: [],
     selectedRowKeys: [],
-
     vehicleOverallStatus: {},
-
     loading: false,
     deleteLoading: false,
     priorityVisible: false,

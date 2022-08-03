@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, DatePicker, Form, Input, Row, Table } from 'antd';
 import { convertToUserTimezone, dealResponse, formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -6,10 +6,9 @@ import { fetchEStopLogs } from '@/services/XIHEService';
 import { SearchOutlined } from '@ant-design/icons';
 
 const { RangePicker } = DatePicker;
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
+const { formItemLayout } = getFormLayout(6, 18);
 
 const EStopLog = () => {
-  const domRef = useRef();
   const [formRef] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [estopLogs, setEStopLogs] = useState([]);
@@ -79,14 +78,14 @@ const EStopLog = () => {
 
   return (
     <div style={{ height: '100%' }}>
-      <Form form={formRef} {...formItemLayout}>
+      <Form size={'small'} form={formRef} {...formItemLayout}>
         <Row gutter={10}>
           <Col span={12}>
             <Form.Item name={'timeRange'} label={formatMessage({ id: 'app.form.dateRange' })}>
               <RangePicker
                 allowClear
                 showTime={{ format: 'HH:mm:ss' }}
-                format="YYYY-MM-DD HH:mm:ss"
+                format='YYYY-MM-DD HH:mm:ss'
                 placeholder={[
                   formatMessage({ id: 'app.common.startTime' }),
                   formatMessage({ id: 'app.common.endTime' }),
@@ -118,7 +117,7 @@ const EStopLog = () => {
         columns={columns}
         loading={loading}
         rowKey={(record) => record.id}
-        pagination={{ ...pagination, showSizeChanger: false }}
+        pagination={{ ...pagination }}
         onChange={handleTableChange}
       />
     </div>

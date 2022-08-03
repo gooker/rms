@@ -1,10 +1,10 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { message, Tooltip } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import EventManager from '@/utils/EventManager';
 import { EmergencyCategoryTools, MonitorOperationType } from '../enums';
-import styles from '../monitorLayout.module.less';
 import { formatMessage, isNull } from '@/utils/util';
+import styles from '../monitorLayout.module.less';
 
 const key = 'updatable';
 const subscribeType = 'moveUp';
@@ -41,9 +41,9 @@ const EmergencyStopPanel = (props) => {
     if (category === 'dragEmergency') {
       // 给予用户操作指引
       message.info({
-        content: formatMessage({ id: 'monitor.estop.creationTip' }),
-        duration: 0,
         key,
+        duration: 0,
+        content: formatMessage({ id: 'monitor.estop.creationTip' }),
       });
 
       window.$$dispatch({
