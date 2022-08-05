@@ -315,7 +315,7 @@ class StandardTaskPool extends React.Component {
                 className={taskQueueStyles.vehicleStatusBadge}
                 style={{ background: VehicleStateColor.available }}
               >
-                <FormattedMessage id={'app.common.available'} />
+                <FormattedMessage id={'vehicleState.Idle'} />
               </span>
             </Badge>
             <Badge
@@ -363,7 +363,7 @@ class StandardTaskPool extends React.Component {
                 className={taskQueueStyles.vehicleStatusBadge}
                 style={{ background: VehicleStateColor.Error }}
               >
-                <FormattedMessage id={'vehicle.battery.low'} />
+                <FormattedMessage id={'vehicleState.Error'} />
               </span>
             </Badge>
             <Badge

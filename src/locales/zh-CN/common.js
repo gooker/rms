@@ -74,7 +74,6 @@ export default {
   'app.common.file': '文件',
   'app.common.normal': '正常',
   'app.common.abnormal': '异常',
-  'app.common.available': '可用',
   'app.common.detail': '详情',
 
   // 方向

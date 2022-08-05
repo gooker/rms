@@ -14,6 +14,7 @@ import vehicleListModel from './vehicleListModel';
 import equipmentListModel from './equipmentListModel';
 import chargerListModel from './chargerListModel';
 import quickTask from './quickTaskModel';
+import helpDoc from './helpDocModel';
 
 export default [
   globalModel,
@@ -32,4 +33,5 @@ export default [
   equipmentListModel,
   chargerListModel,
   quickTask,
+  helpDoc,
 ];

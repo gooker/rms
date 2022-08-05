@@ -15,6 +15,10 @@ const EStopList = (props) => {
   );
 
   useEffect(() => {
+    refreshList();
+  }, []);
+
+  useEffect(() => {
     setDataSource(emergencyStopList.filter(({ estopType }) => estopType === 'Area'));
   }, [emergencyStopList]);
 
@@ -83,7 +87,6 @@ const EStopList = (props) => {
       !dealResponse(
         emergencyStopList,
         false,
-        null,
         formatMessage({ id: 'monitor.estop.fetchListFailed' }),
       )
     ) {

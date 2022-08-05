@@ -20,11 +20,10 @@ export default {
   'vehicleState.StandBy': '待命',
   'vehicleState.Working': '任务中',
   'vehicleState.Charging': '充电中',
-  'vehicleState.Offline': '离线',
-  'vehicleState.Error': '错误',
+  'vehicleState.Offline': '未就绪',
+  'vehicleState.Error': '不可用',
   'vehicleState.Connecting': '连接中',
   'vehicleState.Waiting': '等待',
-  'vehicleState.lowPower': '低电量',
 
   // 小车属性
   'vehicle.info': '车辆信息',
@@ -93,5 +92,4 @@ export default {
   'batteryType.enumeration3': '保留',
   'batteryType.enumeration4': '分拣车(磷酸铁锂)',
   'batteryType.enumeration5': '潜伏车1.2吨和料箱机器人(磷酸铁锂)',
-
 };
