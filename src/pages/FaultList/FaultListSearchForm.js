@@ -94,9 +94,9 @@ const FaultListSearchForm = (props) => {
           >
             <ReloadOutlined /> <FormattedMessage id={'app.button.reset'} />
           </Button>
-          <Button style={{ marginLeft: 15 }} onClick={exportFault}>
+          {/* <Button style={{ marginLeft: 15 }} onClick={exportFault}>
             <ExportOutlined /> <FormattedMessage id={'app.button.download'} />
-          </Button>
+          </Button> */}
         </Col>
       </Row>
     </Form>

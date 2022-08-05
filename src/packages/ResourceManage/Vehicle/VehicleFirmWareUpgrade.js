@@ -365,7 +365,7 @@ const VehicleUpgrade = (props) => {
             </Button>
 
             <Button disabled={selectedRowKeys.length === 0} onClick={batchRestart}>
-              <CloudSyncOutlined /> <FormattedMessage id="firmdware.download.restartEffective" />
+              <CloudSyncOutlined /> <FormattedMessage id="monitor.reboot" />
             </Button>
 
             <Button
