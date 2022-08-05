@@ -1,24 +1,22 @@
 import React, { memo, useEffect, useState } from 'react';
-import TablePageWrapper from '@/components/TablePageWrapper';
-import { message, Table } from 'antd';
-import { fetchDefinedFaults, fetchVehicleErrorRecord } from '@/services/commonService';
+import { Popover } from 'antd';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
+import TablePageWrapper from '@/components/TablePageWrapper';
+import { fetchVehicleErrorRecord } from '@/services/resourceService';
 import FaultListSearchForm from '@/pages/FaultList/FaultListSearchForm';
-import FaultCodeContent from '@/components/FaultCodeContent';
 import { connect } from '@/utils/RmsDva';
+import TableWithPages from '@/components/TableWithPages';
 
 const FaultListComponent = (props) => {
-  const { type, dispatch } = props;
+  const { dispatch } = props;
 
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({ pageSize: 10, current: 1, total: 0 });
 
   const [faultList, setFaultList] = useState([]);
-  const [definedFaults, setDefinedFaults] = useState({});
 
   useEffect(() => {
     async function init() {
-      await fetchDefinedFaultList();
       await fetchFaultList();
     }
     init();
@@ -29,14 +27,38 @@ const FaultListComponent = (props) => {
       title: formatMessage({ id: 'vehicle.id' }),
       dataIndex: 'vehicleId',
       align: 'center',
+      width: '100px',
+    },
+    {
+      title: formatMessage({ id: 'app.fault.code' }),
+      dataIndex: 'errorCode',
+      align: 'center',
     },
     {
       title: formatMessage({ id: 'app.fault.name' }),
-      dataIndex: 'errorCode',
+      dataIndex: 'errorName',
       align: 'center',
-      render: (errorCode) => (
-        <FaultCodeContent code={errorCode} faultContent={definedFaults[errorCode]} />
-      ),
+    },
+    {
+      title: formatMessage({ id: 'app.fault.name' }),
+      dataIndex: 'errorContent',
+      align: 'center',
+      render: (text) => {
+        if (text) {
+          if (text.length > 15) {
+            return (
+              <Popover
+                content={<span style={{ display: 'inline-block', maxWidth: '300px' }}>{text}</span>}
+                trigger="hover"
+              >
+                <span style={{ cursor: 'pointer' }}>{text.substr(0, 10)}...</span>
+              </Popover>
+            );
+          } else {
+            return <span>{text}</span>;
+          }
+        }
+      },
     },
     {
       title: formatMessage({ id: 'app.fault.firstReport' }),
@@ -44,17 +66,11 @@ const FaultListComponent = (props) => {
       align: 'center',
       render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
     },
-
-    {
-      title: formatMessage({ id: 'app.fault.lastReport' }),
-      dataIndex: 'updateTime',
-      align: 'center',
-      render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
-    },
     {
       title: formatMessage({ id: 'app.task.id' }),
       dataIndex: 'taskId',
       align: 'center',
+      width: '100px',
       render: (text) => {
         return (
           <span
@@ -72,16 +88,7 @@ const FaultListComponent = (props) => {
       title: formatMessage({ id: 'app.fault.step' }),
       dataIndex: 'step',
       align: 'center',
-    },
-    {
-      title: formatMessage({ id: 'app.fault.extraData1' }),
-      dataIndex: 'preData',
-      align: 'center',
-    },
-    {
-      title: formatMessage({ id: 'app.fault.extraData2' }),
-      dataIndex: 'curData',
-      align: 'center',
+      width: '100px',
     },
   ];
 
@@ -92,39 +99,21 @@ const FaultListComponent = (props) => {
     });
   }
 
-  // 获取所有错误信息
+  // 获取所有故障记录
   async function fetchFaultList(formValues) {
     setLoading(true);
     const requestParam = {
       ...formValues,
       current: pagination.current,
       size: pagination.pageSize,
-      type: 'All',
-      vehicleErrorTypes: ['HARDWARE_ERROR'],
     };
-    const response = await fetchVehicleErrorRecord(type, requestParam);
+    const response = await fetchVehicleErrorRecord(requestParam);
     if (!dealResponse(response)) {
       const { list, page } = response;
       setFaultList(list);
       setPagination({ current: page.currentPage, pageSize: page.size, total: page.totalElements });
     }
     setLoading(false);
-  }
-
-  // 获取已定义的故障数据
-  async function fetchDefinedFaultList() {
-    const response = await fetchDefinedFaults(type);
-    if (!dealResponse(response)) {
-      const _definedFaults = {};
-      if (Array.isArray(response)) {
-        response.forEach((fault) => {
-          _definedFaults[fault.errorCode] = fault;
-        });
-      }
-      setDefinedFaults(_definedFaults);
-    } else {
-      message.error(formatMessage({ id: 'app.fault.fetchDefinedFailed' }));
-    }
   }
 
   function handleTableChange({ current, pageSize }) {
@@ -138,17 +127,15 @@ const FaultListComponent = (props) => {
 
   return (
     <TablePageWrapper>
-      <div>
-        <FaultListSearchForm search={fetchFaultList} faults={definedFaults} />
-      </div>
-      <Table
-        bordered
+      <FaultListSearchForm search={fetchFaultList} />
+      <TableWithPages
         loading={loading}
         columns={columns}
         dataSource={faultList}
+        scroll={{ x: 'max-content' }}
         onChange={handleTableChange}
         pagination={{ pagination, showSizeChanger: true, showTotal: renderTotalTip }}
-        rowKey={({ fileTaskId }) => fileTaskId}
+        rowKey={({ id }) => id}
       />
     </TablePageWrapper>
   );

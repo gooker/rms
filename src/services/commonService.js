@@ -323,24 +323,6 @@ export async function deleteFaultDefinition(vehicleType, params) {
   );
 }
 
-// 获取故障定义
-export async function fetchDefinedFaults(vehicleType) {
-  return request(`/${NameSpace[vehicleType]}/api/selectErrorDefinitionList`, {
-    method: `GET`,
-    data: { sectionId: window.localStorage.getItem('sectionId') },
-  });
-}
-
-// 获取小车故障信息
-export async function fetchVehicleErrorRecord(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/api/vehicleErrorRecord`, {
-    method: 'POST',
-    data: {
-      ...params,
-      sectionId: window.localStorage.getItem('sectionId'),
-    },
-  });
-}
 
 // 资源分组-分组管理
 export async function getCustomGroupJson() {

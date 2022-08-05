@@ -617,3 +617,20 @@ export async function deleteVehicleDefinition(param) {
   });
 }
 
+// 获取小车故障记录
+
+export async function fetchVehicleErrorRecord(param) {
+  return request(`/${NameSpace.Platform}/errorDefinition/getVehicleErrorRecord`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 故障记录导出
+
+export async function exportVehicleErrorRecord(param) {
+  return request(`/${NameSpace.Platform}/errorDefinition/getVehicleErrorRecordExcel`, {
+    method: 'POST',
+    data: param,
+  });
+}

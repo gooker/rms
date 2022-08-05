@@ -14,14 +14,14 @@ const FaultSearch = (props) => {
     form.validateFields().then((values) => {
       const params = { ...values };
       if (!isStrictNull(values?.date?.[0])) {
-        params.createTimeStart = convertToUserTimezone(values.date[0]).format(
+        params.createTimeStart = convertToUserTimezone(values.createDate[0]).format(
           'YYYY-MM-DD HH:mm:ss',
         );
+        params.createTimeEnd = convertToUserTimezone(values.createDate[1]).format(
+          'YYYY-MM-DD HH:mm:ss',
+        );
+        params.date = null;
       }
-      if (!isStrictNull(values?.date?.[1])) {
-        params.createTimeEnd = convertToUserTimezone(values.date[1]).format('YYYY-MM-DD HH:mm:ss');
-      }
-      delete params?.date;
       onSearch(params);
     });
   }

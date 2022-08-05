@@ -56,6 +56,7 @@ export default {
   // 故障相关
   'app.fault.code': '故障码',
   'app.fault.name': '故障名称',
+  'app.fault.content': '故障内容',
   'app.fault.type': '故障类型',
   'app.fault.level': '故障等级',
   'app.fault.step': '步骤',
@@ -65,7 +66,6 @@ export default {
   'app.fault.lastReport': '最近上报',
   'app.fault.autoRecover': '自动恢复',
   'app.fault.additionalData': '额外信息',
-  'app.fault.extraData1': '附加数据1',
   'app.fault.extraData2': '附加数据2',
 
   // 触发器
@@ -90,7 +90,6 @@ export default {
   'app.fault.definition': '故障定义',
   'app.fault.init': '初始化',
   'app.fault.init.confirm': '该操作会初始化所有故障定义信息, 是否继续执行该操作?',
-  'app.fault.fetchDefinedFailed': '获取已定义故障数据失败',
   'app.fault.exportFileNameWithParts': '故障信息数据(部分)',
   'app.fault.exportFileName': '故障信息数据(全部)',
 
