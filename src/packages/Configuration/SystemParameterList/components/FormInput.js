@@ -18,11 +18,11 @@ class InputComponent extends PureComponent {
   }
 }
 
-export default function InputFunction({ value, options = {}, onChange }) {
+export default function InputFunction({ name, value, options = {}, onChange }) {
   return (
     <InputComponent
       onChange={(val) => {
-        onChange(val);
+        onChange(name, val);
       }}
       value={value}
       params={options}

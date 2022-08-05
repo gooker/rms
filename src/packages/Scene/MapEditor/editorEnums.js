@@ -178,7 +178,6 @@ export const CellTypeSetting = [
     picture: 'block_cell.png',
     i18n: 'editor.cellType.forbid',
     scope: 'routeMap',
-    texture: 'block_cell',
   },
   // 存储点
   {
@@ -186,7 +185,6 @@ export const CellTypeSetting = [
     picture: 'store_cell.png',
     i18n: 'editor.cellType.storage',
     scope: 'logic',
-    texture: 'store_cell',
   },
   // 跟车点
   {
@@ -194,7 +192,6 @@ export const CellTypeSetting = [
     picture: 'follow_cell.png',
     i18n: 'editor.cellType.follow',
     scope: 'routeMap',
-    texture: 'follow_cell',
   },
   // 等待点
   {
@@ -202,7 +199,6 @@ export const CellTypeSetting = [
     picture: 'wait_cell.png',
     i18n: 'editor.cellType.waiting',
     scope: 'routeMap',
-    texture: 'wait_cell',
   },
   // 接任务点
   {
@@ -210,7 +206,6 @@ export const CellTypeSetting = [
     picture: 'get_task.png',
     i18n: 'editor.cellType.getTask',
     scope: 'logic',
-    texture: 'get_task',
   },
   // 安全区
   {
@@ -218,7 +213,6 @@ export const CellTypeSetting = [
     picture: 'safe_cell.png',
     i18n: 'editor.cellType.safe',
     scope: 'logic',
-    texture: 'safe_cell',
   },
   // 独立旋转点
   {
@@ -226,7 +220,6 @@ export const CellTypeSetting = [
     picture: 'round.png',
     i18n: 'editor.cellType.rotation',
     scope: 'logic',
-    texture: 'round',
   },
 ];
 

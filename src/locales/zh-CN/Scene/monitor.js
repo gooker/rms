@@ -10,6 +10,9 @@ export default {
   'monitor.manual': '手动',
   'monitor.reboot': '重启',
 
+  // 弹窗工具
+  'monitor.modal.sourceLock.clear': '取消查看',
+
   // Right Tools
   'monitor.right.latent': '潜伏车操作',
   'monitor.right.tote': '料箱车操作',
@@ -242,23 +245,18 @@ export default {
   'monitor.workstation.label.num': '任务数量',
   'monitor.workstation.allocateAMRnum': '分车数',
   'monitor.workstation.allocateAMRnum.limit': '分车上线',
-
   'monitor.station.status.START': '已开始',
   'monitor.station.status.PAUSED': '已暂停',
   'monitor.station.status.END': '已结束',
-
   'monitor.tip.noTask': '当前无任务执行',
   'monitor.station.more': '更多',
-
   'monitor.charge.assignedAMR': '已分配小车',
   'monitor.charger.bind.confirm': '确定绑定该充电桩ID吗?',
   'monitor.charger.unBind.confirm': '确定解绑该充电桩ID吗?',
   'monitor.charger.enable.confirm': '确定将充电桩切换为: {state}?',
   'monitor.charger.release': '解除占用',
   'monitor.charger.release.confirm': '确定解除占用吗?',
-
   'monitor.runTime.info': '运行时信息',
-
   'monitor.exhibition.tip.fetchDataFail': '获取图表数据失败',
   'monitor.exhibition.vehicle.total': '总共',
   'monitor.exhibition.taskState': '任务实时',

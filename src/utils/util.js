@@ -1283,16 +1283,18 @@ export function generateResourceGroups(record) {
 
 // 将接口获取的车辆列表数据转换成适合页面使用的格式
 export function transformVehicleList(allVehicles) {
-  return allVehicles.map((vehicleItem) => {
-    const { vehicle, vehicleInfo, vehicleWorkStatusDTO, ...rest } = vehicleItem;
-    return {
-      ...rest,
-      ...vehicle,
-      currentCellId: vehicleInfo.currentCellId,
-      currentDirection: vehicleInfo.direction,
-      vehicleStatus: vehicleWorkStatusDTO?.vehicleStatus,
-    };
-  });
+  return allVehicles
+    .map((vehicleItem) => {
+      const { vehicle, vehicleInfo, vehicleWorkStatusDTO, ...rest } = vehicleItem;
+      return {
+        ...rest,
+        ...vehicle,
+        currentCellId: vehicleInfo.currentCellId,
+        currentDirection: vehicleInfo.direction,
+        vehicleStatus: vehicleWorkStatusDTO?.vehicleStatus,
+      };
+    })
+    .filter(({ isSimulator }) => isSimulator);
 }
 
 export function mathComputation(num1, num2, symbol) {

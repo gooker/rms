@@ -21,7 +21,6 @@ import {
   convertToteLayoutData,
   getElevatorMapCellId,
   getLockCellBounds,
-  getTextureFromResources,
   hasLatentPod,
   unifyVehicleState,
 } from '@/utils/mapUtil';
@@ -49,6 +48,7 @@ import {
   transformXYByParams,
 } from '@/utils/mapTransformer';
 import { loadMonitorExtraTextures } from '@/utils/textures';
+import SourceLock from '@/entities/SourceLock';
 
 class MonitorMapView extends BaseMap {
   constructor() {
@@ -70,7 +70,6 @@ class MonitorMapView extends BaseMap {
 
     // 监控相关
     this.idVehicleMap = new Map(); // {uniqueId: [VehicleEntity]}
-
     this.idLoadMap = new Map(); // {loadId: [PodEntity]}
     this.idLoadInVehicle = new Map(); // {loadId:null} // 用来标识有哪些货架在小车身上
     this.idTotePodMap = new Map(); // {cellId_L: [PodEntity]} ||  {cellId_R: [PodEntity]}
@@ -79,7 +78,8 @@ class MonitorMapView extends BaseMap {
     // Locks
     this.vehicleLocksMap = new Map();
     this.cellLocker = null;
-    this.TemporaryLockMap = new Map(); // {[x${x}y${y}]: [LockEntity]}
+    this.temporaryLockMap = new Map(); // {[x${x}y${y}]: [LockEntity]}
+    this.sourceLock = []; // 资源锁
 
     // 热度
     this.cellHeatMap = new Map();
@@ -87,19 +87,17 @@ class MonitorMapView extends BaseMap {
     // 站点实时速率
     this.stationRealTimeRateMap = new Map();
 
-    // 显示小车路径
+    // 小车路径相关
     this.filteredVehicle = []; // 存放小车的uniqueId
     this.showTaskPath = false;
     this.vehicleTaskMap = new Map(); // {uniqueId: TaskActions}
     this.vehiclePathMap = new Map(); // {uniqueId:[TaskPathEntity]}
     this.vehicleTargetLineMap = new Map(); // {uniqueId:SmoothGraphics}
+    this.trackVehicleId = null;
 
     // 料箱实时
     this.toteTaskRealtimePath = [];
     this.toteTaskRealtimeState = [];
-
-    // 小车追踪
-    this.trackVehicleId = null;
   }
 
   async componentDidMount() {
@@ -329,16 +327,14 @@ class MonitorMapView extends BaseMap {
   renderTemporaryLock = (inputData) => {
     // 清除所有的临时不可走点
     this.clearTemporaryLock();
-
     // 渲染新的临时不可走点
     inputData?.forEach((lock) => {
       const cellEntity = this.idCellMap.get(lock.cellId);
       if (cellEntity) {
         const { x, y } = cellEntity;
-        const texture = getTextureFromResources('tmp_block_lock');
-        const locker = new TemporaryLock(texture, x, y);
+        const locker = new TemporaryLock(x, y);
         this.pixiUtils.viewportAddChild(locker);
-        this.TemporaryLockMap.set(`x${x}y${y}`, locker);
+        this.temporaryLockMap.set(`x${x}y${y}`, locker);
       }
     });
     this.refresh();
@@ -346,13 +342,50 @@ class MonitorMapView extends BaseMap {
 
   // 清除临时不可走点锁
   clearTemporaryLock = () => {
-    this.TemporaryLockMap.forEach((locker) => {
+    this.temporaryLockMap.forEach((locker) => {
       this.pixiUtils.viewportRemoveChild(locker);
-      locker.destroy({ children: true });
+      locker.destroy();
     });
-    this.TemporaryLockMap.clear();
+    this.temporaryLockMap.clear();
     this.refresh();
   };
+
+  // ************************ 资源锁 **********************
+  // 渲染资源锁
+  renderSourceLock(category, lockList) {
+    // 清除所有已渲染的资源锁
+    this.clearSourceLock();
+    // 渲染新的资源锁
+    lockList?.forEach((lock) => {
+      const cellEntity = this.idCellMap.get(lock.cellId);
+      if (cellEntity) {
+        const { x, y } = cellEntity;
+        const sourceLock = new SourceLock({
+          x,
+          y,
+          lock,
+          click: () => {
+            window.$$dispatch({
+              type: 'monitorView/saveSourceLock',
+              payload: { category, lockList },
+            });
+          },
+        });
+        this.pixiUtils.viewportAddChild(sourceLock);
+        this.sourceLock.push(sourceLock);
+      }
+    });
+    this.refresh();
+  }
+
+  clearSourceLock() {
+    this.sourceLock.forEach((locker) => {
+      this.pixiUtils.viewportRemoveChild(locker);
+      locker.destroy();
+    });
+    this.sourceLock.length = 0;
+    this.refresh();
+  }
 
   // 地图元素点击事件
   onVehicleClick = async ({ type, id }) => {
@@ -852,7 +885,6 @@ class MonitorMapView extends BaseMap {
         vehicleStatus,
         currentCellId,
         currentDirection,
-        ncurrentDirection,
         errorLevel,
         uniqueId,
         vehicleType,

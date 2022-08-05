@@ -3,7 +3,7 @@ import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
 import { IconFont } from '@/components/IconFont';
 import { DumpBasket } from '@/entities';
-import { MonitorOperationType } from '@/packages/Scene/MapMonitor/enums';
+import { MonitorOperationType } from '@/packages/Scene/MapMonitor/MonitorConts';
 import EventManager from '@/utils/EventManager';
 import styles from './components.module.less';
 

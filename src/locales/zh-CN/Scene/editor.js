@@ -29,6 +29,7 @@ export default {
   'editor.message.codeNotExit': '点位不存在',
   'editor.message.codeNotInRange': '点位ID不在该逻辑区范围',
   'editor.code.duplicate': '编码已存在',
+  'editor.merge.requireLand': '请切换到物理坐标模式',
 
   // 施工图
   'editor.constructionDrawing.export': '导出施工图',
@@ -70,6 +71,7 @@ export default {
   'editor.cell.bases': '基准点位',
   'editor.cell.space': '码间距',
   'editor.cell.adjustSpace': '调整码间距',
+  'editor.cell.merge': '点位融合',
   'editor.cell.horizontalSelection': '横向选择',
   'editor.cell.verticalSelection': '纵向选择',
   'editor.cell.batchSelection': '批量选择',
@@ -178,4 +180,7 @@ export default {
   // 创建默认线条
   'editor.defaultRoute.title': '创建默认路线',
   'editor.defaultRoute.warn': '该操作可能会覆盖已存在的路线, 是否继续执行?',
+
+  // 其他
+  'editor.button.swap': '交换',
 };

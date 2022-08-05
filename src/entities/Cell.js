@@ -27,8 +27,9 @@ export default class Cell extends PIXI.Container {
       console.error(`Cell: 未识别的导航类型 > ${this.navigationType}`);
     }
 
-    this.id = props.id; // Integer ID
-    this.naviId = props.naviId; // 车型导航点的原始ID
+    this.id = props.id;
+    this.naviId = props.naviId;
+    this.pid = props.pid;
 
     this.x = props.x;
     this.y = props.y;
@@ -74,11 +75,11 @@ export default class Cell extends PIXI.Container {
     this.navigationId.y = CellSize.height / 2 + 30;
     this.addChild(this.navigationId);
 
-    // 二维码点
-    // this.qrId = new BitText(this.id, 0, 0, 0x00aeff);
-    // this.qrId.anchor.set(0.5, 1);
-    // this.qrId.y = -CellSize.height / 2 - 30;
-    // this.addChild(this.qrId);
+    // pId
+    // this.pidSprite = new BitText(this.pid, 0, 0, 0x00aeff);
+    // this.pidSprite.anchor.set(0.5, 1);
+    // this.pidSprite.y = -CellSize.height / 2 - 30;
+    // this.addChild(this.pidSprite);
   }
 
   renderNavigation(cellType = 'blank') {

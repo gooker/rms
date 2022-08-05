@@ -166,8 +166,7 @@ export default class BaseMap extends React.PureComponent {
       rest.cellIds.forEach((cell) => {
         const cellEntity = this.idCellMap.get(cell);
         if (cellEntity) {
-          opt === 'add' && cellEntity.plusType('rest_cell', getTextureFromResources('rest_cell'));
-          opt === 'remove' && cellEntity.removeType('rest_cell');
+          //
         }
       });
     }
@@ -604,29 +603,8 @@ export default class BaseMap extends React.PureComponent {
       this.pixiUtils.viewportAddChild(elevator);
       this.elevatorMap.set(`x${x}y${y}`, elevator);
 
-      // 渲染电梯出入口、等待点、电梯点
+      // 电梯点替换点ID
       doors.forEach((door) => {
-        const { cellId: entryCellId, leaveCellId, waitCellId } = door;
-        // 入口
-        if (entryCellId) {
-          const cellEntity = this.idCellMap.get(parseInt(entryCellId));
-          cellEntity &&
-            cellEntity.plusType('elevator_in', getTextureFromResources('entrance_cell'));
-        }
-
-        // 出口
-        if (leaveCellId) {
-          const cellEntity = this.idCellMap.get(parseInt(leaveCellId));
-          cellEntity && cellEntity.plusType('elevator_out', getTextureFromResources('exit_cell'));
-        }
-
-        // 等待点
-        if (waitCellId) {
-          const cellEntity = this.idCellMap.get(parseInt(waitCellId));
-          cellEntity && cellEntity.plusType('wait_cell', getTextureFromResources('wait_cell'));
-        }
-
-        // 电梯点替换点ID
         elevatorCellEntity.addReplaceId(replace);
       });
 
@@ -648,23 +626,6 @@ export default class BaseMap extends React.PureComponent {
       }
 
       doors.forEach((door) => {
-        const { cellId: entryCellId, waitCellId, leaveCellId } = door;
-
-        if (entryCellId) {
-          const cellEntity = this.idCellMap.get(parseInt(entryCellId));
-          cellEntity && cellEntity.removeType('elevator_in');
-        }
-
-        if (leaveCellId) {
-          const cellEntity = this.idCellMap.get(parseInt(leaveCellId));
-          cellEntity && cellEntity.removeType('elevator_out');
-        }
-
-        if (waitCellId) {
-          const cellEntity = this.idCellMap.get(parseInt(waitCellId));
-          cellEntity && cellEntity.removeType('wait_cell');
-        }
-
         elevatorCellEntity.addReplaceId(null);
       });
     }

@@ -91,32 +91,32 @@ export default [
       },
     ],
   },
-  {
-    path: `/${AppCode.ResourceManage}/equipment`,
-    name: 'equipment',
-    icon: 'equipment',
-    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-    routes: [
-      {
-        path: `/${AppCode.ResourceManage}/equipment/customType`,
-        name: 'customType',
-        component: '/ResourceManage/Equipment/CustomEquipmentType',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/equipment/list`,
-        name: 'list',
-        component: '/ResourceManage/Equipment/EquipmentList',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/equipment/faultManagement`,
-        name: 'faultManagement',
-        component: '/ResourceManage/Equipment/EquipmentFaultManagement',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
-    ],
-  },
+  // {
+  //   path: `/${AppCode.ResourceManage}/equipment`,
+  //   name: 'equipment',
+  //   icon: 'equipment',
+  //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+  //   routes: [
+  //     {
+  //       path: `/${AppCode.ResourceManage}/equipment/customType`,
+  //       name: 'customType',
+  //       component: '/ResourceManage/Equipment/CustomEquipmentType',
+  //       authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+  //     },
+  //     {
+  //       path: `/${AppCode.ResourceManage}/equipment/list`,
+  //       name: 'list',
+  //       component: '/ResourceManage/Equipment/EquipmentList',
+  //       authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+  //     },
+  //     {
+  //       path: `/${AppCode.ResourceManage}/equipment/faultManagement`,
+  //       name: 'faultManagement',
+  //       component: '/ResourceManage/Equipment/EquipmentFaultManagement',
+  //       authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+  //     },
+  //   ],
+  // },
   {
     path: `/${AppCode.ResourceManage}/charger`,
     name: 'charger',
@@ -162,9 +162,9 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/resourceLock/containerLock`,
-        name: 'containerLock',
-        component: '/ResourceManage/ResourceLock/ContainerLock',
+        path: `/${AppCode.ResourceManage}/resourceLock/loadLock`,
+        name: 'loadLock',
+        component: '/ResourceManage/ResourceLock/LoadLock',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {

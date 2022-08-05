@@ -67,6 +67,8 @@ const MonitorModals = (props) => {
       {categoryModal === 'workStationTask' && categoryPanel === 'ToteVehicle' && (
         <AutomaticToteWorkstationTask />
       )}
+
+      {/* 资源锁 */}
     </>
   );
 };

@@ -22,20 +22,20 @@ export default [
       },
     ],
   },
-  {
-    path: `/${AppCode.Configuration}/integration`,
-    name: 'integration',
-    icon: 'layout',
-    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-    routes: [
-      {
-        path: `/${AppCode.Configuration}/integration/webHook`, // WebHook
-        name: 'webHook',
-        component: '/Configuration/Integration/WebHook/index',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-    ],
-  },
+  // {
+  //   path: `/${AppCode.Configuration}/integration`,
+  //   name: 'integration',
+  //   icon: 'layout',
+  //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+  //   routes: [
+  //     {
+  //       path: `/${AppCode.Configuration}/integration/webHook`, // WebHook
+  //       name: 'webHook',
+  //       component: '/Configuration/Integration/WebHook/index',
+  //       authority: ['ADMIN', 'SUPERMANAGER'],
+  //     },
+  //   ],
+  // },
   {
     path: `/${AppCode.Configuration}/system`,
     name: 'systemConfig',
@@ -47,19 +47,18 @@ export default [
         name: 'globalConfig',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         routes: [
-          {
-            path: `/${AppCode.Configuration}/system/global/oem`, // OEM
-            name: 'oem',
-            component: '/Configuration/OEM',
-            authority: ['ADMIN', 'SUPERMANAGER'],
-          },
-          {
-            path: `/${AppCode.Configuration}/system/global/customMenuManager`, // 自定义菜单
-            name: 'customMenuManager',
-            component: '/Configuration/CustomMenuManager',
-            authority: ['ADMIN', 'SUPERMANAGER'],
-          },
-
+          // {
+          //   path: `/${AppCode.Configuration}/system/global/oem`, // OEM
+          //   name: 'oem',
+          //   component: '/Configuration/OEM',
+          //   authority: ['ADMIN', 'SUPERMANAGER'],
+          // },
+          // {
+          //   path: `/${AppCode.Configuration}/system/global/customMenuManager`, // 自定义菜单
+          //   name: 'customMenuManager',
+          //   component: '/Configuration/CustomMenuManager',
+          //   authority: ['ADMIN', 'SUPERMANAGER'],
+          // },
           {
             path: `/${AppCode.Configuration}/system/global/richEditor`, // 富文本编辑
             name: 'richEditor',
@@ -81,15 +80,21 @@ export default [
         ],
       },
       {
-        path: `/${AppCode.Configuration}/system/section`, //
+        path: `/${AppCode.Configuration}/system/section`, // 区域级配置
         name: 'sectionConfig',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         routes: [
+          // {
+          //   path: `/${AppCode.Configuration}/system/section/parameters`, // 参数配置
+          //   name: 'parameters',
+          //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+          //   component: '/Configuration/SystemParameters',
+          // },
           {
-            path: `/${AppCode.Configuration}/system/section/parameters`, // 参数配置
-            name: 'parameters',
-            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-            component: '/Configuration/SystemParameters',
+            path: `/${AppCode.Configuration}/system/section/parameterList`, // 参数列表(原系统参数配置)
+            name: 'parameterList',
+            component: '/Configuration/SystemParameterList/index',
+            hooks: ['dev'],
           },
         ],
       },

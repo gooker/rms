@@ -1,17 +1,15 @@
 import React, { memo, useState } from 'react';
-import { Divider, Tooltip, Modal } from 'antd';
+import { Divider, Modal, Tooltip } from 'antd';
 import {
   AimOutlined,
-  ReloadOutlined,
   DashboardOutlined,
-  FullscreenOutlined,
-  CloudDownloadOutlined,
   FullscreenExitOutlined,
+  FullscreenOutlined,
+  ReloadOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
 import LocationTracking from '../Modal/LocationTracking';
-import DownLoadMRV from '../Modal/DownLoadMRV';
 import DashBoard from '../DashBoard';
 
 const MonitorHeaderRightTools = (props) => {
@@ -68,17 +66,17 @@ const MonitorHeaderRightTools = (props) => {
           }}
         />
       </Tooltip>
-      <Divider type="vertical" />
+      <Divider type='vertical' />
 
       {/* MRV */}
-      <Tooltip title={formatMessage({ id: 'monitor.MRV' })} placement={'top'}>
-        <CloudDownloadOutlined
-          onClick={() => {
-            switchMRVModalVisible(true);
-          }}
-        />
-      </Tooltip>
-      <Divider type="vertical" />
+      {/*<Tooltip title={formatMessage({ id: 'monitor.MRV' })} placement={'top'}>*/}
+      {/*  <CloudDownloadOutlined*/}
+      {/*    onClick={() => {*/}
+      {/*      switchMRVModalVisible(true);*/}
+      {/*    }}*/}
+      {/*  />*/}
+      {/*</Tooltip>*/}
+      {/*<Divider type="vertical" />*/}
 
       {/* Dashboard */}
       <Tooltip title={formatMessage({ id: 'monitor.dashboard' })} placement={'top'}>
@@ -102,18 +100,20 @@ const MonitorHeaderRightTools = (props) => {
       >
         <LocationTracking />
       </Modal>
-      <Modal
-        destroyOnClose
-        visible={MRVVisible}
-        width={400}
-        onCancel={() => {
-          switchMRVModalVisible(false);
-        }}
-        title={'MRV'}
-        footer={null}
-      >
-        <DownLoadMRV />
-      </Modal>
+
+      {/* MRV 下载*/}
+      {/*<Modal*/}
+      {/*  destroyOnClose*/}
+      {/*  visible={MRVVisible}*/}
+      {/*  width={400}*/}
+      {/*  onCancel={() => {*/}
+      {/*    switchMRVModalVisible(false);*/}
+      {/*  }}*/}
+      {/*  title={'MRV'}*/}
+      {/*  footer={null}*/}
+      {/*>*/}
+      {/*  <DownLoadMRV />*/}
+      {/*</Modal>*/}
 
       {/* 仪表盘 */}
       {dashBoardVisible && <DashBoard />}

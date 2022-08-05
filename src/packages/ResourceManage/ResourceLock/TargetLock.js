@@ -1,13 +1,13 @@
-import React, { useState, memo, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Tooltip, Button, Row, Col, message } from 'antd';
+import { Button, Col, message, Row, Tooltip } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import { fetchTargetCellLockList, fetchBatchDeleteTargetCellLock } from '@/services/commonService';
+import { fetchBatchDeleteTargetCellLock, fetchTargetCellLockList } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
-import { dealResponse, isNull, isStrictNull, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import SearchTargetLock from './components/SearchTargetLock';
 
@@ -59,39 +59,9 @@ const TargetLock = (props) => {
   ];
 
   useEffect(() => {
-    async function init() {
-      await freshData();
-    }
-    init();
+    freshData();
   }, []);
 
-  function checkTaskDetail(taskId, vehicleType) {
-    const { dispatch } = props;
-    dispatch({
-      type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, vehicleType },
-    });
-  }
-
-  function onSelectChange(selectedKeys, selectedRow) {
-    setSelectedRowKeys(selectedKeys);
-    setSelectedRow(selectedRow);
-  }
-
-  async function deleteTargetLock() {
-    RmsConfirm({
-      content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
-      onOk: async () => {
-        const response = await fetchBatchDeleteTargetCellLock(selectedRow);
-        if (!dealResponse(response)) {
-          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-          freshData();
-        } else {
-          message.success(formatMessage({ id: 'app.tip.operateFailed' }));
-        }
-      },
-    });
-  }
   async function freshData() {
     setLoading(true);
     const response = await fetchTargetCellLockList();
@@ -128,14 +98,42 @@ const TargetLock = (props) => {
     setCurrentTargetLockList(result);
   }
 
+  function checkTaskDetail(taskId, vehicleType) {
+    const { dispatch } = props;
+    dispatch({
+      type: 'task/fetchTaskDetailByTaskId',
+      payload: { taskId, vehicleType },
+    });
+  }
+
+  function onSelectChange(selectedKeys, selectedRow) {
+    setSelectedRowKeys(selectedKeys);
+    setSelectedRow(selectedRow);
+  }
+
+  async function deleteTargetLock() {
+    RmsConfirm({
+      content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
+      onOk: async () => {
+        const response = await fetchBatchDeleteTargetCellLock(selectedRow);
+        if (!dealResponse(response)) {
+          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+          freshData();
+        } else {
+          message.success(formatMessage({ id: 'app.tip.operateFailed' }));
+        }
+      },
+    });
+  }
+
   return (
     <TablePageWrapper>
       <div>
         <SearchTargetLock search={filterData} data={targetLockList} />
         <Row>
-          <Col flex="auto" className={commonStyles.tableToolLeft}>
+          <Col flex='auto' className={commonStyles.tableToolLeft}>
             <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteTargetLock}>
-              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
+              <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
             </Button>
             <Button onClick={freshData}>
               <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />

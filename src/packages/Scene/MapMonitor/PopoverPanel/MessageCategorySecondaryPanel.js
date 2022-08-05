@@ -1,8 +1,7 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { hasAppPermission } from '@/utils/Permission';
-import { MessageCategoryTools } from '../enums';
+import { MessageCategoryTools } from '../MonitorConts';
 import styles from '../monitorLayout.module.less';
 
 const MessageCategorySecondaryPanel = (props) => {
