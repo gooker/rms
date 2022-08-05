@@ -1,12 +1,24 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Modal, Form, Input, Switch } from 'antd';
-import { isNull, formatMessage, getFormLayout, dealResponse, isStrictNull } from '@/utils/util';
+import { Modal, Form, Input, Switch, Select, Row, Col, Button } from 'antd';
+import { connect } from '@/utils/RmsDva';
+import {
+  isNull,
+  formatMessage,
+  getFormLayout,
+  dealResponse,
+  isStrictNull,
+  convertMapToArrayMap,
+} from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import { saveVehicleDefinition } from '@/services/resourceService';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import commonStyle from '@/common.module.less';
+import { isPlainObject } from 'lodash';
 
-const { formItemLayout } = getFormLayout(6, 17);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 17);
 
 function AddDefinition(props) {
-  const { visible, onCancel, onOk, updateRecord, allData } = props;
+  const { visible, onCancel, onOk, updateRecord, allData, allAdaptors } = props;
   const [formRef] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
@@ -21,8 +33,26 @@ function AddDefinition(props) {
       .validateFields()
       .then(async (values) => {
         setLoading(true);
-        const response = await savexxxx({ ...values });
-        if (!dealResponse(response)) {
+        const params = { ...values };
+        const { adapterVehicleType, additionalInfo } = values;
+        const [adapterType, vehicleType] = adapterVehicleType.split('@');
+        params.adapterType = adapterType;
+        params.vehicleType = vehicleType;
+        let newAdditionalInfo = {};
+        if (Array.isArray(additionalInfo)) {
+          additionalInfo.forEach((item) => {
+            if (isPlainObject(item)) {
+              const { key, value } = item;
+              newAdditionalInfo[key] = value;
+            }
+          });
+        }
+        params.additionalInfo = newAdditionalInfo;
+        console.log(params.additionalInfo);
+
+        delete params.adapterVehicleType;
+        const response = await saveVehicleDefinition({ ...params });
+        if (!dealResponse(response, 1)) {
           onCancel();
           onOk();
         }
@@ -40,11 +70,27 @@ function AddDefinition(props) {
   }
 
   function validateNameDuplicate(_, value) {
-    const errorNames = allData?.map(({ errorName }) => errorName);
-    if (!value || !errorNames.includes(value) || !isStrictNull(updateRecord)) {
+    const errorNames = allData
+      .filter(({ id }) => id !== updateRecord?.id)
+      .map(({ errorName }) => errorName);
+    if (!value || !errorNames.includes(value)) {
       return Promise.resolve();
     }
     return Promise.reject(new Error(formatMessage({ id: 'app.form.name.duplicate' })));
+  }
+
+  function convertAdditionalInfos() {
+    if (!isStrictNull(updateRecord)) {
+      return convertMapToArrayMap(updateRecord.additionalInfo);
+    } else {
+      return [{}];
+    }
+  }
+
+  function getVehicleTasksByType() {
+    if (!isStrictNull(updateRecord)) {
+      return `${updateRecord.adapterType}@${updateRecord.vehicleType}`;
+    }
   }
 
   return (
@@ -77,15 +123,48 @@ function AddDefinition(props) {
           rules={[{ required: true }, { validator: validateNameDuplicate }]}
           initialValue={updateRecord?.errorName}
         >
-          <Input allowClear disabled={!isNull(updateRecord)} />
+          <Input allowClear />
+        </Form.Item>
+
+        <Form.Item
+          label={formatMessage({ id: 'app.vehicleType' })}
+          name="adapterVehicleType"
+          rules={[{ required: true }]}
+          initialValue={getVehicleTasksByType()}
+        >
+          <Select allowClear value={updateRecord?.vehicleType}>
+            {Object.values(allAdaptors).map(({ adapterType }) => {
+              const { code, name, vehicleTypes } = adapterType;
+              return (
+                <Select.OptGroup key={code} label={name}>
+                  {vehicleTypes.map((item, index) => (
+                    <Select.Option key={index} value={`${code}@${item.code}`}>
+                      {item.name}
+                    </Select.Option>
+                  ))}
+                </Select.OptGroup>
+              );
+            })}
+          </Select>
         </Form.Item>
 
         <Form.Item
           label={formatMessage({ id: 'app.fault.level' })}
           name="level"
+          rules={[{ required: true }]}
           initialValue={updateRecord?.level}
         >
-          <Input allowClear />
+          <Select allowClear>
+            <Select.Option key="INFO" value="INFO">
+              INFO
+            </Select.Option>
+            <Select.Option key="WARN" value="WARN">
+              WARN
+            </Select.Option>
+            <Select.Option key="ERROR" value="ERROR">
+              ERROR
+            </Select.Option>
+          </Select>
         </Form.Item>
         <Form.Item
           label={formatMessage({ id: 'app.fault.type' })}
@@ -102,40 +181,57 @@ function AddDefinition(props) {
         >
           <Switch allowClear />
         </Form.Item>
-        <Form.Item
-          label={<FormattedMessage id="app.fault.extraData1" />}
-          name="preDataDefinition"
-          initialValue={updateRecord?.preDataDefinition}
-        >
-          <Input allowClear />
-        </Form.Item>
 
-        <Form.Item
-          label={<FormattedMessage id="app.fault.extraData2" />}
-          name="curDataDefinition"
-          initialValue={updateRecord?.curDataDefinition}
-        >
-          <Input allowClear />
-        </Form.Item>
+        <Form.List name="additionalInfo" initialValue={convertAdditionalInfos()}>
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map((field, index) => (
+                <Form.Item
+                  key={field.key}
+                  required={true}
+                  {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
+                  label={index === 0 ? formatMessage({ id: 'app.fault.additionalData' }) : ''}
+                >
+                  <Row gutter={10}>
+                    <Col span={22}>
+                      <Row gutter={24}>
+                        <Col span={9}>
+                          <Form.Item noStyle {...field} name={[field.name, 'key']}>
+                            <Input />
+                          </Form.Item>
+                        </Col>
 
-        <Form.Item
-          label={<FormattedMessage id="app.common.description" />}
-          name="description"
-          initialValue={updateRecord?.description}
-        >
-          <Input.TextArea allowClear />
-        </Form.Item>
-
-        <Form.Item
-          label={<FormattedMessage id="app.fault.additionalData" />}
-          name="additionalContent"
-          initialValue={updateRecord?.additionalContent}
-        >
-          <Input.TextArea allowClear />
-        </Form.Item>
+                        <Col span={15}>
+                          <Form.Item noStyle {...field} name={[field.name, 'value']}>
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col span={2} className={commonStyle.flexCenter}>
+                      {fields.length > 1 ? (
+                        <MinusCircleOutlined
+                          onClick={() => remove(field.name)}
+                          style={{ fontSize: 16 }}
+                        />
+                      ) : null}
+                    </Col>
+                  </Row>
+                </Form.Item>
+              ))}
+              <Form.Item {...formItemLayoutNoLabel}>
+                <Button block type="dashed" onClick={() => add()} style={{ width: '50%' }}>
+                  <PlusOutlined />
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
       </Form>
     </Modal>
   );
 }
 
-export default memo(AddDefinition);
+export default connect(({ global }) => ({
+  allAdaptors: global.allAdaptors,
+}))(memo(AddDefinition));
