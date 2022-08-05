@@ -16,6 +16,7 @@ export default {
   // 载具
   'resource.load': '载具',
   'resource.load.id': '载具ID',
+  'resource.load.type': '载具类型',
   'resource.load.length': '长',
   'resource.load.width': '宽',
   'resource.load.height': '高',
@@ -33,6 +34,7 @@ export default {
   'resource.load.endCode': '结束载具码',
 
   // 储位
+  'resource.storage.code': '储位编码',
   'resource.storage.template': '储位模版',
   'resource.storage.group': '储位组',
   'resource.storage.init': '初始化储位',

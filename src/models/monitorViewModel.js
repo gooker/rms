@@ -85,6 +85,7 @@ const MonitorViewModelState = {
 
   // 资源锁
   sourceLock: null,
+  sourceLockCategory: null,
 };
 
 export default {
@@ -154,7 +155,13 @@ export default {
     saveSourceLock(state, action) {
       return {
         ...state,
-        ...action.payload,
+        sourceLock: action.payload,
+      };
+    },
+    updateSourceLockCategory(state, action) {
+      return {
+        ...state,
+        sourceLockCategory: action.payload,
       };
     },
     saveVehicleAlarmList(state, action) {

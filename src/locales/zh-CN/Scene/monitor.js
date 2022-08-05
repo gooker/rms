@@ -263,4 +263,7 @@ export default {
   'monitor.exhibition.taskHistory': '任务历史',
   'monitor.exhibition.vehiclePower': '车辆电量',
   'app.map.store': '存储区',
+
+  // 其他
+  'monitor.sourceLock.lockTime': '锁定时间',
 };

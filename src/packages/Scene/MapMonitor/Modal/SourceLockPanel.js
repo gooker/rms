@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo } from 'react';
 import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -8,19 +8,17 @@ import { fetchLoadTaskLockList, fetchStorageLockList, fetchTargetCellLockList } 
 import { connect } from '@/utils/RmsDva';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 19);
-const SourceLockCategory = {
+export const SourceLockCategory = {
   targetLock: 'targetLock',
   loadLock: 'loadLock',
   storageLock: 'storageLock',
 };
 
 const SourceLockPanel = (props) => {
-  const { dispatch, mapRef } = props;
-
-  const [current, setCurrent] = useState(null);
+  const { dispatch, mapRef, sourceLockCategory } = props;
 
   async function showLock(category) {
-    setCurrent(category);
+    dispatch({ type: 'monitorView/updateSourceLockCategory', payload: category });
     let response;
     switch (category) {
       case SourceLockCategory.targetLock: {
@@ -36,12 +34,13 @@ const SourceLockPanel = (props) => {
       }
     }
     if (!dealResponse(response)) {
+      response = response.map((item, index) => ({ ...item, key: index }));
       mapRef.renderSourceLock(category, response);
     }
   }
 
   function cancelShow() {
-    setCurrent(null);
+    dispatch({ type: 'monitorView/updateSourceLockCategory', payload: null });
     mapRef.clearSourceLock();
   }
 
@@ -60,7 +59,7 @@ const SourceLockPanel = (props) => {
         <Form labelWrap {...formItemLayout}>
           <Form.Item label={formatMessage({ id: 'menu.resourceLock.targetLock' })}>
             <Button
-              type={current === SourceLockCategory.targetLock ? 'primary' : 'default'}
+              type={sourceLockCategory === SourceLockCategory.targetLock ? 'primary' : 'default'}
               size={'small'}
               onClick={() => {
                 showLock(SourceLockCategory.targetLock);
@@ -71,7 +70,7 @@ const SourceLockPanel = (props) => {
           </Form.Item>
           <Form.Item label={formatMessage({ id: 'menu.resourceLock.loadLock' })}>
             <Button
-              type={current === SourceLockCategory.loadLock ? 'primary' : 'default'}
+              type={sourceLockCategory === SourceLockCategory.loadLock ? 'primary' : 'default'}
               size={'small'}
               onClick={() => {
                 showLock(SourceLockCategory.loadLock);
@@ -82,7 +81,7 @@ const SourceLockPanel = (props) => {
           </Form.Item>
           <Form.Item label={formatMessage({ id: 'menu.resourceLock.storageLock' })}>
             <Button
-              type={current === SourceLockCategory.storageLock ? 'primary' : 'default'}
+              type={sourceLockCategory === SourceLockCategory.storageLock ? 'primary' : 'default'}
               size={'small'}
               onClick={() => {
                 showLock(SourceLockCategory.storageLock);
@@ -92,7 +91,7 @@ const SourceLockPanel = (props) => {
             </Button>
           </Form.Item>
           <Form.Item {...formItemLayoutNoLabel}>
-            <Button ghost size={'small'} onClick={cancelShow} disabled={current === null}>
+            <Button ghost size={'small'} onClick={cancelShow}>
               <CloseOutlined /> <FormattedMessage id={'monitor.modal.sourceLock.clear'} />
             </Button>
           </Form.Item>
@@ -101,6 +100,7 @@ const SourceLockPanel = (props) => {
     </div>
   );
 };
-export default connect(({ monitor }) => ({
+export default connect(({ monitor, monitorView }) => ({
   mapRef: monitor.mapContext,
+  sourceLockCategory: monitorView.sourceLockCategory,
 }))(memo(SourceLockPanel));

@@ -26,6 +26,7 @@ import VehicleAlert from './VehicleInfo/VehicleAlert';
 import VehicleRunningInfo from './VehicleInfo/VehicleRunninInfo';
 import EmergencyManagerModal from './EmergencyStopModal';
 import SourceLockPanel from '@/packages/Scene/MapMonitor/Modal/SourceLockPanel';
+import SourceLockDetailModal from '@/packages/Scene/MapMonitor/Modal/SourceLockDetailModal';
 
 const MonitorModals = (props) => {
   const { categoryModal, categoryPanel, dispatch } = props;
@@ -69,6 +70,7 @@ const MonitorModals = (props) => {
       )}
 
       {/* 资源锁 */}
+      <SourceLockDetailModal />
     </>
   );
 };

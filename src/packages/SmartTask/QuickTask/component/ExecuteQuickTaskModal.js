@@ -12,7 +12,7 @@ import {
 import { connect } from '@/utils/RmsDva';
 import { convertQuickTaskVarToRequestStruct, formatVariableFormValues, mergeQuickTaskVar } from '../quickTaskUtil';
 import { executeCustomTask } from '@/services/commonService';
-import FormModal from '@/components/FormModal';
+import FormModal from '@/components/CommonModal';
 import FormattedMessage from '@/components/FormattedMessage';
 import ResourceLimit from '@/packages/SmartTask/CustomTask/components/ResourceLimit';
 import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
