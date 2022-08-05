@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
-import { Category, ResourceCategoryTools, ViewCategoryTools } from '../enums';
+import { Category, ResourceCategoryTools, ViewCategoryTools } from '../MonitorConts';
 import styles from '../monitorLayout.module.less';
 
 const ViewCategorySecondaryPanel = (props) => {

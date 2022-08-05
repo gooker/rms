@@ -8,7 +8,7 @@ import { MonitorMapSizeKey, ZoneMarkerType } from '@/config/consts';
 import MonitorMapView from './MonitorMapView';
 import MonitorMask from '@/packages/Scene/MapMonitor/components/MonitorMask';
 import MonitorFooter from '@/packages/Scene/MapMonitor/components/MonitorFooter';
-import { FooterHeight, HeaderHeight, RightToolBarWidth } from '../enums';
+import { FooterHeight, HeaderHeight, RightToolBarWidth } from '../MonitorConts';
 import commonStyles from '@/common.module.less';
 import { CoordinateType } from '@/config/config';
 
@@ -297,39 +297,35 @@ const MonitorMapContainer = (props) => {
       mapContext.renderTunnel(tunnels);
     }
     // 渲染线条
-    mapContext.renderCostLines(relations);
+    mapContext.renderCostLines(relations, shownCellCoordinateType, currentMap.transform);
     mapContext.refresh();
   }
 
   // 渲染监控里的小车、货架等
   function renderMonitorLoad() {
     if (!isNull(monitorLoad)) {
-      const { latentVehicle, latentPod, toteVehicle, toteRack, sorterVehicle, loadList } =
-        monitorLoad;
+      const { latentVehicle, loadList } = monitorLoad;
       // mapContext.renderLatentVehicle(latentVehicle);
 
-      mapContext.renderToteVehicle(toteVehicle);
-
-      mapContext.renderSorterVehicle(sorterVehicle);
-
+      // 分类展示载具
       if (Array.isArray(loadList)) {
-        const currentlatentLoad = loadList?.filter(
+        const currentLatentLoad = loadList?.filter(
           ({ lt }) => lt === 'LOAD_TYPE_LatentJackingLoadType',
         );
-        const currentToteLoad = loadList?.filter(({ lt }) => lt === 'tote');
-        mapContext.renderLatentPod(currentlatentLoad);
+        mapContext.renderLatentPod(currentLatentLoad);
+
+        // const currentToteLoad = loadList?.filter(({ lt }) => lt === 'tote');
         // mapContext.renderTotePod(currentToteLoad);
       }
 
-      mapContext.renderTotePod(toteRack);
+      const { toteVehicle, sorterVehicle, toteRack } = monitorLoad;
+      // mapContext.renderToteVehicle(toteVehicle);
+      // mapContext.renderSorterVehicle(sorterVehicle);
+      // mapContext.renderTotePod(toteRack);
 
-      const { temporaryBlock, emergencyStopList, chargerList } = monitorLoad;
+      const { temporaryBlock, chargerList, emergencyStopList } = monitorLoad;
       // 临时不可走点
       mapContext.renderTemporaryLock(temporaryBlock ?? []);
-
-      // 急停区
-      // mapContext.renderEmergencyStopArea(emergencyStopList);
-      // dispatch({ type: 'monitor/saveEmergencyStopList', payload: emergencyStopList });
 
       // 渲染充电桩已绑定chargerId标记(这里只是处理已经绑定chargerId的情况)
       if (Array.isArray(chargerList)) {
@@ -338,6 +334,10 @@ const MonitorMapContainer = (props) => {
           mapContext.updateChargerState({ n: item.name, s: item.chargerStatus });
         });
       }
+
+      // 急停区
+      // mapContext.renderEmergencyStopArea(emergencyStopList);
+      // dispatch({ type: 'monitor/saveEmergencyStopList', payload: emergencyStopList });
     }
   }
 

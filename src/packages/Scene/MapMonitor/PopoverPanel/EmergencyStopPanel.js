@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { message, Tooltip } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import EventManager from '@/utils/EventManager';
-import { EmergencyCategoryTools, MonitorOperationType } from '../enums';
+import { EmergencyCategoryTools, MonitorOperationType } from '../MonitorConts';
 import { formatMessage, isNull } from '@/utils/util';
 import styles from '../monitorLayout.module.less';
 

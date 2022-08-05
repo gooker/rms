@@ -82,6 +82,10 @@ const MonitorViewModelState = {
   // 地图显示模式
   shownCellCoordinateType: CoordinateType.NAVI, // land 表示物理点位、navi表示导航点位
   shownNavigationType: [NavigationType.M_QRCODE, NavigationType.SEER_SLAM],
+
+  // 资源锁
+  sourceLock: null,
+  sourceLockCategory: null,
 };
 
 export default {
@@ -148,7 +152,18 @@ export default {
         commonStationView: { ...state.commonStationView, ...action.payload },
       };
     },
-
+    saveSourceLock(state, action) {
+      return {
+        ...state,
+        sourceLock: action.payload,
+      };
+    },
+    updateSourceLockCategory(state, action) {
+      return {
+        ...state,
+        sourceLockCategory: action.payload,
+      };
+    },
     saveVehicleAlarmList(state, action) {
       return {
         ...state,

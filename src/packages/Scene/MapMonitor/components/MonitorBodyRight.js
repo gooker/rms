@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { getRandomString, isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
-import { Category, MonitorRightTools, RightToolBarWidth } from '../enums';
+import { Category, MonitorRightTools, RightToolBarWidth } from '../MonitorConts';
 import Property from '../PopoverPanel/Property';
 import VehicleCategorySecondaryPanel from '../PopoverPanel/VehicleCategorySecondaryPanel';
 import ViewCategorySecondaryPanel from '../PopoverPanel/ViewCategorySecondaryPanel';
@@ -135,38 +135,41 @@ const MonitorBodyRight = (props) => {
   return (
     <div className={styles.bodyRightSideContainer} style={{ width: `${RightToolBarWidth}px` }}>
       <div className={styles.bodyRightSide}>
-        {MonitorRightTools.map(({ label, value, icon, style }) => {
-          return (
-            <div
-              key={value}
-              role={'category'}
-              style={{ position: 'relative' }}
-              className={categoryPanel === value ? styles.categoryActive : undefined}
-              onClick={(e) => {
-                let top;
-                if (e.target.tagName === 'IMG') {
-                  top = e.target.parentElement.getBoundingClientRect().top;
-                } else if (e.target.tagName === 'svg') {
-                  top =
-                    e.target.parentElement.parentElement.parentElement.getBoundingClientRect().top;
-                } else {
-                  top = e.target.getBoundingClientRect().top;
-                }
-                setOffsetTop(top);
-                if (value === Category.Prop) {
-                  if (selections.length === 1) {
+        {MonitorRightTools.map(({ auth, value, icon, style, label }) => {
+          if (isNull(auth) || (typeof auth === 'function' && auth())) {
+            return (
+              <div
+                key={value}
+                role={'category'}
+                style={{ position: 'relative' }}
+                className={categoryPanel === value ? styles.categoryActive : undefined}
+                onClick={(e) => {
+                  let top;
+                  if (e.target.tagName === 'IMG') {
+                    top = e.target.parentElement.getBoundingClientRect().top;
+                  } else if (e.target.tagName === 'svg') {
+                    top =
+                      e.target.parentElement.parentElement.parentElement.getBoundingClientRect()
+                        .top;
+                  } else {
+                    top = e.target.getBoundingClientRect().top;
+                  }
+                  setOffsetTop(top);
+                  if (value === Category.Prop) {
+                    if (selections.length === 1) {
+                      updateEditPanelFlag(value);
+                    }
+                  } else {
                     updateEditPanelFlag(value);
                   }
-                } else {
-                  updateEditPanelFlag(value);
-                }
-              }}
-            >
-              {renderIcon(icon, style)}
-              {renderBadge(value)}
-            </div>
-          );
-        })}
+                }}
+              >
+                {renderIcon(icon, style)}
+                {renderBadge(value)}
+              </div>
+            );
+          }
+        }).filter(Boolean)}
       </div>
       {!isNull(categoryPanel) ? renderPanelContent() : null}
     </div>

@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Select } from 'antd';
 
-class SelectTagComponent extends PureComponent {
+class FormMultiSelect extends PureComponent {
   render() {
     const { options = [] } = this.props;
     return (
@@ -13,7 +13,7 @@ class SelectTagComponent extends PureComponent {
           }
         }}
         value={this.props.value}
-        mode="tags"
+        mode='tags'
       >
         {options.map((record) => (
           <Select.Option key={record.value} value={record.value}>
@@ -25,12 +25,12 @@ class SelectTagComponent extends PureComponent {
   }
 }
 
-export default function SelectTag({ value, onChange, options }) {
+export default function SelectTag({ name, value, onChange, options }) {
   return (
-    <SelectTagComponent
+    <FormMultiSelect
       value={value}
       onChange={(val) => {
-        onChange(val);
+        onChange(name, val);
       }}
       options={options}
     />

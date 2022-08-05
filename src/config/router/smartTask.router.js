@@ -29,13 +29,13 @@ export default [
     component: '/SmartTask/QuickTask/index',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
-  {
-    path: `/${AppCode.SmartTask}/limitEqualizer`,
-    name: 'limitEqualizer',
-    icon: 'limit',
-    component: '/SmartTask/TaskLimitEqualizer/index',
-    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-  },
+  // {
+  //   path: `/${AppCode.SmartTask}/limitEqualizer`,
+  //   name: 'limitEqualizer',
+  //   icon: 'limit',
+  //   component: '/SmartTask/TaskLimitEqualizer/index',
+  //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+  // },
   {
     path: `/${AppCode.SmartTask}/trigger`,
     name: 'trigger',

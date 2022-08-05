@@ -19,13 +19,14 @@ import StackCellConfirmModal from '../components/StackCellConfirmModal';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, isNull } from '@/utils/util';
 import { getCellsWithPosition, getNavigationTypes } from '@/utils/mapUtil';
+import MergeCells from '@/packages/Scene/MapEditor/PopoverPanel/MergeCells';
 import commonStyles from '@/common.module.less';
 import styles from '../../popoverPanel.module.less';
 
 const ButtonStyle = { width: 120, height: 50, borderRadius: 5 };
 
 const CellPanel = (props) => {
-  const { dispatch, height, currentMap, mapContext } = props;
+  const { dispatch, height, currentMap, mapContext, shownCellCoordinateType } = props;
 
   const [formCategory, setFormCategory] = useState(null);
   const [secondTitle, setSecondTitle] = useState(null);
@@ -42,6 +43,8 @@ const CellPanel = (props) => {
         return <MoveCell />;
       case 'adjustSpace':
         return <AdjustCellSpace />;
+      case 'merge':
+        return <MergeCells />;
       default:
         return null;
     }
@@ -125,21 +128,32 @@ const CellPanel = (props) => {
                       setSecondTitle(formatMessage({ id: 'editor.cell.batchAdd' }));
                     }}
                   >
-                    <PlusCircleOutlined /> <FormattedMessage id="editor.cell.batchAdd" />
+                    <PlusCircleOutlined /> <FormattedMessage id='editor.cell.batchAdd' />
                   </Button>
                 </Col>
 
-                {/* 删除点位 */}
-                <Col span={12}>
-                  <Button
-                    style={ButtonStyle}
-                    disabled={currentMap == null}
-                    onClick={deleteNavigations}
-                  >
-                    <MinusCircleOutlined /> <FormattedMessage id="editor.cell.delete" />
-                  </Button>
-                </Col>
-
+                {/* 点位融合 */}
+                {/*<Col span={12}>*/}
+                {/*  <Button*/}
+                {/*    style={ButtonStyle}*/}
+                {/*    disabled={currentMap === null}*/}
+                {/*    onClick={() => {*/}
+                {/*      if (shownCellCoordinateType === CoordinateType.NAVI) {*/}
+                {/*        // 点位融合只能基于物理点位*/}
+                {/*        notification.warn({*/}
+                {/*          message: formatMessage({ id: 'app.message.systemHint' }),*/}
+                {/*          description: formatMessage({ id: 'editor.merge.requireLand' }),*/}
+                {/*          placement: 'top',*/}
+                {/*        });*/}
+                {/*      } else {*/}
+                {/*        setFormCategory('merge');*/}
+                {/*        setSecondTitle(formatMessage({ id: 'editor.cell.merge' }));*/}
+                {/*      }*/}
+                {/*    }}*/}
+                {/*  >*/}
+                {/*    <MergeCellsOutlined /> <FormattedMessage id="editor.cell.merge" />*/}
+                {/*  </Button>*/}
+                {/*</Col>*/}
                 {/* 移动点位 */}
                 <Col span={12}>
                   <Button
@@ -153,7 +167,6 @@ const CellPanel = (props) => {
                     <DragOutlined /> <FormattedMessage id="editor.cell.move" />
                   </Button>
                 </Col>
-
                 {/* 调整码间距 */}
                 <Col span={12}>
                   <Button
@@ -164,7 +177,17 @@ const CellPanel = (props) => {
                       setSecondTitle(formatMessage({ id: 'editor.cell.adjustSpace' }));
                     }}
                   >
-                    <LineHeightOutlined /> <FormattedMessage id="editor.cell.adjustSpace" />
+                    <LineHeightOutlined /> <FormattedMessage id='editor.cell.adjustSpace' />
+                  </Button>
+                </Col>
+                {/* 删除点位 */}
+                <Col span={12}>
+                  <Button
+                    style={ButtonStyle}
+                    disabled={currentMap == null}
+                    onClick={deleteNavigations}
+                  >
+                    <MinusCircleOutlined /> <FormattedMessage id='editor.cell.delete' />
                   </Button>
                 </Col>
               </Row>
@@ -221,7 +244,10 @@ const CellPanel = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => {
-  const { currentMap, mapContext } = editor;
-  return { currentMap, mapContext };
+export default connect(({ editor, editorView }) => {
+  return {
+    currentMap: editor.currentMap,
+    mapContext: editor.mapContext,
+    shownCellCoordinateType: editorView.shownCellCoordinateType,
+  };
 })(memo(CellPanel));

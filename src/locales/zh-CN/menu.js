@@ -83,7 +83,7 @@ export default {
   'menu.resourceLock.targetLock': '目标锁',
   'menu.resourceLock.vehicleLock': '车辆锁',
   'menu.resourceLock.stationLock': '站点锁',
-  'menu.resourceLock.containerLock': '载具锁',
+  'menu.resourceLock.loadLock': '载具锁',
   'menu.resourceLock.storageLock': '储位锁',
   'menu.resourceGroupMapping': '资源分组绑定',
 
@@ -160,6 +160,7 @@ export default {
   'menu.systemConfig': '系统配置',
   'menu.systemConfig.sectionConfig': '区域级配置',
   'menu.systemConfig.sectionConfig.parameters': '参数配置',
+  'menu.systemConfig.sectionConfig.parameterList': '参数列表',
   'menu.systemConfig.globalConfig': '全域级配置',
   'menu.systemConfig.globalConfig.oem': 'OEM',
   'menu.systemConfig.globalConfig.customMenuManager': '自定义菜单',

@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
 import { setMonitorSocketCallback } from '@/utils/mapUtil';
-import { HeaderHeight, MonitorOperationType } from './enums';
+import { HeaderHeight, MonitorOperationType } from './MonitorConts';
 import MonitorModals from './Modal';
 import MonitorHeader from './components/MonitorHeader';
 import MonitorBodyRight from './components/MonitorBodyRight';

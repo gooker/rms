@@ -18,11 +18,11 @@ class PassWordComponent extends Component {
   }
 }
 
-export default function PassWord({ value, options = {}, onChange }) {
+export default function FormPassword({ name, value, options = {}, onChange }) {
   return (
     <PassWordComponent
       onChange={(val) => {
-        onChange(val);
+        onChange(name, val);
       }}
       value={value}
       params={options}

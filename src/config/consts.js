@@ -189,6 +189,7 @@ export const zIndex = {
   cellHeat: 9,
   functionIcon: 10,
   emergencyStop: 11,
+  sourceLock: 12,
 };
 
 // 日志下载文件类型
@@ -280,8 +281,8 @@ export const GridResponsive = {
   sm: 24,
   md: 12,
   lg: 12,
-  xl: 8,
-  xxl: 6,
+  xl: 12,
+  xxl: 8,
 };
 
 // 潜伏料箱任务类型

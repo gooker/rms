@@ -1,18 +1,7 @@
 import React, { memo } from 'react';
-import SystemParamsManager from '@/pages/SystemParams/SystemParamsComponent';
-import { VehicleType } from '@/config/config';
-import {
-  fetchLatentToteParamFormData,
-  updateLatentToteSystemParams,
-} from '@/services/commonService';
 
-const SystemParameters = (props) => {
-  return (
-    <SystemParamsManager
-      vehicleType={VehicleType.LatentTote}
-      getApi={fetchLatentToteParamFormData}
-      updateApi={updateLatentToteSystemParams}
-    />
-  );
+const ScoringAlgorithm = (props) => {
+  const {} = props;
+  return <div>ScoringAlgorithm</div>;
 };
-export default memo(SystemParameters);
+export default memo(ScoringAlgorithm);

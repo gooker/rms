@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Modal } from 'antd';
 
-const FormModal = (props) => {
+const CommonModal = (props) => {
   const { children, ...rest } = props;
   return (
     <Modal
@@ -17,4 +17,4 @@ const FormModal = (props) => {
     </Modal>
   );
 };
-export default memo(FormModal);
+export default memo(CommonModal);

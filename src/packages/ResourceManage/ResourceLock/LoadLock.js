@@ -10,7 +10,7 @@ import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util'
 import RmsConfirm from '@/components/RmsConfirm';
 import SearchTargetLock from './components/SearchTargetLock';
 
-const ContainerLock = (props) => {
+const LoadLock = (props) => {
   const [loading, setLoading] = useState(false);
   const [containerLockList, setContainerLockList] = useState([]);
   const [currentLockList, setCurrentLockList] = useState([]);
@@ -20,7 +20,7 @@ const ContainerLock = (props) => {
   const columns = [
     {
       title: <FormattedMessage id='resource.load.id' />,
-      dataIndex: 'loadId	',
+      dataIndex: 'loadId',
       align: 'center',
     },
     {
@@ -146,4 +146,4 @@ const ContainerLock = (props) => {
     </TablePageWrapper>
   );
 };
-export default memo(ContainerLock);
+export default memo(LoadLock);

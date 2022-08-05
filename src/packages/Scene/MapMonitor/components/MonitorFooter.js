@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Row } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { FooterHeight } from '@/packages/Scene/MapMonitor/enums';
+import { FooterHeight } from '@/packages/Scene/MapMonitor/MonitorConts';
 import MapRatioSlider from '@/packages/Scene/components/MapRatioSlider';
 import OperationType from '@/packages/Scene/MapMonitor/components/OperationType';
 import MapShownModeSelector from '@/packages/Scene/components/MapShownModeSelector';

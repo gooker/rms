@@ -2,12 +2,8 @@ import { message } from 'antd';
 import { findIndex } from 'lodash';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
-import { Category, MonitorOperationType } from '@/packages/Scene/MapMonitor/enums';
-import {
-  fetchEmergencyStopList,
-  fetchMapVehicleLocks,
-  saveEmergencyStop,
-} from '@/services/XIHEService';
+import { Category, MonitorOperationType } from '@/packages/Scene/MapMonitor/MonitorConts';
+import { fetchEmergencyStopList, fetchMapVehicleLocks, saveEmergencyStop } from '@/services/XIHEService';
 import { fetchChargerList, fetchLoadList } from '@/services/resourceService';
 import {
   addTemporaryBlockCell,

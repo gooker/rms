@@ -1,16 +1,19 @@
 import * as PIXI from 'pixi.js';
-import { CellSize, GlobalAlpha, zIndex } from '@/config/consts';
+import { zIndex } from '@/config/consts';
+import { getTextureFromResources } from '@/utils/mapUtil';
 
 export default class TemporaryLock extends PIXI.Sprite {
-  constructor(texture, x, y) {
+  constructor(x, y) {
+    const texture = getTextureFromResources('tmp_block_lock');
     super(texture);
+
     this.x = x;
-    this.y = y + CellSize.height / 2;
+    this.y = y;
     this.cullable = true;
-    this.height = 3 * CellSize.height;
-    this.width = 3 * CellSize.width;
-    this.alpha = GlobalAlpha;
+    this.alpha = 0.7;
+    this.height = 500;
+    this.width = 500;
     this.zIndex = zIndex.temporaryLock;
-    this.anchor.set(0.5, 1);
+    this.anchor.set(0.5);
   }
 }

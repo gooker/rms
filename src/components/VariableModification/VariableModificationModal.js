@@ -4,7 +4,7 @@ import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { isPlainObject } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { convertMapToArrayMap, formatMessage, getFormLayout, getRandomString, isNull } from '@/utils/util';
-import FormModal from '@/components/FormModal';
+import FormModal from '@/components/CommonModal';
 import FormattedMessage from '@/components/FormattedMessage';
 import ResourceLimit from '@/packages/SmartTask/CustomTask/components/ResourceLimit';
 import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';

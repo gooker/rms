@@ -1,6 +1,5 @@
 import React from 'react';
-import { FireOutlined, FunctionOutlined, SendOutlined, SettingOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import { IconFont } from '@/components/IconFont';
+import { PlusCircleOutlined, SendOutlined, SettingOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 
 export const HeaderHeight = 35;
@@ -50,43 +49,46 @@ export const MonitorRightTools = [
     value: Category.Select,
     icon: 'selection_category.svg',
   },
-  {
-    label: <FormattedMessage id={'app.alarm'} />,
-    value: Category.Alert,
-    icon: 'alert_category.svg',
-    style: { width: '33px' },
-  },
+  // {
+  //   label: <FormattedMessage id={'app.alarm'} />,
+  //   value: Category.Alert,
+  //   icon: 'alert_category.svg',
+  //   style: { width: '33px' },
+  // },
   {
     label: <FormattedMessage id={'monitor.right.simulator'} />,
     value: Category.Simulator,
     icon: 'simulator_category.svg',
     style: { width: '37px' },
+    auth: () => {
+      return window.localStorage.getItem('dev') === 'true';
+    },
   },
-  {
-    label: <FormattedMessage id={'monitor.right.navigation'} />,
-    value: Category.Navigation,
-    icon: 'navigation_category.svg',
-    style: { width: '34px', paddingTop: '5px' },
-  },
+  // {
+  //   label: <FormattedMessage id={'monitor.right.navigation'} />,
+  //   value: Category.Navigation,
+  //   icon: 'navigation_category.svg',
+  //   style: { width: '34px', paddingTop: '5px' },
+  // },
   {
     label: <FormattedMessage id={'app.map.emergencyStop'} />,
     value: Category.Emergency,
     icon: 'emergency_category.svg',
     style: { width: '32px', paddingTop: '5px' },
   },
-  {
-    label: <FormattedMessage id={'monitor.right.resource'} />,
-    value: Category.Resource,
-    icon: 'resource_category.svg',
-    style: { width: '33px', paddingTop: '5px' },
-  },
-  {
-    label: <FormattedMessage id={'monitor.right.message'} />,
-    value: Category.Message,
-    icon: <IconFont type={'icon-message'} />,
-    style: { paddingTop: '5px' },
-    showBadge: true,
-  },
+  // {
+  //   label: <FormattedMessage id={'monitor.right.resource'} />,
+  //   value: Category.Resource,
+  //   icon: 'resource_category.svg',
+  //   style: { width: '33px', paddingTop: '5px' },
+  // },
+  // {
+  //   label: <FormattedMessage id={'monitor.right.message'} />,
+  //   value: Category.Message,
+  //   icon: <IconFont type={'icon-message'} />,
+  //   style: { paddingTop: '5px' },
+  //   showBadge: true,
+  // },
 ];
 
 // 车辆二级
@@ -115,24 +117,24 @@ export const VehicleCategoryTools = [
     style: { width: '35px', height: 'auto' },
     value: 'carry',
   },
-  {
-    label: <FormattedMessage id={'menu.quickTask'} />,
-    icon: <FireOutlined />,
-    style: { color: '#ffffff', fontSize: 29 },
-    value: 'quickTask',
-  },
-  {
-    label: <FormattedMessage id={'menu.customTask'} />,
-    icon: <FunctionOutlined />,
-    style: { color: '#ffffff', fontSize: 29 },
-    value: 'customTask',
-  },
-  {
-    label: <FormattedMessage id={'menu.trigger'} />,
-    icon: <ThunderboltOutlined />,
-    style: { color: '#ffffff', fontSize: 29 },
-    value: 'trigger',
-  },
+  // {
+  //   label: <FormattedMessage id={'menu.quickTask'} />,
+  //   icon: <FireOutlined />,
+  //   style: { color: '#ffffff', fontSize: 29 },
+  //   value: 'quickTask',
+  // },
+  // {
+  //   label: <FormattedMessage id={'menu.customTask'} />,
+  //   icon: <FunctionOutlined />,
+  //   style: { color: '#ffffff', fontSize: 29 },
+  //   value: 'customTask',
+  // },
+  // {
+  //   label: <FormattedMessage id={'menu.trigger'} />,
+  //   icon: <ThunderboltOutlined />,
+  //   style: { color: '#ffffff', fontSize: 29 },
+  //   value: 'trigger',
+  // },
   {
     label: <FormattedMessage id={'monitor.right.remoteControl'} />,
     icon: 'remoteCtrl_category.png',
@@ -180,8 +182,7 @@ export const EmergencyCategoryTools = [
   {
     label: <FormattedMessage id={'monitor.emergency.drag'} />,
     value: 'dragEmergency',
-    icon: 'emergency_category.svg',
-    style: { width: '33px', height: 'auto' },
+    icon: <PlusCircleOutlined style={{ color: '#ffffff', fontSize: 30 }} />,
   },
   {
     label: <FormattedMessage id={'monitor.emergency.operation'} />,
@@ -189,7 +190,6 @@ export const EmergencyCategoryTools = [
     icon: 'emergency_category.svg',
     style: { width: '33px', height: 'auto' },
   },
-
   {
     label: <FormattedMessage id={'monitor.emergency.temporaryBlock'} />,
     value: 'temporaryBlock',
