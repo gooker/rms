@@ -4,7 +4,6 @@ import { connect } from '@/utils/RmsDva';
 import { withRouter } from 'react-router-dom';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
-  fetchMaintain,
   fetchManualMode,
   fetchVehicleInfo,
   fetchVehicleRunningInfo,
@@ -12,10 +11,17 @@ import {
 } from '@/services/commonService';
 import { goToCharge, goToRest } from '@/services/taskService';
 import { vehicleRemoteControl } from '@/services/monitorService';
-import { dealResponse, formatMessage, isStrictNull, renderBattery, renderVehicleState } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  isStrictNull,
+  renderBattery,
+  renderVehicleState,
+} from '@/utils/util';
 import { AppCode } from '@/config/config';
 import styles from '../../monitorLayout.module.less';
 import style from './index.module.less';
+import { updateVehicleMaintain } from '@/services/resourceService';
 
 const checkedColor = '#ff8400';
 
@@ -50,9 +56,10 @@ const VehicleElementProp = (props) => {
   }, [data]);
 
   async function getVehicleInfo() {
+    const { vehicleType } = data;
     const [response, alertResponse] = await Promise.all([
-      fetchVehicleInfo(data.id, data.vehicleType),
-      getAlertCentersByTaskIdOrVehicleId({ vehicleId: JSON.parse(data.id) }),
+      fetchVehicleInfo(data.id, vehicleType),
+      getAlertCentersByTaskIdOrVehicleId({ vehicleId: JSON.parse(data.id), vehicleType }),
     ]);
 
     if (!dealResponse(response)) {
@@ -117,21 +124,13 @@ const VehicleElementProp = (props) => {
 
   function goCharge() {
     goToCharge({ vehicleId: vehicleId, vehicleType: data.vehicleType }).then((response) => {
-      if (dealResponse(response)) {
-        message.error(formatMessage({ id: 'monitor.controller.goCharge.fail' }));
-      } else {
-        message.success(formatMessage({ id: 'monitor.controller.goCharge.success' }));
-      }
+      return dealResponse(response, 1);
     });
   }
 
   function toRest() {
     goToRest({ vehicleId: vehicleId, vehicleType: data.vehicleType }).then((response) => {
-      if (dealResponse(response)) {
-        message.error(formatMessage({ id: 'monitor.controller.toRest.fail' }));
-      } else {
-        message.success(formatMessage({ id: 'monitor.controller.toRest.success' }));
-      }
+      return dealResponse(response, 1);
     });
   }
 
@@ -142,35 +141,22 @@ const VehicleElementProp = (props) => {
       rawCommandHex: hexCommand,
     };
     const response = await vehicleRemoteControl(type, params);
-    if (dealResponse(response)) {
-      message.error(
-        formatMessage(
-          { id: 'monitor.controller.Vehicle.tip.customCommandSendFail' },
-          { actionContent },
-        ),
-      );
-    } else {
-      message.success(
-        formatMessage(
-          { id: 'monitor.controller.Vehicle.tip.customCommandSendSuccess' },
-          { actionContent },
-        ),
-      );
-    }
+    return dealResponse(response, 1);
   }
 
   // 维护小车
   async function mainTainVehicle() {
     const params = {
-      sectionId: window.localStorage.getItem('sectionId'),
-      vehicleId,
       disabled: !mainTain,
+      vehicleInfos: [
+        {
+          adapterType: currentVehicleInfo?.adapterType?.adapterType,
+          vehicleId,
+        },
+      ],
     };
-    const response = await fetchMaintain(type, params);
-    if (dealResponse(response)) {
-      message.error(formatMessage({ id: 'app.message.operateFailed' }));
-    } else {
-      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+    const response = await updateVehicleMaintain(params);
+    if (!dealResponse(response, 1)) {
       setMainTain(!mainTain);
     }
   }
@@ -178,15 +164,11 @@ const VehicleElementProp = (props) => {
   // 切换小车手动模式
   async function switchManualMode() {
     const params = {
-      sectionId: window.localStorage.getItem('sectionId'),
       vehicleId,
       manualMode: !manualMode,
     };
     const response = await fetchManualMode(type, params);
-    if (dealResponse(response)) {
-      message.error(message.error(formatMessage({ id: 'app.message.operateFailed' })));
-    } else {
-      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+    if (!dealResponse(response, 1)) {
       setManualMode(!manualMode);
     }
   }

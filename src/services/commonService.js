@@ -39,7 +39,7 @@ export async function fetchAllVehicleList() {
 
 // 获取section的指定小车当前信息
 export async function fetchVehicleInfo(vehicleId, vehicleType) {
-  return request(`/${NameSpace.Platform}/traffic/getVehicle/${vehicleId}/${vehicleType}`, {
+  return request(`/${NameSpace.Platform}/vehicle/getVehicle/${vehicleId}/${vehicleType}`, {
     method: `GET`,
   });
 }
@@ -252,13 +252,6 @@ export async function fetchUpdateFileTask(vehicleType, params) {
   });
 }
 
-//维护/取消维护
-export async function fetchMaintain(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/vehicle/action/maintain`, {
-    method: 'GET',
-    data: params,
-  });
-}
 
 // 请求切换小车手动模式
 export async function fetchManualMode(vehicleType, params) {
@@ -268,21 +261,6 @@ export async function fetchManualMode(vehicleType, params) {
   });
 }
 
-// 下载固件--提交
-export async function fetchUpgradeFirmwareFile(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/file/upLoadFirmwareFile`, {
-    method: 'GET',
-    data: params,
-  });
-}
-
-// 升级
-export async function upgradeVehicle(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/file/upgradeVehicle`, {
-    method: 'GET',
-    data: params,
-  });
-}
 
 /**** 日志下载 ****/
 // 下载小车上的日志文件到云端SFTP
@@ -345,24 +323,6 @@ export async function deleteFaultDefinition(vehicleType, params) {
   );
 }
 
-// 获取故障定义
-export async function fetchDefinedFaults(vehicleType) {
-  return request(`/${NameSpace[vehicleType]}/api/selectErrorDefinitionList`, {
-    method: `GET`,
-    data: { sectionId: window.localStorage.getItem('sectionId') },
-  });
-}
-
-// 获取小车故障信息
-export async function fetchVehicleErrorRecord(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/api/vehicleErrorRecord`, {
-    method: 'POST',
-    data: {
-      ...params,
-      sectionId: window.localStorage.getItem('sectionId'),
-    },
-  });
-}
 
 // 资源分组-分组管理
 export async function getCustomGroupJson() {

@@ -12,6 +12,7 @@ import {
 import commonStyles from '@/common.module.less';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { DisconnectOutlined, ReloadOutlined } from '@ant-design/icons';
+import TableWithPages from '@/components/TableWithPages';
 
 const alertType = { TASK_ALERT: 'magenta', Vehicle_ALERT: 'red', SYSTEM_ALERT: 'volcano' };
 const alertLevel = { ERROR: 'red', WARN: '#f5df19', INFO: 'blue' };
@@ -244,7 +245,7 @@ class QuestionCenter extends Component {
             </Button>
           </Row>
         </div>
-        <Table
+        <TableWithPages
           loading={loading}
           rowKey={({ id }) => id}
           columns={this.column}

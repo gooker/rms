@@ -1,15 +1,10 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, DatePicker, Form, Input, message, Row, Select } from 'antd';
-import {
-  convertToUserTimezone,
-  dealResponse,
-  formatMessage,
-  isNull,
-  isStrictNull,
-} from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import { fetchAllVehicleList } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ExportOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
+import { exportVehicleErrorRecord } from '@/services/resourceService';
 
 const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD HH:mm';
@@ -32,36 +27,24 @@ const FaultListSearchForm = (props) => {
 
   function searchFaultList() {
     formRef.validateFields().then((values) => {
-      const formValues = {};
-      Object.keys(values).forEach((formKey) => {
-        if (formKey === 'date') {
-          if (!isNull(values?.date?.[0])) {
-            formValues.createTimeStart = convertToUserTimezone(values.date[0]).format(
-              'YYYY-MM-DD HH:mm:ss',
-            );
-          }
-          if (!isNull(values?.date?.[1])) {
-            formValues.createTimeEnd = convertToUserTimezone(values.date[1]).format(
-              'YYYY-MM-DD HH:mm:ss',
-            );
-          }
-        } else {
-          if (!isNull(values[formKey])) {
-            formValues[formKey] = values[formKey];
-          }
-        }
-      });
+      const formValues = { ...values };
+      if (!isStrictNull(values?.date?.[0])) {
+        formValues.createTimeStart = convertToUserTimezone(values.createDate[0]).format(
+          'YYYY-MM-DD HH:mm:ss',
+        );
+        formValues.createTimeEnd = convertToUserTimezone(values.createDate[1]).format(
+          'YYYY-MM-DD HH:mm:ss',
+        );
+        formValues.date = null;
+      }
       search(formValues);
     });
   }
 
-  function exportFault() {
+  async function exportFault() {
     const formValue = formRef.getFieldsValue();
-    if (isStrictNull(formValue.taskId) && isStrictNull(formValue.step)) {
-      message.warn(formatMessage({ id: 'app.faultInfo.require.taskId' }));
-      return;
-    }
-    searchFaultList();
+    const response = await exportVehicleErrorRecord(formValue);
+    // searchFaultList();
   }
 
   return (

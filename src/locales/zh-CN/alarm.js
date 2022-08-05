@@ -5,7 +5,7 @@ export default {
   'app.alarmCenter.goHandle': '前往',
   'app.alarmCenter.alert': '告警',
   'app.alarmCenter.TASK_ALERT': '任务告警',
-  'app.alarmCenter.Vehicle_ALERT': '小车告警',
+  'app.alarmCenter.VEHICLE_ALERT': '小车告警',
   'app.alarmCenter.SYSTEM_ALERT': '系统告警',
   'app.alarmCenter.dismissed': '已解除',
   'app.alarmCenter.undismissed': '未解除',

@@ -86,7 +86,7 @@ class Header extends React.Component {
 
   goToQuestionCenter = async () => {
     const { history } = this.props;
-    history.push(`/${AppCode.SSO}/alertCenter`);
+    history.push(`/${AppCode.DevOps}/alertCenter`);
   };
 
   changeLocale = async ({ key }) => {

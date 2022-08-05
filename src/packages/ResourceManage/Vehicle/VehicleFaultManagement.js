@@ -3,6 +3,6 @@ import FaultListComponent from '@/pages/FaultList/FaultListComponent';
 
 const VehicleFaultManagement = (props) => {
   const {} = props;
-  return <FaultListComponent type={'VEHICLE'} />;
+  return <FaultListComponent />;
 };
 export default memo(VehicleFaultManagement);

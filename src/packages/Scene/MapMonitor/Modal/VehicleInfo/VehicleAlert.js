@@ -21,10 +21,10 @@ const EmptyRun = (props) => {
     {
       title: <FormattedMessage id="app.alarmCenter.code" />,
       dataIndex: 'alertCode',
-      fixed: 'left',
+      width: 100,
     },
 
-    { title: <FormattedMessage id="app.map.cell" />, dataIndex: 'cellId' },
+    { title: <FormattedMessage id="app.map.cell" />, dataIndex: 'cellId', width: 100 },
 
     {
       title: <FormattedMessage id="app.alarmCenter.alertName" />,
@@ -33,7 +33,6 @@ const EmptyRun = (props) => {
     {
       title: <FormattedMessage id="app.alarmCenter.alertContent" />,
       dataIndex: 'alertContentI18NKey',
-      fixed: 'right',
     },
   ];
 

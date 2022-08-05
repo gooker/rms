@@ -581,3 +581,56 @@ export async function fetchVehicleUpgradeList(param) {
     data: param,
   });
 }
+
+// 故障定义相关接口
+
+// 分页查询Vehicle故障定义
+export async function fetchVehicleDefinitionList(param) {
+  return request(`/${NameSpace.Platform}/errorDefinition/getErrorDefinitionByPage`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 非分页-查询Vehicle故障定义
+export async function fetchAllVehicleDefinition(param) {
+  return request(`/${NameSpace.Platform}/errorDefinition/getErrorDefinitionList`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 保存故障定义
+export async function saveVehicleDefinition(param) {
+  return request(`/${NameSpace.Platform}/errorDefinition/saveErrorDefinition`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 批量删除故障定义
+
+export async function deleteVehicleDefinition(param) {
+  return request(`/${NameSpace.Platform}/errorDefinition/batchDeleteErrorDefinition`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 获取小车故障记录
+
+export async function fetchVehicleErrorRecord(param) {
+  return request(`/${NameSpace.Platform}/errorDefinition/getVehicleErrorRecord`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 故障记录导出
+
+export async function exportVehicleErrorRecord(param) {
+  return request(`/${NameSpace.Platform}/errorDefinition/getVehicleErrorRecordExcel`, {
+    method: 'POST',
+    data: param,
+  });
+}
