@@ -24,7 +24,7 @@ export default {
   'taskLimit.limitTips': '提示: 若限流数量为空 则不会限流',
 
   // **********  自定义任务 ********** //
-  'customTasks.readOnly.tip': '该任务为只读，请复制后进行修改',
+  'customTasks.readOnly.tip': '该自定义任务为系统预制任务, 不支持编辑操作',
   'customTasks.example.field': '字段',
   'customTasks.example.default': '默认值',
   'customTask.backToList': '返回列表',
@@ -109,7 +109,7 @@ export default {
   'customTask.lock.resourceLock': '资源锁',
   'customTask.lock.resourceType': '资源类型',
   'customTask.lock.LOAD': '载具',
-  'customTask.lock.STORE': '存储点',
+  'customTask.lock.STORE': '储位',
   'customTask.lock.TARGET': '目标',
   'customTask.lock.LOCK': '锁定时机',
   'customTask.lock.LOCK.NO': '不锁',

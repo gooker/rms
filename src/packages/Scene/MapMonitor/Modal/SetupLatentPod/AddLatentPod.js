@@ -99,7 +99,7 @@ const AddLatentPod = () => {
         >
           <LatentPodUpdater showInput angle={angle} />
         </Form.Item>
-        <Form.Item required label={formatMessage({ id: 'app.pod.id' })}>
+        <Form.Item required label={formatMessage({ id: 'resource.load.id' })}>
           <Row>
             <Col>
               <Form.Item noStyle name={'podId'} rules={[{ required: true }]}>
@@ -107,8 +107,8 @@ const AddLatentPod = () => {
               </Form.Item>
             </Col>
             <Col>
-              <Button type="danger" onClick={deletePod} style={{ marginLeft: 15 }}>
-                <FormattedMessage id="app.button.delete" />
+              <Button type='danger' onClick={deletePod} style={{ marginLeft: 15 }}>
+                <FormattedMessage id='app.button.delete' />
               </Button>
             </Col>
           </Row>

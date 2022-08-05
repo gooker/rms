@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Table, Empty, Button, message } from 'antd';
+import { Button, Empty, message, Table } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { releaseLatentPod } from '@/services/monitorService';
 import { connect } from '@/utils/RmsDva';
@@ -41,7 +41,7 @@ const PodToStationMessage = (props) => {
       align: 'center',
     },
     {
-      title: formatMessage({ id: 'app.pod.id' }),
+      title: formatMessage({ id: 'resource.load.id' }),
       dataIndex: 'podId',
       align: 'center',
     },

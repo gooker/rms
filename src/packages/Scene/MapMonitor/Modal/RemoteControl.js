@@ -275,7 +275,7 @@ const RemoteControl = (props) => {
                 <Form.Item noStyle name={'podId'}>
                   <InputNumber
                     style={{ width: 120 }}
-                    placeholder={formatMessage({ id: 'app.pod.id' })}
+                    placeholder={formatMessage({ id: 'resource.load.id' })}
                   />
                 </Form.Item>
               </Form.Item>

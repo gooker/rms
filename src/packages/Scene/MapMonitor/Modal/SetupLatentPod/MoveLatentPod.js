@@ -33,7 +33,7 @@ const MoveLatentPod = () => {
         <Divider style={{ margin: '10px 0' }} />
         <Form.Item
           name={'podId'}
-          label={formatMessage({ id: 'app.pod.id' })}
+          label={formatMessage({ id: 'resource.load.id' })}
           rules={[{ required: true }]}
         >
           <InputNumber />

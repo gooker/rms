@@ -113,7 +113,7 @@ class LatentToteOrderComponent extends Component {
 
   expandColumns = [
     {
-      title: formatMessage({ id: 'app.pod.id' }),
+      title: formatMessage({ id: 'resource.load.id' }),
       dataIndex: 'podId',
     },
     {

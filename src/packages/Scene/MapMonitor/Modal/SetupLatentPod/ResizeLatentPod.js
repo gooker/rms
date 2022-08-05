@@ -46,14 +46,14 @@ const ResizeLatentPod = () => {
         >
           <LatentPodUpdater showInput angle={0} />
         </Form.Item>
-        <Form.Item required={!resizeAll} {...layout} label={formatMessage({ id: 'app.pod.id' })}>
+        <Form.Item required={!resizeAll} {...layout} label={formatMessage({ id: 'resource.load.id' })}>
           <Row gutter={10}>
             <Col span={18}>
               <Form.Item noStyle {...layout} name={'podId'} rules={[{ required: !resizeAll }]}>
                 <Select
                   allowClear
                   size={'small'}
-                  mode="tags"
+                  mode='tags'
                   notFoundContent={null}
                   disabled={resizeAll}
                 />

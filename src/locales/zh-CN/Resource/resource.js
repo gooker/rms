@@ -48,7 +48,6 @@ export default {
 
   // 潜伏货架
   'app.pod': '货架',
-  'app.pod.id': '货架ID',
   'app.pod.direction': '货架面',
   'app.pod.side.A': 'A',
   'app.pod.side.B': 'B',

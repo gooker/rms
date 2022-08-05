@@ -91,7 +91,7 @@ const PodSimulationForm = (props) => {
         <Form.Item
           hidden={hidden}
           name={[code, 'podId']}
-          label={formatMessage({ id: 'app.pod.id' })}
+          label={formatMessage({ id: 'resource.load.id' })}
           rules={[{ required: true }]}
         >
           <Input style={{ width: 300 }} />
