@@ -51,7 +51,7 @@ class MainLayout extends React.Component {
           if (isNull(userInfo)) {
             throw new Error(formatMessage({ id: 'app.section.not.exist' }));
           }
-          const { currentSection, username, language } = userInfo;
+          const { username, language } = userInfo;
 
           // 初始化国际化信息
           await initI18n(language);
@@ -68,8 +68,9 @@ class MainLayout extends React.Component {
             // 初始化页面长链接、告警相关功能
             if (username !== 'admin') {
               // 初始化Socket客户端
-              const { name: login, password: passcode } = currentSection;
-              this.socketClient = new SocketClient({ login, passcode });
+              // this.socketClient = new SocketClient();
+              this.socketClient = new SocketClient({ login: 'user1', passcode: 123456 });
+
               this.socketClient.connect();
               this.socketClient.registerNotificationQuestion((message) => {
                 // 如果关闭提示，就直接不拉取接口

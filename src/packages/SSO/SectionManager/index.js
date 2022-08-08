@@ -45,17 +45,6 @@ export default class SectionManager extends Component {
       dataIndex: 'sectionName',
       align: 'center',
     },
-
-    {
-      title: <FormattedMessage id="sso.user.name" />,
-      dataIndex: 'name',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="sso.user.password" />,
-      dataIndex: 'password',
-      align: 'center',
-    },
   ];
 
   // 删除区域
@@ -170,7 +159,6 @@ export default class SectionManager extends Component {
             this.setState({ sectionModalVisible: false, updateFlag: false });
           }}
         >
-          {' '}
           <UpdateSection
             selectRow={selectRow}
             updateFlag={updateFlag}

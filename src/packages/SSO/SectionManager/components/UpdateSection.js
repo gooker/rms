@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, Button } from 'antd';
+import { Button, Form, Input } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/util';
 
@@ -22,8 +22,7 @@ export default class UpdateSection extends Component {
   }
 
   typeValidator = (_, value) => {
-    // 数字
-    var regex = /^[0-9A]+$/gi;
+    const regex = /^[0-9A]+$/gi;
     if (value && !regex.test(value)) {
       return Promise.reject(new Error(formatMessage({ id: 'section.idvalidate', format: false })));
     }
@@ -43,59 +42,17 @@ export default class UpdateSection extends Component {
         <Form ref={this.formRef} layout={'vertical'}>
           <Form.Item
             label={formatMessage({ id: 'app.common.name' })}
-            name="sectionName"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+            name='sectionName'
+            rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label={formatMessage({ id: 'app.form.sectionId' })}
-            name="sectionId"
-            rules={[
-              {
-                required: true,
-              },
-              { validator: this.typeValidator },
-            ]}
+            name='sectionId'
+            rules={[{ required: true }, { validator: this.typeValidator }]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
-            label={formatMessage({ id: 'section.mqUser' })}
-            name="name"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input
-              autoComplete="off"
-              readOnly
-              onFocus={() => {
-                const { getFieldInstance } = this.formRef.current;
-                const ev = getFieldInstance('name');
-                if (ev && ev.input) {
-                  ev.input.readOnly = false;
-                }
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            label={<FormattedMessage id="section.mqPassword" />}
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: formatMessage({ id: 'section.password.required' }),
-              },
-            ]}
-          >
-            <Input.Password autoComplete="off" type="password" />
           </Form.Item>
         </Form>
         <div

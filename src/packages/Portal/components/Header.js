@@ -5,12 +5,10 @@ import { withRouter } from 'react-router-dom';
 import screenfull from 'screenfull';
 import { connect } from '@/utils/RmsDva';
 import { AppCode } from '@/config/config';
-import { dealResponse, isNull } from '@/utils/util';
+import { dealResponse, isNull, isStrictNull } from '@/utils/util';
 import { getHAInfo } from '@/services/XIHEService';
 import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
-import HA from './HA';
-import ExpiredTip from './ExpiredTip';
 import SelectEnvironment from './SelectEnvironment';
 import UserCenter from './UserCenter';
 import SelectSection from './SelectSection';
@@ -26,7 +24,7 @@ import styles from './Header.module.less';
   sysAuthInfo: global.sysAuthInfo,
   globalLocale: global.globalLocale,
   isFullscreen: global.isFullscreen,
-  backendVersion: global.backendVersion,
+  version: global.version,
   currentUser: user.currentUser,
 }))
 class Header extends React.Component {
@@ -94,26 +92,33 @@ class Header extends React.Component {
     await dispatch({ type: 'global/updateGlobalLocale', payload: key });
   };
 
+  renderVersion = () => {
+    const { version } = this.props;
+    const versionText = version?.PlatForm?.version;
+    if (!isStrictNull(versionText)) {
+      return `v1.0.0`;
+    }
+    return null;
+  };
+
   render() {
-    const { showErrorNotification, isHA, sysAuthInfo } = this.state;
-    const { alertCount, backendVersion } = this.props;
-    const { logo, isFullscreen, currentUser } = this.props;
+    const { logo, currentUser, isHA, sysAuthInfo } = this.props;
+    const { showErrorNotification, alertCount, isFullscreen } = this.state;
     if (isNull(currentUser)) return null;
 
-    const mainVersion = backendVersion?.MixRobot?.version;
     const isAdmin = currentUser.username === 'admin';
     return (
       <div className={styles.header}>
         <div className={styles.leftContent}>
-          <img src={logo || '/images/logoMain.png'} alt={'logo'} />
-          <div className={styles.version}>{mainVersion && `v${mainVersion}`}</div>
+          <img src={logo || '/images/logoMain.png'} alt={'logo'} style={{ width: 240 }} />
+        </div>
+        <div className={styles.middleContent}>
+          <div className={styles.devFlag}>DEV</div>
+          <div className={styles.version}>{this.renderVersion()}</div>
         </div>
         <div className={styles.rightContent}>
-          {isHA && <HA />}
-          {sysAuthInfo <= 30 && <ExpiredTip days={sysAuthInfo} />}
-
-          {/* 刷新基础数据 */}
-          {/*<ReloadGlobalResource />*/}
+          {/*{isHA && <HA />}*/}
+          {/*{sysAuthInfo <= 30 && <ExpiredTip days={sysAuthInfo} />}*/}
 
           {/* 环境切换 */}
           <SelectEnvironment />

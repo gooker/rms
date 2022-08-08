@@ -9,15 +9,20 @@ import { fetchTaskTypes } from '@/services/taskService';
 import { fetchAllPrograming } from '@/services/XIHEService';
 import { fetchAllAdaptor } from '@/services/resourceService';
 import { mockData } from '@/packages/Configuration/CustomMenuManager/components/mockData';
+import { fetchAllQueues, fetchVersion } from '@/services/commonService';
 
 export async function fetchGlobalExtraData() {
   const dispatch = window.$$dispatch;
   try {
-    dispatch({ type: 'global/updateGlobalFetching', payload: true });
     // 所有的任务类型、地图编程元数据、所有适配器数据
-    const response = await Promise.all([fetchTaskTypes(), fetchAllPrograming(), fetchAllAdaptor()]);
-    const [allTaskTypes, allPrograming, allAdaptors] = response;
-    const states = { globalFetching: false };
+    const [allTaskTypes, allPrograming, allAdaptors, allQueue, version] = await Promise.all([
+      fetchTaskTypes(),
+      fetchAllPrograming(),
+      fetchAllAdaptor(),
+      fetchAllQueues(),
+      fetchVersion(),
+    ]);
+    const states = {};
 
     // 任务类型
     if (!dealResponse(allTaskTypes)) {
@@ -55,11 +60,34 @@ export async function fetchGlobalExtraData() {
       );
     }
 
+    // MQ队列
+    if (!dealResponse(allQueue)) {
+      states.allQueue = allQueue;
+    } else {
+      message.error(
+        `${formatMessage(
+          { id: 'app.message.fetchFailTemplate' },
+          { type: formatMessage({ id: 'webHook.subscribe.event' }) },
+        )}`,
+      );
+    }
+
+    // 版本
+    if (!dealResponse(version)) {
+      states.version = version;
+    } else {
+      message.error(
+        `${formatMessage(
+          { id: 'app.message.fetchFailTemplate' },
+          { type: formatMessage({ id: 'vehicle.version' }) },
+        )}`,
+      );
+    }
+
     dispatch({ type: 'global/updateStateInBatch', payload: states });
   } catch (e) {
     console.error(e);
     message.error(formatMessage({ id: 'app.global.fetchGlobalDataFailed' }));
-    dispatch({ type: 'global/updateGlobalFetching', payload: false });
   }
 }
 

@@ -79,12 +79,13 @@ export function isItemOfArray(baseArray, array) {
   return result;
 }
 
-export function formatMessage({ id }, values = {}) {
-  if (id) {
-    const content = intl.get(id, values);
-    return content || id;
+export function formatMessage(i18n, values = {}) {
+  let key = i18n;
+  if (isPlainObject(i18n)) {
+    key = i18n.id;
   }
-  return '###';
+  const content = intl.get(key, values);
+  return content || key;
 }
 
 export const htmlFormatMessage = ({ id }, values) => {
@@ -608,25 +609,6 @@ export function extractMapValueToMap(input, keyLabel = 'key', valueLabel = 'valu
     return input.map((item) => ({ [item[keyLabel]]: item[valueLabel] }));
   }
   return [];
-}
-
-/**
- * 将数组元素整合为对象
- * @param data {Array}
- * @param labels {Array}
- * @return Object
- */
-export function convertArrayToMap(data, labels) {
-  if (Array.isArray(data) && Array.isArray(labels)) {
-    const result = {};
-    data.forEach((item, index) => {
-      if (!isStrictNull(labels[index])) {
-        result[labels[index]] = item;
-      }
-    });
-    return result;
-  }
-  return {};
 }
 
 // Modal 长宽自适应，以这个为主
@@ -1389,4 +1371,27 @@ export function extractOpenKeys(currentApp, allMenuData, pathname) {
       return openKeys;
     }
   }
+}
+
+export function generateWebHookTestParam(dto, formValue) {
+  const { url, urlMappingRelation, webHookTopicDTO } = dto;
+  const headers = {};
+  if (Array.isArray(dto.headers)) {
+    dto.headers.forEach((header) => {
+      headers[header.key] = header.value;
+    });
+  }
+  const result = {
+    url,
+    headers,
+    urlMappingRelation: {
+      topic: urlMappingRelation.topic,
+      address: urlMappingRelation.address,
+    },
+    webHookTopicDTO,
+  };
+  if (isPlainObject(formValue)) {
+    result.webHookTopicDTO.payload = JSON.stringify(formValue);
+  }
+  return result;
 }

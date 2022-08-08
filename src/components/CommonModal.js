@@ -1,6 +1,12 @@
 import React, { memo } from 'react';
 import { Modal } from 'antd';
 
+/**
+ *
+ * @param props {ModalType}
+ * @return {JSX.Element}
+ * @constructor
+ */
 const CommonModal = (props) => {
   const { children, ...rest } = props;
   return (

@@ -19,7 +19,6 @@ export default {
     socketClient: null,
 
     // 标识符
-    globalFetching: false, // 获取全局数据
     menuCollapsed: false,
     isFullscreen: false,
     isInnerFullscreen: false,
@@ -41,13 +40,12 @@ export default {
     logo: null,
     copyRight: null,
     alertCount: 0,
-    backendVersion: null,
-    adapterVersion: null,
+    version: null,
     sysAuthInfo: null,
-
     allTaskTypes: {}, // 任务类型
     allAdaptors: {}, // 所有的适配器
     programing: [], // 所有地图编程元数据
+    allQueue: [], // Mq Topic
   },
 
   reducers: {
@@ -61,13 +59,6 @@ export default {
       return {
         ...state,
         ...action.payload,
-      };
-    },
-    saveBackendVersion(state, { payload }) {
-      return {
-        ...state,
-        backendVersion: payload?.versionMap || {},
-        adapterVersion: payload?.adapterServerMap || {},
       };
     },
     updateEditI18NMode(state, { payload }) {
@@ -107,12 +98,6 @@ export default {
       return {
         ...state,
         menuCollapsed: payload,
-      };
-    },
-    updateGlobalFetching(state, { payload }) {
-      return {
-        ...state,
-        globalFetching: payload,
       };
     },
     updateTextureLoaded(state, { payload }) {

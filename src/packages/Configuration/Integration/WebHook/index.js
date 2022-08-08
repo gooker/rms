@@ -1,36 +1,34 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Modal, Tag } from 'antd';
+import { Button, Tag } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { find, findIndex } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import { deleteWebHooks, getAllQueues, getAllWebHooks } from '@/services/commonService';
+import { deleteWebHooks, getAllWebHooks } from '@/services/commonService';
 import { fetchAllRegisterData } from '@/services/XIHEService';
-import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import RmsConfirm from '@/components/RmsConfirm';
-import commonStyles from '@/common.module.less';
 import WebHookFormModal from './WebHookFormModal';
 import useTablePageLoading from '@/RmsHooks/UseTablePageLoading';
+import commonStyles from '@/common.module.less';
+import { connect } from '@/utils/RmsDva';
 
-const WebHook = () => {
+const WebHook = ({ mqQueue }) => {
   const { loading, setLoading, deleteLoading, setDeleteLoading } = useTablePageLoading();
 
   const [webHooks, setWebHooks] = useState([]); // 已创建的Hook
-  const [mqQueue, setMqQueue] = useState([]); // MQ Queue
-
   const [modalVisible, setModalVisible] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   useEffect(refresh, []);
 
-  // TODO: 获取所有topic绑定的webhook 放到webhook数据里展示
   function refresh() {
     setLoading(true);
-    Promise.all([getAllWebHooks(), getAllQueues(), fetchAllRegisterData()])
-      .then(([allWebHooks, allMqQueue, allTopicData]) => {
-        if (!dealResponse([allWebHooks, allMqQueue, allTopicData])) {
+    Promise.all([getAllWebHooks(), fetchAllRegisterData()])
+      .then(([allWebHooks, allTopicData]) => {
+        if (!dealResponse([allWebHooks, allTopicData])) {
           const newWebHooks = [...allWebHooks];
           allTopicData?.map((item) => {
             item?.mappingRelation.map(({ id, nameSpace }) => {
@@ -40,7 +38,6 @@ const WebHook = () => {
             });
           });
           setWebHooks(newWebHooks);
-          setMqQueue(allMqQueue);
         }
       })
       .finally(() => {
@@ -87,19 +84,28 @@ const WebHook = () => {
       title: <FormattedMessage id="app.common.name" />,
       dataIndex: 'name',
       align: 'center',
-      fixed: 'left',
     },
     { title: 'URL', dataIndex: 'url', align: 'center' },
     {
-      title: <FormattedMessage id="webHook.subscribe.event" />,
+      title: <FormattedMessage id='webHook.subscribe.event' />,
       dataIndex: 'urlMappingRelation',
-      render: (text, record) => {
-        if (isStrictNull(text)) return;
-        const allTopic = [];
-        text?.map(({ topic }) => {
-          allTopic.push(<Tag color="blue">{topic}</Tag>);
-        });
-        return allTopic;
+      align: 'center',
+      render: (text) => {
+        if (Array.isArray(text)) {
+          const names = [];
+          text.forEach(({ topic }) => {
+            const target = find(mqQueue, { webHookTopic: topic });
+            if (target) {
+              names.push(
+                <Tag key={target.webHookTopic} color='blue'>
+                  {target.name}
+                </Tag>,
+              );
+            }
+          });
+          return names;
+        }
+        return null;
       },
     },
     { title: <FormattedMessage id="app.common.description" />, dataIndex: 'desc', align: 'center' },
@@ -152,10 +158,6 @@ const WebHook = () => {
     onChange: onSelectChange,
   };
 
-  const title = `${formatMessage({
-    id: isNull(editingRow) ? 'app.button.add' : 'app.button.update',
-  })}`;
-
   return (
     <TablePageWrapper>
       <div className={commonStyles.tableToolLeft}>
@@ -180,24 +182,18 @@ const WebHook = () => {
         rowKey={(record) => record.id}
       />
 
-      <Modal
-        destroyOnClose
-        title={title}
-        width={660}
+      <WebHookFormModal
+        editing={editingRow}
+        mqQueue={mqQueue}
         visible={modalVisible}
-        closable={false}
-        footer={false}
-      >
-        <WebHookFormModal
-          editing={editingRow}
-          mqQueue={mqQueue}
-          onClose={(refresh = true) => {
-            setModalVisible(false);
-            refresh && refreshTable();
-          }}
-        />
-      </Modal>
+        onClose={(refresh = true) => {
+          setModalVisible(false);
+          refresh && refreshTable();
+        }}
+      />
     </TablePageWrapper>
   );
 };
-export default memo(WebHook);
+export default connect(({ global }) => ({
+  mqQueue: global.allQueue,
+}))(memo(WebHook));

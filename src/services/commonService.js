@@ -252,7 +252,6 @@ export async function fetchUpdateFileTask(vehicleType, params) {
   });
 }
 
-
 // 请求切换小车手动模式
 export async function fetchManualMode(vehicleType, params) {
   return request(`/${NameSpace[vehicleType]}/vehicle/action/manualMode`, {
@@ -260,7 +259,6 @@ export async function fetchManualMode(vehicleType, params) {
     data: params,
   });
 }
-
 
 /**** 日志下载 ****/
 // 下载小车上的日志文件到云端SFTP
@@ -322,7 +320,6 @@ export async function deleteFaultDefinition(vehicleType, params) {
     },
   );
 }
-
 
 // 资源分组-分组管理
 export async function getCustomGroupJson() {
@@ -501,8 +498,17 @@ export async function fetchChargerFaultList(params) {
   });
 }
 
+/************************* Web Hook **************************/
+// 测试WebHook
+export async function testWebHook(params) {
+  return request(`/${NameSpace.Platform}/webHook/testWebHook`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
 // 查询所有MQ Queue
-export async function getAllQueues() {
+export async function fetchAllQueues() {
   return request(`/${NameSpace.Platform}/webHook/getAllQueue`, {
     method: 'GET',
   });
@@ -787,6 +793,14 @@ export async function setSystemTimeZone(timeZone) {
 // 获取所有的时区时间
 export async function fetchAllTimeZone() {
   return request(`/${NameSpace.Platform}/sso/environment/getAllTimeZone`, {
+    method: 'GET',
+  });
+}
+
+/************************** 版本 **************************/
+// 获取版本信息
+export async function fetchVersion() {
+  return request(`/${NameSpace.Platform}/certificate/getAppVersion`, {
     method: 'GET',
   });
 }
