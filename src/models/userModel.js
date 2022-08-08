@@ -93,13 +93,16 @@ export default {
       }
     },
 
-    *logout(_, { call }) {
-      const response = yield call(fetchLogout, {
-        token: window.sessionStorage.getItem('token'),
-      });
+    * logout({ payload }, { call }) {
+      const { keepDev } = payload;
+      const token = window.sessionStorage.getItem('token');
+      const response = yield call(fetchLogout, { token });
       if (!dealResponse(response)) {
         window.localStorage.clear();
         window.sessionStorage.clear();
+        if (keepDev) {
+          window.localStorage.setItem('dev', 'true');
+        }
       }
       window.RMS.push('/login');
     },

@@ -7,6 +7,7 @@ export default {
     '当前浏览器不支持 Clipboard API; 请更换Chrome浏览器再次尝试',
   'app.section.not.exist': '当前用户没有已激活的Section',
   'app.global.requestCancelled': '请求已取消',
+  'app.global.logoutConfirm': '是否同时退出DEV模式?',
 
   'app.login.login': '登录',
   'app.login.cancelLogin': '取消登录',

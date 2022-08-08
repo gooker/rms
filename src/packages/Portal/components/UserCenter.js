@@ -7,6 +7,8 @@ import FormattedMessage from '@/components/FormattedMessage';
 import ModuleInformationPanel from './ModuleInformationPanel';
 import styles from './Header.module.less';
 import { AppCode } from '@/config/config';
+import RmsConfirm from '@/components/RmsConfirm';
+import { formatMessage } from '@/utils/util';
 
 const UserCenter = (props) => {
   const { dispatch, currentUser, userRoleList } = props;
@@ -16,7 +18,19 @@ const UserCenter = (props) => {
 
   function handleUserMenuClick({ key }) {
     if (key === 'logout') {
-      dispatch({ type: 'user/logout', payload: history });
+      if (window.localStorage.getItem('dev') === 'true') {
+        RmsConfirm({
+          content: formatMessage('app.global.logoutConfirm'),
+          onOk: () => {
+            dispatch({ type: 'user/logout', payload: { keepDev: true } });
+          },
+          onCancel: () => {
+            dispatch({ type: 'user/logout', payload: { keepDev: false } });
+          },
+        });
+      } else {
+        dispatch({ type: 'user/logout', payload: { keepDev: false } });
+      }
     }
     if (key === 'apiList') {
       setApiListVisible(true);

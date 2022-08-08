@@ -96,10 +96,11 @@ const Login = (props) => {
     formRef.validateFields().then(async (values) => {
       controllerRef.current = new AbortController();
       setLoading(true);
+      // 如果没有显示环境选择框，就使用默认环境
       if (isNull(values.environment)) {
-        const { activeEnv } = await getAllEnvironments(window.dbContext);
-        values.environment = activeEnv;
+        values.environment = 'default';
       }
+      // 将数据库active数据同步为当前环境
       let activeEnv = find(allEnvironments, { active: true });
       if (activeEnv.id !== values.environment) {
         allEnvironments.forEach((item) => {
