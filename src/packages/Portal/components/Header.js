@@ -113,13 +113,14 @@ class Header extends React.Component {
           <img src={logo || '/images/logoMain.png'} alt={'logo'} style={{ width: 240 }} />
         </div>
         <div className={styles.middleContent}>
-          <div className={styles.devFlag}>DEV</div>
+          {window.localStorage.getItem('dev') === 'true' && (
+            <div className={styles.devFlag}>DEV</div>
+          )}
+          {/*{isHA && <HA />}*/}
+          {/*{sysAuthInfo <= 30 && <ExpiredTip days={sysAuthInfo} />}*/}
           <div className={styles.version}>{this.renderVersion()}</div>
         </div>
         <div className={styles.rightContent}>
-          {/*{isHA && <HA />}*/}
-          {/*{sysAuthInfo <= 30 && <ExpiredTip days={sysAuthInfo} />}*/}
-
           {/* 环境切换 */}
           <SelectEnvironment />
 

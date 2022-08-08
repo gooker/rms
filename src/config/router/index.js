@@ -5,6 +5,7 @@ import SmartTask from './smartTask.router';
 import Map from './map.router';
 import Strategy from './configuration.router';
 import DevOps from './devOps.router';
+import Report from './report.router';
 
 export default {
   [AppCode.SSO]: SSORouter,
@@ -13,8 +14,8 @@ export default {
   [AppCode.Map]: Map,
   [AppCode.Configuration]: Strategy,
   [AppCode.DevOps]: DevOps,
+  [AppCode.Report]: Report,
 
-  // [AppCode.Report]: Report,
   // [AppCode.VehicleManned]: VehicleManned,
   // [AppCode.Cleaning]: Cleaning,
   // [AppCode.FlexibleSorting]: FlexibleSorting,
