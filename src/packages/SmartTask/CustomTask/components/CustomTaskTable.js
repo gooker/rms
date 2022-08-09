@@ -1,7 +1,14 @@
 import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, Divider, message, Modal, Space } from 'antd';
-import { DeleteOutlined, EditOutlined, EyeOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/icons';
+import { Button, Col, message, Modal, Row } from 'antd';
+import {
+  CopyOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  FileTextOutlined,
+  RedoOutlined,
+} from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import { deleteCustomTasksById } from '@/services/commonService';
@@ -12,11 +19,13 @@ import TableWithPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
 import styles from '../customTask.module.less';
 import { IconFont } from '@/components/IconFont';
+import CopyCustomTaskModal from '@/packages/SmartTask/CustomTask/components/CopyCustomTaskModal';
 
 const CustomTaskTable = (props) => {
   const { dispatch, listVisible, listData, loading } = props;
 
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [copyVisible, setCopyVisible] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [exampleStructure, setExampleStructure] = useState(null); // 请求体结构
 
@@ -52,7 +61,6 @@ const CustomTaskTable = (props) => {
     },
     {
       title: <FormattedMessage id="customTasks.table.requestBody" />,
-      with: 80,
       align: 'center',
       fixed: 'right',
       render: (text, record) => (
@@ -68,27 +76,37 @@ const CustomTaskTable = (props) => {
     },
     {
       title: <FormattedMessage id="app.common.operation" />,
-      with: 80,
       align: 'center',
       fixed: 'right',
       render: (text, record) => (
-        <Space>
-          <span className={styles.tableIcon}>
+        <Row justify={'center'} gutter={16}>
+          <Col className={styles.tableIcon}>
             <EyeOutlined
               onClick={() => {
                 editRow({ ...record, viewMode: true }); // 标记当前是查看模式
               }}
             />
-          </span>
-          <Divider type={'vertical'} />
-          <span className={styles.tableIcon}>
-            <EditOutlined
+          </Col>
+
+          <Col className={styles.tableIcon}>
+            <CopyOutlined
               onClick={() => {
-                editRow(record);
+                copy(record);
               }}
             />
-          </span>
-        </Space>
+          </Col>
+
+          {/* 系统默认不支持编辑操作 */}
+          {!record.readOnly && (
+            <Col className={styles.tableIcon}>
+              <EditOutlined
+                onClick={() => {
+                  editRow(record);
+                }}
+              />
+            </Col>
+          )}
+        </Row>
       ),
     },
   ];
@@ -120,12 +138,25 @@ const CustomTaskTable = (props) => {
     }),
   };
 
+  function copy(record) {
+    dispatch({
+      type: 'customTask/saveEditingRow',
+      payload: record,
+    });
+    setCopyVisible(true);
+  }
+
   function deleteListItem() {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
         setDeleteLoading(true);
-        const response = await deleteCustomTasksById(selectedRowKeys);
+        const customListCodeMap = {};
+        listData.forEach((item) => {
+          customListCodeMap[item.code] = item;
+        });
+        const selectedIds = selectedRowKeys.map((item) => customListCodeMap[item].id);
+        const response = await deleteCustomTasksById(selectedIds);
         if (!dealResponse(response)) {
           setSelectedRowKeys([]);
           refreshPage();
@@ -198,6 +229,14 @@ const CustomTaskTable = (props) => {
         rowSelection={rowSelection}
         rowKey={({ code }) => code}
         pagination={null}
+      />
+
+      {/* 复制自定义任务 */}
+      <CopyCustomTaskModal
+        visible={copyVisible}
+        onCancel={() => {
+          setCopyVisible(false);
+        }}
       />
 
       {/* 任务数据结构预览 */}

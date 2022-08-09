@@ -1,11 +1,11 @@
 import React, { memo } from 'react';
+import { Button, Typography } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { convertToUserTimezone, formatMessage, isNull } from '@/utils/util';
 import CommonModal from '@/components/CommonModal';
-import { Button, Typography } from 'antd';
-import FormattedMessage from '@/components/FormattedMessage';
-import { SourceLockCategory } from '@/packages/Scene/MapMonitor/Modal/SourceLockPanel';
 import TableWithPages from '@/components/TableWithPages';
+import FormattedMessage from '@/components/FormattedMessage';
+import { SourceLockCategory } from './SourceLockPanel';
 
 const SourceLockDetailModal = (props) => {
   const { dispatch, mapRef, visible, sourceLock } = props;

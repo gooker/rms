@@ -24,7 +24,6 @@ export default {
   'taskLimit.limitTips': '提示: 若限流数量为空 则不会限流',
 
   // **********  自定义任务 ********** //
-  'customTasks.readOnly.tip': '该自定义任务为系统预制任务, 不支持编辑操作',
   'customTasks.example.field': '字段',
   'customTasks.example.default': '默认值',
   'customTask.backToList': '返回列表',

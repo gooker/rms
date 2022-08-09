@@ -13,7 +13,6 @@ import { connect } from '@/utils/RmsDva';
 import { adjustModalWidth, formatMessage } from '@/utils/util';
 import { IconFont } from '@/components/IconFont';
 import PositionCell from '../components/PositionCell';
-import ConstructionInfoModal from '../components/ConstructionDraw/ConstructionInfoModal';
 import ConstructionDrawing from '../components/ConstructionDraw/ConstructionDrawing';
 import UploadMapModal from '@/packages/Scene/MapEditor/components/UploadMapModal';
 
@@ -107,20 +106,20 @@ const EditorHeaderRightTools = (props) => {
           <AimOutlined />
         </span>
       </Tooltip>
-      <Divider type="vertical" />
+      <Divider type='vertical' />
 
       {/* 导出施工图 */}
-      <Tooltip title={formatMessage({ id: 'editor.constructionDrawing.export' })}>
-        <span
-          style={{ cursor: mapId ? 'pointer' : 'not-allowed' }}
-          onClick={() => {
-            switchExportConstruction(true);
-          }}
-        >
-          <IconFont type={'icon-constructionDrawing'} />
-        </span>
-      </Tooltip>
-      <Divider type="vertical" />
+      {/*<Tooltip title={formatMessage({ id: 'editor.constructionDrawing.export' })}>*/}
+      {/*  <span*/}
+      {/*    style={{ cursor: mapId ? 'pointer' : 'not-allowed' }}*/}
+      {/*    onClick={() => {*/}
+      {/*      switchExportConstruction(true);*/}
+      {/*    }}*/}
+      {/*  >*/}
+      {/*    <IconFont type={'icon-constructionDrawing'} />*/}
+      {/*  </span>*/}
+      {/*</Tooltip>*/}
+      {/*<Divider type="vertical" />*/}
 
       {/* 导出地图 */}
       <Tooltip title={formatMessage({ id: 'app.button.download' })}>
@@ -201,23 +200,23 @@ const EditorHeaderRightTools = (props) => {
       </Modal>
 
       {/* 配置导出施工图 */}
-      <Modal
-        width={450}
-        destroyOnClose
-        visible={exportConstruction}
-        onCancel={() => {
-          switchExportConstruction(false);
-        }}
-        title={formatMessage({ id: 'editor.constructionDrawing.export' })}
-        footer={null}
-      >
-        <ConstructionInfoModal
-          configureSubmit={(values) => {
-            switchConstructionDraw(true);
-            setConstructionInfo(values);
-          }}
-        />
-      </Modal>
+      {/*<Modal*/}
+      {/*  width={450}*/}
+      {/*  destroyOnClose*/}
+      {/*  visible={exportConstruction}*/}
+      {/*  onCancel={() => {*/}
+      {/*    switchExportConstruction(false);*/}
+      {/*  }}*/}
+      {/*  title={formatMessage({ id: 'editor.constructionDrawing.export' })}*/}
+      {/*  footer={null}*/}
+      {/*>*/}
+      {/*  <ConstructionInfoModal*/}
+      {/*    configureSubmit={(values) => {*/}
+      {/*      switchConstructionDraw(true);*/}
+      {/*      setConstructionInfo(values);*/}
+      {/*    }}*/}
+      {/*  />*/}
+      {/*</Modal>*/}
 
       <Modal
         width={adjustModalWidth()}

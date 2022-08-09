@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Alert, Button, Dropdown, Form, Menu, message, Modal, Space } from 'antd';
+import { Button, Dropdown, Form, Menu, message, Modal, Space } from 'antd';
 import {
   BranchesOutlined,
   CloseOutlined,
@@ -162,7 +162,7 @@ const CustomTaskForm = (props) => {
       dispatch({ type: 'customTask/saveState', payload: { listVisible: !listVisible } });
     }
 
-    if (isNull(editingRow) || (!editingRow.readOnly && !editingRow.viewMode)) {
+    if (isNull(editingRow) || !editingRow.viewMode) {
       Modal.confirm({
         title: formatMessage({ id: 'customTask.backToList' }),
         content: formatMessage({ id: 'customTasks.form.clear.warn' }),
@@ -371,18 +371,6 @@ const CustomTaskForm = (props) => {
 
   return (
     <div className={styles.customTaskForm}>
-      {editingRow && editingRow.readOnly && (
-        <div style={{ position: 'absolute', top: 16, left: 'calc(50vw - 197px)' }}>
-          <Alert
-            showIcon
-            type='warning'
-            message={formatMessage({ id: 'app.message.systemHint' })}
-            description={formatMessage({ id: 'customTasks.readOnly.tip' })}
-            style={{ width: 350 }}
-          />
-        </div>
-      )}
-
       <div className={styles.dndColumn}>
         <div className={styles.dndItem} style={{ flex: 5 }}>
           <div className={styles.dndTitle}>

@@ -5,7 +5,6 @@ import { getCurrentRouteMapData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import ProgramingCell from '../Programing/ProgramingCellTab';
 import ProgramingRelation from '../Programing/ProgramingRelationTab';
-import ProgramingZone from '../Programing/ProgramingZoneTab';
 import styles from '../../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 

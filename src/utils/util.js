@@ -1395,3 +1395,15 @@ export function generateWebHookTestParam(dto, formValue) {
   }
   return result;
 }
+
+/**
+ * @param content {string}
+ */
+export function renderLabel(content) {
+  if (typeof content !== 'string' || isStrictNull(content)) return null;
+  if (content.startsWith('@@')) {
+    const i18nKey = content.replace('@@', '');
+    return formatMessage(i18nKey);
+  }
+  return content;
+}

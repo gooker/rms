@@ -9,7 +9,7 @@ class SocketClient {
     this.ws = nameSpacesInfo?.ws;
     this.headers = {
       login: login,
-      passcode: passcode,
+      passcode: window.sessionStorage.getItem('token'),
     };
     this.client = null;
     this.unsubscribeueueQueue = [];
