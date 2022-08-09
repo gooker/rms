@@ -196,7 +196,7 @@ export default {
         yield put({ type: 'saveMapList', payload: newMapList });
 
         // 如果删除的地图正在当前展示，就选择地图列表的第一个地图进行展示
-        if (currentMap.id === payload) {
+        if (currentMap && currentMap.id === payload) {
           if (newMapList.length === 0) {
             yield put({ type: 'saveCurrentMap', payload: null });
           } else {

@@ -38,7 +38,11 @@ export function getDistance(pos, pos2) {
   return Math.round(Math.sqrt((pos.x - pos2.x) ** 2 + (pos.y - pos2.y) ** 2));
 }
 
-// 获取物理角度
+/**
+ * 获取物理角度
+ * 1. 右 & 下 为正方向
+ * 2. 右为0
+ */
 export function getAngle(source, target) {
   const angle = Math.atan2(target.y - source.y, target.x - source.x) * (180 / Math.PI);
   if (angle > 0) {

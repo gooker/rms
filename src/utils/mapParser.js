@@ -13,7 +13,7 @@
 import { message } from 'antd';
 import { isNull } from '@/utils/util';
 import { getAngle, getCellMapId, getDistance } from '@/utils/mapUtil';
-import { convertSeerOriginPos2LandAndNavi } from '@/utils/mapTransformer';
+import { convertLandAngle2Pixi, convertSeerOriginPos2LandAndNavi } from '@/utils/mapTransformer';
 import { CellEntity, LogicArea, MapEntity, RelationEntity, RouteMap } from '@/entities';
 import { LineType, NavigationType } from '@/config/config';
 import packageJSON from '../../package.json';
@@ -55,11 +55,11 @@ export function convertMushinyOldMapToNew(mapData) {
         newMap.cellMap[id] = new CellEntity({
           id,
           naviId: id + '',
-          navigationType: NavigationType.SEER_SLAM,
-          x,
-          y,
+          navigationType: NavigationType.M_QRCODE,
           nx: x,
           ny: y,
+          x,
+          y: -y,
           logicId: logic.id,
           additional: {},
         });
@@ -78,13 +78,18 @@ export function convertMushinyOldMapToNew(mapData) {
         });
         if (Array.isArray(routeMapItem.relations)) {
           routeMapItem.relations.forEach((relation) => {
+            const source = newMap.cellMap[relation.source];
+            const target = newMap.cellMap[relation.target];
+            const angle = getAngle({ x: source.nx, y: source.ny }, { x: target.nx, y: target.ny });
+            const nangle = convertLandAngle2Pixi(angle);
             loopRouteMap.relations.push(
               new RelationEntity({
                 cost: relation.cost,
-                angle: getAngle(newMap.cellMap[relation.source], newMap.cellMap[relation.target]),
                 source: relation.source,
                 target: relation.target,
                 distance: relation.distance,
+                angle,
+                nangle,
               }),
             );
           });

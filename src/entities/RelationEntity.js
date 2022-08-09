@@ -6,8 +6,8 @@ export default class RelationEntity {
     this.source = props.source;
     this.target = props.target;
     this.cost = props.cost || 10;
-    this.angle = props.angle || null;
-    this.nangle = props.nangle || null;
+    this.angle = props.angle ?? null;
+    this.nangle = props.nangle ?? null;
     this.distance = props.distance || null;
     this.control1 = props.control1 || null;
     this.ncontrol1 = props.ncontrol1 || null;
