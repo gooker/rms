@@ -2,9 +2,9 @@ import * as PIXI from 'pixi.js';
 import { find, isPlainObject } from 'lodash';
 import { BitText } from '@/entities';
 import { isNull, isStrictNull, radToAngle } from '@/utils/util';
-import { CellSize, MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
-import { NavigationTypeView } from '@/config/config';
 import { getKeyByCoordinateType, getTextureFromResources } from '@/utils/mapUtil';
+import { NavigationTypeView } from '@/config/config';
+import { CellSize, MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
 
 const HitAreaSize = 280;
 const InnerIndex = { direction: 1, navigation: 2, type: 3, text: 3, bg: 4 };
@@ -82,6 +82,20 @@ export default class Cell extends PIXI.Container {
     // this.addChild(this.pidSprite);
   }
 
+  updateNaviId(naviId) {
+    if (this.navigationId) {
+      this.removeChild(this.navigationId);
+      this.navigationId.destroy();
+      this.navigationId = null;
+    }
+
+    this.naviId = naviId;
+    this.navigationId = new BitText(naviId, 0, 0, 0xffffff, 100);
+    this.navigationId.anchor.set(0.5, 0);
+    this.navigationId.y = CellSize.height / 2 + 30;
+    this.addChild(this.navigationId);
+  }
+
   renderNavigation(cellType = 'blank') {
     this.navigation = new PIXI.Sprite(
       getTextureFromResources(`${this.navigationType}_${cellType}`),
@@ -130,18 +144,6 @@ export default class Cell extends PIXI.Container {
         console.error(`RMS: 发现未知的导航点类型[${this.navigationType}]`);
       }
     }
-  }
-
-  updateNaviId(naviId) {
-    if (this.navigationId) {
-      this.removeChild(this.navigationId);
-      this.navigationId.destroy(true);
-      this.navigationId = null;
-    }
-    this.navigationId = new BitText(naviId, 0, 0, this.brandColor);
-    this.navigationId.anchor.set(0.5, 0);
-    this.navigationId.y = CellSize.height / 2 + 30;
-    this.addChild(this.navigationId);
   }
 
   // 坐标

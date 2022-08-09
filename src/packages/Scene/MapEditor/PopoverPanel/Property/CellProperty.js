@@ -1,11 +1,11 @@
 import React, { memo, useEffect } from 'react';
-import { Button, Col, Empty, Form, Input, InputNumber, Row, Tag } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Row, Tag } from 'antd';
 import { SyncOutlined } from '@ant-design/icons';
 import { isPlainObject } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
-import { CoordinateType } from '@/config/config';
+import { CoordinateType, NavigationType } from '@/config/config';
 import EditorCard from '../../components/EditorCard';
 import FormattedMessage from '@/components/FormattedMessage';
 import LabelComponent from '@/components/LabelComponent';
@@ -88,7 +88,11 @@ const CellProperty = (props) => {
               <Button
                 type={'primary'}
                 onClick={updateNaviId}
-                disabled={shownCellCoordinateType === CoordinateType.NAVI}
+                disabled={
+                  // 只有在导航模式并且是牧星点位才能编辑
+                  shownCellCoordinateType !== CoordinateType.NAVI ||
+                  cell.navigationType !== NavigationType.M_QRCODE
+                }
               >
                 <SyncOutlined /> <FormattedMessage id={'app.button.update'} />
               </Button>
@@ -98,9 +102,7 @@ const CellProperty = (props) => {
 
         {/* 导航点属性 */}
         <EditorCard
-          label={`${formatMessage({ id: 'app.map.navigationCell' })}${formatMessage({
-            id: 'app.common.prop',
-          })}`}
+          label={`${formatMessage('app.map.navigationCell')}${formatMessage('app.common.prop')}`}
         >
           <LabelComponent label={formatMessage({ id: 'app.common.type' })}>
             {cell.navigationType}
@@ -114,18 +116,18 @@ const CellProperty = (props) => {
         </EditorCard>
 
         {/* 点位类型*/}
-        <EditorCard label={formatMessage({ id: 'editor.cellType' })}>
-          {cellTypeTags.length === 0 ? (
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-          ) : (
-            cellTypeTags
-          )}
-        </EditorCard>
+        {/*<EditorCard label={formatMessage({ id: 'editor.cellType' })}>*/}
+        {/*  {cellTypeTags.length === 0 ? (*/}
+        {/*    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />*/}
+        {/*  ) : (*/}
+        {/*    cellTypeTags*/}
+        {/*  )}*/}
+        {/*</EditorCard>*/}
 
-        {/* 地图编程(只显示GLO) */}
-        <EditorCard label={formatMessage({ id: 'editor.programing' })}>
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-        </EditorCard>
+        {/* 地图编程 */}
+        {/*<EditorCard label={formatMessage({ id: 'editor.programing' })}>*/}
+        {/*  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />*/}
+        {/*</EditorCard>*/}
       </div>
     </>
   );

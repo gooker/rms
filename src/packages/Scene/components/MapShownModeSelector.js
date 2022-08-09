@@ -26,11 +26,11 @@ const MapShownModeSelector = (props) => {
 
   const cellCoordinateTypeMenu = (
     <Menu selectedKeys={[shownCellCoordinateType]} onClick={updateShownCellCoordinateType}>
-      <Menu.Item key={'land'}>
-        <FormattedMessage id="app.map.landCell" />
-      </Menu.Item>
       <Menu.Item key={'navi'}>
-        <FormattedMessage id="app.map.naviCell" />
+        <FormattedMessage id='app.map.naviCell' />
+      </Menu.Item>
+      <Menu.Item key={'land'}>
+        <FormattedMessage id='app.map.landCell' />
       </Menu.Item>
     </Menu>
   );
