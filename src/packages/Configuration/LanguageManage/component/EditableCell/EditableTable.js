@@ -1,19 +1,23 @@
 import React, { memo } from 'react';
-import { Table } from 'antd';
+import { Table, Typography } from 'antd';
 import EditableCell from './EditableCell';
 import { formatMessage } from '@/utils/util';
 import styles from './editableTable.module.less';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const EditableTable = (props) => {
-  const { value, columns, onChange, loading, pagination, handlePagination } = props;
+  const { value, columns, deleteRow, onChange, loading, pagination, handlePagination } = props;
 
   function generateColumns() {
+    let result = [];
+    const basePercent = window.localStorage.getItem('dev') === 'true' ? 96 : 100;
+    const columnWidthPercent = `${Math.floor(basePercent / columns.length)}%`;
     if (Array.isArray(columns) && columns.length > 0) {
-      return columns.map(({ title, field, disabled = false, fixed = false }) => ({
+      result = columns.map(({ title, field, disabled = false, fixed = false }) => ({
         title: title,
         dataIndex: field,
         align: 'center',
-        width: `${Math.floor((1 / columns.length) * 100)}%`,
+        width: columnWidthPercent,
         render: (text, record, index) => {
           if (disabled) {
             return <div className={`${styles.celldisabled} ${styles.tableCell}`}>{text}</div>;
@@ -28,8 +32,27 @@ const EditableTable = (props) => {
           );
         },
       }));
+
+      if (window.localStorage.getItem('dev') === 'true') {
+        result.push({
+          title: formatMessage('app.common.operation'),
+          align: 'center',
+          width: '5%',
+          render: (text, record) => {
+            return (
+              <Typography.Link
+                onClick={() => {
+                  deleteRow(record);
+                }}
+              >
+                <FormattedMessage id={'app.button.delete'} />
+              </Typography.Link>
+            );
+          },
+        });
+      }
     }
-    return [];
+    return result;
   }
 
   function handleTableChange({ current, pageSize }) {

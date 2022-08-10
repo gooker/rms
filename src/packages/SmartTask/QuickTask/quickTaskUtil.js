@@ -9,15 +9,15 @@ export function checkQuickVariable(variable) {
 
   // 任务开始
   const { vehicle, vehicleLimit } = customStart;
-  if (vehicle.config.isRequired || vehicle.config.visible) {
-    if (vehicle.config.isRequired) {
+  if (vehicle?.config.isRequired || vehicle?.config.visible) {
+    if (vehicle?.config.isRequired) {
       if (isConfigEmpty(vehicle.value)) {
         return true;
       }
     }
   }
-  if (vehicleLimit.config.isRequired || vehicleLimit.config.visible) {
-    if (vehicleLimit.config.isRequired) {
+  if (vehicleLimit?.config.isRequired || vehicleLimit?.config.visible) {
+    if (vehicleLimit?.config.isRequired) {
       if (isConfigEmpty(vehicleLimit.value)) {
         return true;
       }
@@ -30,8 +30,8 @@ export function checkQuickVariable(variable) {
     const fieldKeys = Object.keys(customAction[subTaskCode]);
     for (const fieldKey of fieldKeys) {
       const fieldValue = customAction[subTaskCode][fieldKey];
-      if (fieldValue.config.isRequired || fieldValue.config.visible) {
-        if (fieldValue.config.isRequired) {
+      if (fieldValue?.config.isRequired || fieldValue?.config.visible) {
+        if (fieldValue?.config.isRequired) {
           if (isConfigEmpty(fieldValue.value)) {
             return true;
           }
@@ -42,15 +42,15 @@ export function checkQuickVariable(variable) {
 
   // 任务结束
   const { backZone, loadBackZone } = customEnd;
-  if (backZone.config.isRequired || backZone.config.visible) {
-    if (backZone.config.isRequired) {
+  if (backZone?.config.isRequired || backZone?.config.visible) {
+    if (backZone?.config.isRequired) {
       if (isConfigEmpty(backZone.value)) {
         return true;
       }
     }
   }
-  if (loadBackZone.config.isRequired || loadBackZone.config.visible) {
-    if (loadBackZone.config.isRequired) {
+  if (loadBackZone?.config.isRequired || loadBackZone?.config.visible) {
+    if (loadBackZone?.config.isRequired) {
       if (isConfigEmpty(loadBackZone.value)) {
         return true;
       }
@@ -75,7 +75,6 @@ function isConfigEmpty(item) {
 // 将快捷任务的变量字段转换成运行任务需要的结构
 export function convertQuickTaskVarToRequestStruct(quickTaskVariable) {
   const { customStart, customAction, customEnd } = quickTaskVariable;
-  //
   const _customStart = {};
   _customStart.vehicle = customStart.vehicle.value;
   _customStart.vehicleLimit = customStart.vehicleLimit.value;
@@ -83,8 +82,10 @@ export function convertQuickTaskVarToRequestStruct(quickTaskVariable) {
   const _customAction = {};
   Object.entries(customAction).forEach(([nodeCode, nodeConfig]) => {
     _customAction[nodeCode] = {};
-    Object.entries(nodeConfig).forEach(([field, { value }]) => {
-      _customAction[nodeCode][field] = value;
+    Object.entries(nodeConfig).forEach(([field, fieldValue]) => {
+      if (fieldValue) {
+        _customAction[nodeCode][field] = fieldValue.value;
+      }
     });
   });
 

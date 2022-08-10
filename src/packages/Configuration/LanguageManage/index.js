@@ -15,15 +15,11 @@ import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import {
   addSysLang,
+  deleteByAppCodeAndKey,
   getTranslationByCode,
   updateSysTranslation,
 } from '@/services/translationService';
-import {
-  exportTranslate,
-  generatefilterValue,
-  generateOriginData,
-  generateUpdateDataToSave,
-} from './translateUtils';
+import { exportTranslate, generatefilterValue, generateOriginData, generateUpdateDataToSave } from './translateUtils';
 import RmsConfirm from '@/components/RmsConfirm';
 import DeleteSysLang from './component/DeleteSysLang';
 import AddTranslation from './component/AddTranslation';
@@ -77,18 +73,13 @@ class LanguageManage extends React.Component {
     const { systemLanguage } = this.props;
     const frontedStandard = [];
     systemLanguage.map(({ code }) => {
-      let languageMap = {};
+      let languageMap;
       try {
         languageMap = require(`@/locales/${code}`)?.default;
+        // 莫名其妙多一个与code一样的项
+        delete languageMap[code];
       } catch (error) {
         languageMap = {};
-      }
-      // 当前语言没有翻译，可以直接从zh-CN拿key
-      if (Object.keys(languageMap).length === 0) {
-        const zhKeyMap = require(`@/locales/zh-CN`)?.default;
-        Object.entries(zhKeyMap).map(([key, value]) => {
-          languageMap[key] = '';
-        });
       }
       frontedStandard.push({ languageKey: code, languageMap });
     });
@@ -119,28 +110,17 @@ class LanguageManage extends React.Component {
   getStandardAndCustomData = () => {
     const { systemLanguage } = this.props;
     const { dataList } = this.state;
-    /*切换应用 根据后端返回的数据 以及目前前端勾选的语言 初始化数据
-     *        后端返回的数据 没有该语言 前端赋值为null
+    /* 切换应用: 根据后端返回的数据 以及目前前端勾选的语言 初始化数据
+     *          后端返回的数据 没有该语言 前端赋值为null
      * 原因: 1.交互问题 保持所有数据的key一致;
      *      2：场景: 新添加一个语言 如果之前有100条数据 那么会造成未保存的就是100条(languagemap不一样)
-     *
-     *** custom里面的key一定在standard里面
-     * *
-     * */
+     */
     const dataArray = generateOriginData(dataList, systemLanguage);
-    const { standardData, customData, mergeData } = dataArray;
-    this.setState({
-      standardData: [...standardData],
-      customData: [...customData],
-      mergeData: [...mergeData],
-      loading: false,
-    });
+    this.setState({ ...dataArray, loading: false });
   };
 
   onModeChange = (e) => {
-    this.setState({
-      displayMode: e,
-    });
+    this.setState({ displayMode: e });
   };
 
   isMerge = (mode) => {
@@ -196,11 +176,11 @@ class LanguageManage extends React.Component {
     });
   };
 
-  // 语种变化 应用变化 搜索 最后都调用此放大
+  // 语种变化 应用变化 搜索 最后都调用此方法
   generateFilterLanguage = () => {
-    const dataSorce = this.generateData();
+    const dataSource = this.generateData();
     const { filterValue, showLanguage, showMissingTranslate } = this.state;
-    // 当前列表的coiumns 在对应的value中搜索
+    // 当前列表的columns 在对应的value中搜索
     const shownColumns = {};
     this.tableColumns().map((record) => {
       if (record.field) {
@@ -210,7 +190,7 @@ class LanguageManage extends React.Component {
 
     return generatefilterValue(
       filterValue,
-      dataSorce,
+      dataSource,
       shownColumns,
       showMissingTranslate,
       showLanguage,
@@ -219,7 +199,7 @@ class LanguageManage extends React.Component {
 
   updateEditList = (field, index, record, newValue, text) => {
     const { mergeData, editList } = this.state;
-    let currentlist = { ...editList };
+    let currentList = { ...editList };
     const result = {};
     let currentValue = {};
     if (text !== newValue) {
@@ -247,13 +227,13 @@ class LanguageManage extends React.Component {
 
       // 源数据和修改后的数据相同 则不放入未保存的对象中
       if (changedSet.size === 1 && changedSet.has(1)) {
-        currentlist = { ...editList, ...result };
+        currentList = { ...editList, ...result };
       } else {
-        delete currentlist[key];
+        delete currentList[key];
       }
 
       this.setState({
-        editList: currentlist,
+        editList: currentList,
       });
     }
   };
@@ -355,6 +335,20 @@ class LanguageManage extends React.Component {
         this.getTranslateList,
       );
     }
+  };
+
+  deleteRow = ({ languageKey }) => {
+    const { appCode } = this.state;
+    RmsConfirm({
+      content: formatMessage('translator.delete.confirm'),
+      onOk: () => {
+        deleteByAppCodeAndKey(appCode, languageKey).then((response) => {
+          if (!dealResponse(response)) {
+            // 手动更新dataSource
+          }
+        });
+      },
+    });
   };
 
   // 保存-update
@@ -568,7 +562,7 @@ class LanguageManage extends React.Component {
           </Col>
           <Col>
             <Checkbox
-              value={showMissingTranslate}
+              checked={showMissingTranslate}
               onChange={({ target: { checked } }) => {
                 this.setState({ showMissingTranslate: checked }, this.generateFilterLanguage);
               }}
@@ -582,6 +576,7 @@ class LanguageManage extends React.Component {
           loading={loading}
           value={filterLanguage}
           columns={this.tableColumns()}
+          deleteRow={this.deleteRow}
           onChange={this.updateEditList}
           pagination={pagination}
           handlePagination={(value) => {

@@ -18,6 +18,14 @@ export async function getTranslationByCode(appCode) {
   });
 }
 
+// 根据appCode和languageKey删除翻译
+export async function deleteByAppCodeAndKey(appCode, languageKey) {
+  return request(`/${Platform}/translation/deleteByAppCodeAndKey`, {
+    method: 'GET',
+    data: { appCode, languageKey },
+  });
+}
+
 // 更新具体翻译，保存到custom-批量
 export async function updateTranslations(params) {
   return request(`/${Platform}/translation/batchUpdateTranslation`, {

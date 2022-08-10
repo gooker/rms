@@ -1,43 +1,60 @@
 import React, { memo, useEffect } from 'react';
-import { Form, Input, Radio, Space } from 'antd';
+import { Col, Form, Input, Radio, Row } from 'antd';
 import CommonModal from '@/components/CommonModal';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { convertMapArrayToMap, dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import { updateSysTranslation } from '@/services/translationService';
+import { connect } from '@/utils/RmsDva';
 
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 18);
 const AddTranslation = (props) => {
-  const { visible, onCancel, appCode } = props;
+  const { visible, onCancel, appCode, systemLanguage } = props;
   const [formRef] = Form.useForm();
 
   useEffect(() => {
     if (visible) {
-      formRef.setFieldsValue({ appCode });
+      const dynamicValue = systemLanguage.map(({ code }) => ({ key: code, value: null }));
+      formRef.setFieldsValue({ appCode, value: dynamicValue });
     } else {
       formRef.resetFields();
     }
   }, [visible]);
 
   function submit() {
-    const requestBody = { appCode, merge: true, translationDetail: {} };
-    updateSysTranslation(requestBody).then((response) => {
-      if (!dealResponse(response, true)) {
-        onCancel();
-      }
-    });
+    formRef
+      .validateFields()
+      .then((values) => {
+        const { appCode, key, value } = values;
+        const requestBody = {
+          appCode,
+          merge: true,
+          translationDetail: {
+            [key]: convertMapArrayToMap(value),
+          },
+        };
+        updateSysTranslation(requestBody).then((response) => {
+          if (!dealResponse(response, true)) {
+            onCancel();
+          }
+        });
+      })
+      .catch(() => {
+      });
   }
 
   return (
     <CommonModal
+      width={600}
       title={formatMessage('translator.addRow')}
       visible={visible}
       onCancel={onCancel}
       onOk={submit}
     >
-      <Form form={formRef}>
-        <Form.Item name={'appCode'} label={<FormattedMessage id="app.module" />}>
+      <Form form={formRef} {...formItemLayout}>
+        <Form.Item name={'appCode'} label={<FormattedMessage id='app.module' />}>
           <Radio.Group
-            optionType="button"
-            buttonStyle="solid"
+            optionType='button'
+            buttonStyle='solid'
             options={[
               {
                 label: formatMessage({ id: 'translator.languageManage.frontend' }),
@@ -51,37 +68,51 @@ const AddTranslation = (props) => {
           />
         </Form.Item>
 
-        <Form.Item name={'key'} label={'Key'}>
+        <Form.Item
+          name={'key'}
+          label={formatMessage('translator.key')}
+          rules={[{ required: true }]}
+        >
           <Input />
         </Form.Item>
 
-        <Form.List name="value" label={'Value'}>
+        <Form.List name='value'>
           {(fields, { add, remove }) => (
             <>
-              {fields.map(({ key, name, ...restField }) => (
-                <Space
+              {fields.map(({ key, name, ...restField }, index) => (
+                <Form.Item
                   key={key}
-                  style={{
-                    display: 'flex',
-                    marginBottom: 8,
-                  }}
-                  align="baseline"
+                  required
+                  {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
+                  label={index === 0 ? formatMessage('translator.value') : ''}
                 >
-                  <Form.Item
-                    {...restField}
-                    name={[name, 'key']}
-                    rules={[{ required: true, message: 'Missing Key' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    {...restField}
-                    name={[name, 'value']}
-                    rules={[{ required: true, message: 'Missing last name' }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Space>
+                  <Row key={key} gutter={8}>
+                    <Col>
+                      <Form.Item
+                        noStyle
+                        {...restField}
+                        name={[name, 'key']}
+                        rules={[
+                          { required: true, message: formatMessage('translator.value.required') },
+                        ]}
+                      >
+                        <Input style={{ width: 80 }} />
+                      </Form.Item>
+                    </Col>
+                    <Col flex={1}>
+                      <Form.Item
+                        noStyle
+                        {...restField}
+                        name={[name, 'value']}
+                        rules={[
+                          { required: true, message: formatMessage('translator.value.required') },
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </Form.Item>
               ))}
             </>
           )}
@@ -90,4 +121,6 @@ const AddTranslation = (props) => {
     </CommonModal>
   );
 };
-export default memo(AddTranslation);
+export default connect(({ global }) => ({
+  systemLanguage: global.systemLanguage,
+}))(memo(AddTranslation));

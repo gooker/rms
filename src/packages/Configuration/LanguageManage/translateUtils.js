@@ -1,6 +1,6 @@
 import XLSX from 'xlsx';
-import { findIndex, forIn, sortBy } from 'lodash';
-import { dealResponse, formatMessage, isStrictNull, sortLanguages } from '@/utils/util';
+import { find, findIndex, forIn, groupBy, mergeWith } from 'lodash';
+import { convertMapArrayToMap, dealResponse, formatMessage, isStrictNull, sortLanguages } from '@/utils/util';
 import { getSysLang } from '@/services/translationService';
 
 export async function getSystemLanguage() {
@@ -98,66 +98,69 @@ export function generateUpdateDataToSave(updateData) {
   return saveMap;
 }
 
-// 根据后端数据 转换成前端需要的
-export function generateMaptoArray(dataList) {
+// 将后端数据转换成前端需要的格式
+export function generateMapToArray(dataList, allLanguageKeys) {
   let newData = [];
-  dataList?.map(({ languageKey, languageMap }) => {
-    Object.entries(languageMap).forEach(([key, value]) => {
-      let filterKey = newData.find((item) => item.languageKey === key);
-      let index = findIndex(newData, (record) => record.languageKey === key);
-      if (filterKey) {
-        filterKey.languageMap[languageKey] = value;
-        newData.splice(index, 1, filterKey);
-      } else {
-        newData.push({
-          languageKey: key,
-          languageMap: {
-            [languageKey]: value,
-          },
-        });
-      }
+  const dataListMap = convertMapArrayToMap(dataList, 'languageKey', 'languageMap');
+  // 这里已中文翻译的key为准
+  for (const languageKey in dataListMap['zh-CN']) {
+    const languageMap = {};
+    allLanguageKeys.forEach((lang) => {
+      languageMap[lang] = dataListMap[lang][languageKey];
     });
-  });
+    newData.push({ languageKey, languageMap });
+  }
   return newData;
 }
+
 export function generateOriginData(dataList, allLanguage) {
+  const allLanguageKeys = allLanguage.map(({ code }) => code);
   let standardData = [];
   if (Array.isArray(dataList.Standard)) {
-    standardData = generateMaptoArray(dataList.Standard);
+    standardData = generateMapToArray(dataList.Standard, allLanguageKeys);
   }
 
   let customData = [];
   if (Array.isArray(dataList.Custom)) {
-    customData = dataList.Custom?.map((cuItem) => {
-      const currentItem = { ...cuItem };
-      forIn(allLanguage, ({ code }) => {
-        if (!currentItem.languageMap[code]) {
-          currentItem.languageMap[code] = '';
+    const custom = dataList.Custom.map((item) => {
+      const key = Object.keys(item.languageMap)[0];
+      return { key, ...item };
+    });
+    const customGroup = groupBy(custom, 'key');
+    customData = Object.entries(customGroup).map(([languageKey, translations]) => {
+      const result = { languageKey, languageMap: {} };
+      allLanguageKeys.forEach((lang) => {
+        const translation = find(translations, { languageKey: lang });
+        if (translation) {
+          result['languageMap'][lang] = translation['languageMap'][languageKey];
+        } else {
+          result['languageMap'][lang] = '';
         }
       });
-      return currentItem;
+      return result;
     });
   }
 
   // custom里面的key一定在standard里面
-  const mergeData = [...standardData].map((item) => {
-    let item_ = { ...item };
-    const record_ = customData.filter((record) => item.languageKey === record.languageKey);
-    if (record_.length > 0) {
-      item_ = record_[0];
+  const mergeData = [...standardData];
+  [...customData].forEach((item) => {
+    const standardIndex = findIndex(standardData, { languageKey: item.languageKey });
+    if (standardIndex > -1) {
+      const standard = standardData[standardIndex];
+      const replaceItem = {
+        ...standard,
+        languageMap: mergeWith(standard.languageMap, item.languageMap, (objValue, srcValue) => {
+          if (isStrictNull(srcValue)) {
+            return objValue;
+          }
+          return srcValue;
+        }),
+      };
+      mergeData.splice(standardIndex, 1, replaceItem);
+    } else {
+      mergeData.push(item);
     }
-    return item_;
   });
 
-  return {
-    standardData: sortBy(standardData, (o) => {
-      return o.languageKey;
-    }),
-    customData: sortBy(customData, (o) => {
-      return o.languageKey;
-    }),
-    mergeData: sortBy(mergeData, (o) => {
-      return o.languageKey;
-    }),
-  };
+  return { standardData, customData, mergeData };
 }

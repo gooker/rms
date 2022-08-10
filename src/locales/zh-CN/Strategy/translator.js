@@ -24,4 +24,8 @@ export default {
   'translator.languageManage.edit': '国际化编辑',
   'translator.languageManage.diffResult': '数据对比',
   'translator.addRow': '新增翻译',
+  'translator.key': '键',
+  'translator.value': '值',
+  'translator.value.required': '请输入翻译值',
+  'translator.delete.confirm': '是否确定删除该条翻译?',
 };

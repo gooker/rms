@@ -596,6 +596,17 @@ export function convertMapToArrayMap(data, keyLabel = 'key', valueLabel = 'value
 }
 
 /**
+ * convertMapToArrayMap的逆函数
+ */
+export function convertMapArrayToMap(data, keyLabel = 'key', valueLabel = 'value') {
+  const result = {};
+  data.forEach((item) => {
+    result[item[keyLabel]] = item[valueLabel];
+  });
+  return result;
+}
+
+/**
  * convertMapToArrayMap 的逆运算
  * @param input [{type:'xxx', code:[1,2,3]},{type:'xxx',code:[2,3,4]}]
  * @param keyLabel 自定义key的标识
