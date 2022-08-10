@@ -355,6 +355,7 @@ class MonitorMapView extends BaseMap {
   renderSourceLock(category, lockList) {
     // 清除所有已渲染的资源锁
     this.clearSourceLock();
+
     // 渲染新的资源锁
     lockList?.forEach((lock) => {
       const cellEntity = this.idCellMap.get(lock.cellId);

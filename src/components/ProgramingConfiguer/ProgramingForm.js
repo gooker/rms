@@ -22,26 +22,27 @@ const ProgramingForm = (props) => {
   }, []);
 
   function renderItemInput(valueDataType, isReadOnly, options) {
-    switch (valueDataType) {
-      case 'ARRAY':
-        if (isPlainObject(options)) {
+    if (isPlainObject(options)) {
+      return (
+        <Select disabled={isReadOnly}>
+          {convertMapToArrayMap(options, 'code', 'name').map(({ code, name }) => (
+            <Select.Option key={code} value={code}>
+              {name}
+            </Select.Option>
+          ))}
+        </Select>
+      );
+    } else {
+      switch (valueDataType) {
+        case 'ARRAY':
           return (
-            <Select disabled={isReadOnly}>
-              {convertMapToArrayMap(options, 'code', 'name').map(({ code, name }) => (
-                <Select.Option key={code} value={code}>
-                  {name}
-                </Select.Option>
-              ))}
-            </Select>
+            <Select mode={'tags'} maxTagCount={4} notFoundContent={null} disabled={isReadOnly} />
           );
-        }
-        return (
-          <Select mode={'tags'} maxTagCount={4} notFoundContent={null} disabled={isReadOnly} />
-        );
-      case 'BOOL':
-        return <Switch disabled={isReadOnly} />;
-      default:
-        return <Input disabled={isReadOnly} />;
+        case 'BOOL':
+          return <Switch disabled={isReadOnly} />;
+        default:
+          return <Input disabled={isReadOnly} />;
+      }
     }
   }
 
