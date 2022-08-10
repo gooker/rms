@@ -37,7 +37,11 @@ import WaitForm from './WaitForm';
 import PodSimulation from './PodSimulationForm';
 import EndForm from './EndForm';
 import styles from '../customTask.module.less';
-import { generateCustomTaskForm } from '@/utils/customTaskUtil';
+import {
+  generateCustomTaskForm,
+  generateSample,
+  restoreCustomTaskForm,
+} from '@/utils/customTaskUtil';
 
 const CustomTypeIconMap = {
   [CustomNodeType.ACTION]: <BranchesOutlined />,
@@ -373,10 +377,10 @@ const CustomTaskForm = (props) => {
         <div className={styles.dndItem} style={{ flex: 5 }}>
           <div className={styles.dndTitle}>
             <IconFont type={'icon-flow'} style={{ fontSize: 20, marginRight: 5 }} />
-            <FormattedMessage id='app.task.flow' />
+            <FormattedMessage id="app.task.flow" />
           </div>
           <Container
-            groupName='dnd'
+            groupName="dnd"
             dropPlaceholder={{
               showOnTop: true,
               animationDuration: 150,
@@ -458,11 +462,11 @@ const CustomTaskForm = (props) => {
         </div>
         <div className={styles.topTool}>
           <Button danger onClick={gotoListPage}>
-            <CloseOutlined /> <FormattedMessage id='app.button.return' />
+            <CloseOutlined /> <FormattedMessage id="app.button.return" />
           </Button>
           {(isNull(editingRow) || (!editingRow.readOnly && !editingRow.viewMode)) && (
-            <Button type='primary' onClick={submit}>
-              <SaveOutlined /> <FormattedMessage id='app.button.save' />
+            <Button type="primary" onClick={submit}>
+              <SaveOutlined /> <FormattedMessage id="app.button.save" />
             </Button>
           )}
         </div>

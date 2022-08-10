@@ -3,7 +3,7 @@ export default {
   'editor.locate': '点位定位',
   'editor.map.active': '激活地图',
   'editor.map.active.warn': '无法取消激活',
-  'editor.map.upload': '上传地图',
+  'editor.map.upload': '导入地图',
   'editor.map.upload.mapIncomplete': '地图数据不完整',
   'editor.map.download': '下载地图',
   'editor.selectMap.required': '请先选择地图',

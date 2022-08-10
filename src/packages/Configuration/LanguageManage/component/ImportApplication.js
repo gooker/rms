@@ -1,10 +1,11 @@
 import React, { memo } from 'react';
-import { Form, Modal, Radio } from 'antd';
+import { Form, Radio } from 'antd';
 import { getFormLayout } from '@/utils/util';
 import ImportI18nLanguage from './ImportI18nLanguage';
 import FormattedMessage from '@/components/FormattedMessage';
+import CommonModal from '@/components/CommonModal';
 
-const { formItemLayout } = getFormLayout(6, 15);
+const { formItemLayout } = getFormLayout(5, 16);
 
 const ImportApplication = (props) => {
   const { visible, onCancel, onOk } = props;
@@ -21,11 +22,8 @@ const ImportApplication = (props) => {
   }
 
   return (
-    <Modal
-      destroyOnClose
-      title={<FormattedMessage id='app.button.upload' />}
-      maskClosable={false}
-      closable={false}
+    <CommonModal
+      title={<FormattedMessage id="app.button.import" />}
       width={600}
       visible={visible}
       onCancel={onCancel}
@@ -38,7 +36,7 @@ const ImportApplication = (props) => {
           initialValue={true}
           rules={[{ required: true }]}
         >
-          <Radio.Group>
+          <Radio.Group optionType="button" buttonStyle="solid">
             <Radio value={true}>
               <FormattedMessage id="translator.languageManage.merge" />
             </Radio>
@@ -60,7 +58,7 @@ const ImportApplication = (props) => {
           <ImportI18nLanguage accept={'.xlsx,.xls'} type={'addApp'} />
         </Form.Item>
       </Form>
-    </Modal>
+    </CommonModal>
   );
 };
 export default memo(ImportApplication);

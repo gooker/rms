@@ -6,22 +6,33 @@ import {
   ExportOutlined,
   ImportOutlined,
   PlusCircleOutlined,
+  PlusOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
 import classnames from 'classnames';
 import { cloneDeep, findIndex } from 'lodash';
-import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
-import { addSysLang, getTranslationByCode, updateSysTranslation } from '@/services/translationService';
-import RmsConfirm from '@/components/RmsConfirm';
-import { exportTranslate, generatefilterValue, generateOriginData, generateUpdateDataToSave } from './translateUtils';
-import EditableTable from './component/EditableCell/EditableTable';
-import AddSysLangModal from './component/AddSysLang.js';
-import ImportApplicationModal from './component/ImportApplication';
-import UpdateEditListModal from './component/UpdateEditListModal';
-import DeleteSysLang from './component/DeleteSysLang';
-import DiffToSaveModal from './component/DiffToSaveModal';
 import { connect } from '@/utils/RmsDva';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
+import {
+  addSysLang,
+  getTranslationByCode,
+  updateSysTranslation,
+} from '@/services/translationService';
+import {
+  exportTranslate,
+  generatefilterValue,
+  generateOriginData,
+  generateUpdateDataToSave,
+} from './translateUtils';
+import RmsConfirm from '@/components/RmsConfirm';
+import DeleteSysLang from './component/DeleteSysLang';
+import AddTranslation from './component/AddTranslation';
+import AddSysLangModal from './component/AddSysLang.js';
+import DiffToSaveModal from './component/DiffToSaveModal';
+import FormattedMessage from '@/components/FormattedMessage';
+import UpdateEditListModal from './component/UpdateEditListModal';
+import EditableTable from './component/EditableCell/EditableTable';
+import ImportApplicationModal from './component/ImportApplication';
 import styles from './translator.module.less';
 import commonStyles from '@/common.module.less';
 
@@ -41,6 +52,7 @@ class LanguageManage extends React.Component {
     addLangVisible: false,
     deleteLangVisible: false,
     diffToVisible: false,
+    addSingleVisible: false,
 
     showLanguage: [],
     dataList: {},
@@ -247,7 +259,7 @@ class LanguageManage extends React.Component {
   };
 
   //导出
-  exportExecl = (type) => {
+  exportExcel = (type) => {
     const { standardData, customData, mergeData, appCode, showLanguage } = this.state;
     const { key } = type;
     let allShowData = [];
@@ -370,11 +382,13 @@ class LanguageManage extends React.Component {
       loading,
       pagination,
       showMissingTranslate,
+      addSingleVisible,
     } = this.state;
     const { systemLanguage } = this.props;
     const filterLanguage = this.generateFilterLanguage() || [];
     return (
       <div className={classnames(commonStyles.commonPageStyle, styles.translator)}>
+        {/* 第一行 */}
         <Row>
           <Col>
             <FormItem label={<FormattedMessage id="translator.languageManage.language" />}>
@@ -417,7 +431,6 @@ class LanguageManage extends React.Component {
               </Button>
             )}
           </Col>
-
           <Col flex={1}>
             <Row justify={'end'}>
               <Button
@@ -432,6 +445,8 @@ class LanguageManage extends React.Component {
             </Row>
           </Col>
         </Row>
+
+        {/* 第二行 */}
         <Row>
           <Col>
             <FormItem label={<FormattedMessage id="app.module" />}>
@@ -453,24 +468,23 @@ class LanguageManage extends React.Component {
               />
             </FormItem>
           </Col>
-
-          <Col flex="auto">
+          <Col flex="1">
+            {/* 导入国际化数据 */}
             <Button
-              style={{ margin: '0 20px 0 20px' }}
+              style={{ marginLeft: 16 }}
               disabled={isNull(appCode)}
               onClick={() => {
-                this.setState({
-                  importVisible: true,
-                });
+                this.setState({ importVisible: true });
               }}
             >
-              <ImportOutlined /> <FormattedMessage id='app.button.upload' />
+              <ImportOutlined /> <FormattedMessage id="app.button.import" />
             </Button>
 
+            {/* 导出国际化数据 */}
             <Dropdown
               disabled={isNull(appCode)}
               overlay={
-                <Menu onClick={this.exportExecl}>
+                <Menu onClick={this.exportExcel}>
                   <Menu.Item key="standard">
                     <FormattedMessage id="translator.languageManage.standard" />
                   </Menu.Item>
@@ -483,21 +497,30 @@ class LanguageManage extends React.Component {
                 </Menu>
               }
             >
-              <Button icon={<ExportOutlined />}>
-                {' '}
-                <FormattedMessage id='app.button.download' />
+              <Button style={{ marginLeft: 16 }}>
+                <ExportOutlined /> <FormattedMessage id="app.button.export" />
                 <DownOutlined />
               </Button>
             </Dropdown>
 
+            {/* 手动新增一条数据 */}
+            {window.localStorage.getItem('dev') === 'true' && (
+              <Button
+                style={{ marginLeft: 16 }}
+                onClick={() => {
+                  this.setState({ addSingleVisible: true });
+                }}
+              >
+                <PlusOutlined /> <FormattedMessage id={'translator.addRow'} />
+              </Button>
+            )}
+
             <Button
-              style={{ marginLeft: 20 }}
+              style={{ marginLeft: 16 }}
               disabled={Object.keys(editList).length === 0}
               type="primary"
               onClick={() => {
-                this.setState({
-                  diffToVisible: true,
-                });
+                this.setState({ diffToVisible: true });
               }}
             >
               <SaveOutlined /> <FormattedMessage id="app.button.save" />
@@ -518,6 +541,8 @@ class LanguageManage extends React.Component {
             </FormItem>
           </Col>
         </Row>
+
+        {/* 表格展示 */}
         <Divider />
         <Row>
           <Col flex="auto">
@@ -579,6 +604,15 @@ class LanguageManage extends React.Component {
           visible={this.state.deleteLangVisible}
           onCancel={() => {
             this.setState({ deleteLangVisible: false });
+          }}
+        />
+
+        {/* 新增一条翻译 */}
+        <AddTranslation
+          appCode={appCode}
+          visible={addSingleVisible}
+          onCancel={() => {
+            this.setState({ addSingleVisible: false });
           }}
         />
 

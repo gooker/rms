@@ -23,4 +23,5 @@ export default {
   'translator.languageManage.replace': '替换',
   'translator.languageManage.edit': '国际化编辑',
   'translator.languageManage.diffResult': '数据对比',
+  'translator.addRow': '新增翻译',
 };
