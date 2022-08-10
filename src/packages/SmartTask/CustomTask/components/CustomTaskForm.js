@@ -17,12 +17,9 @@ import {
   customTaskApplyDrag,
   dealResponse,
   formatMessage,
-  generateCustomTaskForm,
-  generateSample,
   getFormLayout,
   getRandomString,
   isNull,
-  restoreCustomTaskForm,
 } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { IconFont } from '@/components/IconFont';
@@ -40,6 +37,7 @@ import WaitForm from './WaitForm';
 import PodSimulation from './PodSimulationForm';
 import EndForm from './EndForm';
 import styles from '../customTask.module.less';
+import { generateCustomTaskForm } from '@/utils/customTaskUtil';
 
 const CustomTypeIconMap = {
   [CustomNodeType.ACTION]: <BranchesOutlined />,

@@ -2,7 +2,7 @@ import { message } from 'antd';
 import { saveAs } from 'file-saver';
 import { find, findIndex, groupBy, isEqual, isPlainObject, pickBy, some } from 'lodash';
 import update from 'immutability-helper';
-import { dealResponse, fillFormValueToAction, formatMessage, getRandomString, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import {
   addTemporaryId,
   batchGenerateLine,
@@ -36,6 +36,7 @@ import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEn
 import { MapSelectableSpriteType } from '@/config/consts';
 import { convertNaviCoordinate2Land } from '@/utils/mapTransformer';
 import { LineType, ProgramingItemType } from '@/config/config';
+import { fillFormValueToAction } from '@/utils/customTaskUtil';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
 

@@ -2,10 +2,11 @@ import React, { memo, useEffect, useState } from 'react';
 import { Col, Divider, Empty, Form, Modal, Row } from 'antd';
 import { find, forIn } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { fillFormValueToAction, isNull, isStrictNull } from '@/utils/util';
+import { isNull, isStrictNull } from '@/utils/util';
 import { renderFormItemContent } from './equipUtils';
 import ProgramingConfigure from '@/components/ProgramingConfiguer/ProgramingForm';
 import ProgramingDnd from '@/components/ProgramingConfiguer/ProgramingDnd';
+import { fillFormValueToAction } from '@/utils/customTaskUtil';
 
 const DeviceStateConfigsModal = (props) => {
   const { deviceMonitorData, visible, configs, onCancel, dispatch, programing, onSave } = props;

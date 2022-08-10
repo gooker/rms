@@ -1,9 +1,10 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Divider, Empty, Modal } from 'antd';
-import { extractActionToFormValue, isNull } from '@/utils/util';
+import { isNull } from '@/utils/util';
 import ProgramingConfigure from './ProgramingForm';
 import ProgramingDnd from '@/components/ProgramingConfiguer/ProgramingDnd';
 import FormattedMessage from '../FormattedMessage';
+import { extractActionToFormValue } from '@/utils/customTaskUtil';
 
 /**
  * 默认导出一个弹窗组件
