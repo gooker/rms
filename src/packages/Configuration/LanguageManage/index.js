@@ -72,24 +72,17 @@ class LanguageManage extends React.Component {
   getSysLanguage = async () => {
     const { systemLanguage } = this.props;
     const frontedStandard = [];
-    systemLanguage.map(({ code }) => {
+    const systemLanguageCodes = systemLanguage.map(({ code }) => code);
+    for (const code of systemLanguageCodes) {
       let languageMap;
       try {
-        languageMap = require(`@/locales/${code}`)?.default;
-        // 莫名其妙多一个与code一样的项
-        delete languageMap[code];
+        languageMap = await import(`@/locales/${code}`).then((module) => module.default);
       } catch (error) {
         languageMap = {};
       }
       frontedStandard.push({ languageKey: code, languageMap });
-    });
-    this.setState(
-      {
-        frontedStandard,
-        showLanguage: systemLanguage.map(({ code }) => code),
-      },
-      this.getTranslateList,
-    );
+    }
+    this.setState({ frontedStandard, showLanguage: systemLanguageCodes }, this.getTranslateList);
   };
 
   // 根据appcode获取翻译列表-list

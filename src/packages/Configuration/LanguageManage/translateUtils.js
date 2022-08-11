@@ -106,7 +106,7 @@ export function generateMapToArray(dataList, allLanguageKeys) {
   for (const languageKey in dataListMap['zh-CN']) {
     const languageMap = {};
     allLanguageKeys.forEach((lang) => {
-      languageMap[lang] = dataListMap[lang][languageKey];
+      languageMap[lang] = dataListMap[lang][languageKey] ?? '';
     });
     newData.push({ languageKey, languageMap });
   }
