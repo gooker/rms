@@ -128,7 +128,7 @@ export async function autoReleaseToteTask(params) {
 /////////////////////////******** 小车动作相关 ******** //////////////////////////
 // 潜伏车搬运
 export async function fetchPodToCell(params) {
-  return request(`/${NameSpace.Platform}/vehicle-task/pod-to-cell`, {
+  return request(`/${NameSpace.Platform}/task/pod-to-cell`, {
     method: 'POST',
     data: params,
   });
