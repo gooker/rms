@@ -14,7 +14,7 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/load/management`,
+        path: `/${AppCode.ResourceManage}/load/loadManagement`,
         name: 'management',
         component: '/ResourceManage/Load/LoadManagement',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
@@ -34,7 +34,7 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
-        path: `/${AppCode.ResourceManage}/storage/management`,
+        path: `/${AppCode.ResourceManage}/storage/storageManagement`,
         name: 'management',
         component: '/ResourceManage/Storage/StorageManagement',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
@@ -54,7 +54,7 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/vehicle/list`,
+        path: `/${AppCode.ResourceManage}/vehicle/vehicleList`,
         name: 'list',
         component: '/ResourceManage/Vehicle/VehicleList/index',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
@@ -104,7 +104,7 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/equipment/list`,
+        path: `/${AppCode.ResourceManage}/equipment/equipmentList`,
         name: 'list',
         component: '/ResourceManage/Equipment/EquipmentList',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
@@ -130,7 +130,7 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/charger/list`,
+        path: `/${AppCode.ResourceManage}/charger/chargerList`,
         name: 'list',
         component: '/ResourceManage/Charger/ChargeList',
         authority: ['ADMIN', 'SUPERMANAGER'],
