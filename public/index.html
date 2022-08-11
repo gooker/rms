@@ -10,9 +10,11 @@
 <% if (isEnvProduction) { %>
 <script>
   window.isProductionEnv = true;
-  window.appId = 2;
 </script>
 <% } %>
+<script>
+  window.appId = 'WEB';
+</script>
 <script src='/config.js'></script>
 <body>
 <noscript>You need to enable JavaScript to run this app.</noscript>

@@ -347,11 +347,10 @@ class LanguageManage extends React.Component {
   // 保存-update
   makeSureUpdate = async () => {
     const { editList, appCode } = this.state;
-    const currenUpdate = Object.values(editList).map((record) => ({
-      languageKey: record.languageKey,
-      ...record.languageMap,
-    }));
-    const translationDetail = generateUpdateDataToSave(currenUpdate);
+    const translationDetail = {};
+    Object.values(editList).forEach(({ languageKey, languageMap }) => {
+      translationDetail[languageKey] = languageMap;
+    });
     const response = await updateSysTranslation({ appCode, merge: true, translationDetail });
     if (!dealResponse(response, true)) {
       this.setState({ diffToVisible: false, editList: {} }, this.getTranslateList);
