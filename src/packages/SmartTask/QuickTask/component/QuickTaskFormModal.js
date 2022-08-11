@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Form, Input, Modal, Select, Switch } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, isNull, renderLabel } from '@/utils/util';
 import { saveQuickTask } from '@/services/smartTaskService';
 import { find } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -107,7 +107,7 @@ const QuickTaskFormModal = (props) => {
           <Select>
             {customTasks.map(({ code, name }) => (
               <Select.Option key={code} value={code}>
-                {name}
+                {renderLabel(name)}
               </Select.Option>
             ))}
           </Select>

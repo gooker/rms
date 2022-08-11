@@ -337,7 +337,7 @@ class LanguageManage extends React.Component {
       onOk: () => {
         deleteByAppCodeAndKey(appCode, languageKey).then((response) => {
           if (!dealResponse(response)) {
-            // 手动更新dataSource
+            this.getSysLanguage();
           }
         });
       },
@@ -599,6 +599,7 @@ class LanguageManage extends React.Component {
         <AddTranslation
           appCode={appCode}
           visible={addSingleVisible}
+          refresh={this.getSysLanguage}
           onCancel={() => {
             this.setState({ addSingleVisible: false });
           }}

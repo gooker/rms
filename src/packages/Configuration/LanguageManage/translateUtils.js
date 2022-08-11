@@ -1,5 +1,5 @@
 import XLSX from 'xlsx';
-import { find, findIndex, forIn, groupBy, mergeWith } from 'lodash';
+import { findIndex, forIn, mergeWith } from 'lodash';
 import { convertMapArrayToMap, dealResponse, formatMessage, isStrictNull, sortLanguages } from '@/utils/util';
 import { getSysLang } from '@/services/translationService';
 
@@ -122,23 +122,10 @@ export function generateOriginData(dataList, allLanguage) {
 
   let customData = [];
   if (Array.isArray(dataList.Custom)) {
-    const custom = dataList.Custom.map((item) => {
-      const key = Object.keys(item.languageMap)[0];
-      return { key, ...item };
-    });
-    const customGroup = groupBy(custom, 'key');
-    customData = Object.entries(customGroup).map(([languageKey, translations]) => {
-      const result = { languageKey, languageMap: {} };
-      allLanguageKeys.forEach((lang) => {
-        const translation = find(translations, { languageKey: lang });
-        if (translation) {
-          result['languageMap'][lang] = translation['languageMap'][languageKey];
-        } else {
-          result['languageMap'][lang] = '';
-        }
-      });
-      return result;
-    });
+    customData = dataList.Custom.map(({ languageKey, languageMap }) => ({
+      languageKey,
+      languageMap,
+    }));
   }
 
   // custom里面的key一定在standard里面

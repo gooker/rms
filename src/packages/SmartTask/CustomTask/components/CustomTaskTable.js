@@ -10,7 +10,7 @@ import {
   RedoOutlined,
 } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage, isNull, renderLabel } from '@/utils/util';
 import { deleteCustomTasksById } from '@/services/commonService';
 import RmsConfirm from '@/components/RmsConfirm';
 import TaskBodyModal from './TaskBodyModal';
@@ -40,9 +40,10 @@ const CustomTaskTable = (props) => {
       dataIndex: 'code',
     },
     {
-      title: <FormattedMessage id="app.common.name" />,
+      title: <FormattedMessage id='app.common.name' />,
       align: 'center',
       dataIndex: 'name',
+      render: (text) => renderLabel(text),
     },
     {
       title: <FormattedMessage id="app.common.priority" />,

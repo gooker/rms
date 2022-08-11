@@ -8,7 +8,7 @@ import { connect } from '@/utils/RmsDva';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 18);
 const AddTranslation = (props) => {
-  const { visible, onCancel, appCode, systemLanguage } = props;
+  const { visible, refresh, onCancel, appCode, systemLanguage } = props;
   const [formRef] = Form.useForm();
 
   useEffect(() => {
@@ -34,6 +34,7 @@ const AddTranslation = (props) => {
         };
         updateSysTranslation(requestBody).then((response) => {
           if (!dealResponse(response, true)) {
+            refresh();
             onCancel();
           }
         });

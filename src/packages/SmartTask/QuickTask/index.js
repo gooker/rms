@@ -3,7 +3,7 @@ import { Divider, message, Switch, Tag, Typography } from 'antd';
 import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
-import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, isStrictNull, renderLabel } from '@/utils/util';
 import { saveQuickTask } from '@/services/smartTaskService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
@@ -76,7 +76,7 @@ const QuickTask = (props) => {
       align: 'center',
       render: (text) => {
         const targetCustomTask = find(customTasks, { code: text });
-        return targetCustomTask?.name;
+        return renderLabel(targetCustomTask?.name);
       },
     },
     {
