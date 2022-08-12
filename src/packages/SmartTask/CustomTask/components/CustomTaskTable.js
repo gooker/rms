@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, message, Modal } from 'antd';
+import { Button, Divider, message, Modal, Typography } from 'antd';
 import { DeleteOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull, renderLabel } from '@/utils/util';
@@ -13,7 +13,6 @@ import commonStyles from '@/common.module.less';
 import styles from '../customTask.module.less';
 import { IconFont } from '@/components/IconFont';
 import CopyCustomTaskModal from '@/packages/SmartTask/CustomTask/components/CopyCustomTaskModal';
-import { Divider, Typography } from '_antd@4.22.3@antd';
 
 const CustomTaskTable = (props) => {
   const { dispatch, listVisible, listData, loading } = props;

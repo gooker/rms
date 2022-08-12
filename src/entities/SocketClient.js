@@ -4,11 +4,10 @@ import { formatMessage, isStrictNull } from '@/utils/util';
 
 const SOCKET_RECONNECT_MESSAGE_ID = 'SOCKET_RECONNECT_MESSAGE_ID';
 class SocketClient {
-  constructor({ login, passcode }) {
+  constructor() {
     const nameSpacesInfo = window.nameSpacesInfo;
     this.ws = nameSpacesInfo?.ws;
     this.headers = {
-      login: login,
       passcode: window.sessionStorage.getItem('token'),
     };
     this.client = null;

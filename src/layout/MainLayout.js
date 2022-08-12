@@ -68,8 +68,7 @@ class MainLayout extends React.Component {
             // 初始化页面长链接、告警相关功能
             if (username !== 'admin') {
               // 初始化Socket客户端
-              // this.socketClient = new SocketClient();
-              this.socketClient = new SocketClient({ login: 'user1', passcode: 123456 });
+              this.socketClient = new SocketClient();
 
               this.socketClient.connect();
               this.socketClient.registerNotificationQuestion((message) => {
