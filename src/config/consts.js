@@ -157,10 +157,10 @@ export const TaskPathColor = {
 };
 
 export const CellTypeColor = {
+  blank: '0xffffff',
+  normal: '0xffdd00',
   storeType: '0x49a942',
   blockType: '0x6d6e70',
-  normal: '0xffdd00',
-  blank: '0xffffff',
 };
 
 export const GeoLockColor = {

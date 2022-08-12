@@ -68,9 +68,15 @@ const TaskResourceLock = (props) => {
               <Select.Option value={'AfterActionEnd'}>
                 <FormattedMessage id={'customTask.lock.AfterActionEnd'} />
               </Select.Option>
-              <Select.Option value={'NO'}>
-                <FormattedMessage id={'customTask.lock.UNLOCK.NO'} />
-              </Select.Option>
+              {item[0] && (
+                <Select.Option value={'NO'}>
+                  {item[0] === 'STORE' ? (
+                    <FormattedMessage id={'customTask.lock.switchToLoad'} />
+                  ) : (
+                    <FormattedMessage id={'customTask.lock.switchToVehicle'} />
+                  )}
+                </Select.Option>
+              )}
             </Select>
           </Col>
           <Button

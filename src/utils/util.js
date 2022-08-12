@@ -879,6 +879,7 @@ export function LatentSizeUpdaterValidator(_, value) {
  * @param languageList {Array}
  */
 export function sortLanguages(languageList) {
+  if (!Array.isArray(languageList) || languageList.length === 0) return [];
   const zhCN = find(languageList, { code: 'zh-CN' });
   const enUS = find(languageList, { code: 'en-US' });
   const result = languageList.filter((item) => !['zh-CN', 'en-US'].includes(item.code));
