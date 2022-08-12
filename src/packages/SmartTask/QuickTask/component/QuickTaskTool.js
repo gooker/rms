@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import { Button, Radio } from 'antd';
+import React, { memo, useState } from 'react';
+import { Button, Divider, Radio } from 'antd';
 import { DeleteOutlined, GroupOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage } from '@/utils/util';
@@ -10,9 +10,12 @@ import GroupManagementModal from './QuickTaskGroupModal';
 import QuickTaskFormModal from './QuickTaskFormModal';
 import commonStyle from '@/common.module.less';
 import { QuickTaskTableView } from '@/packages/SmartTask/QuickTask/quickTaskConstant';
+import { fetchCustomTaskList } from '@/services/commonService';
 
 const QuickTaskTool = (props) => {
   const { dispatch, selectedRowKeys, cancelSelections, viewType } = props;
+
+  const [loading, setLoading] = useState(false);
 
   function batchDeleteQuickTasks() {
     RmsConfirm({
@@ -27,15 +30,22 @@ const QuickTaskTool = (props) => {
     });
   }
 
+  function openCreationModal() {
+    setLoading(true);
+    fetchCustomTaskList().then((response) => {
+      const payload = { taskModalVisible: true };
+      if (!dealResponse(response)) {
+        payload.customTasks = response;
+      }
+      dispatch({ type: 'quickTask/updateState', payload });
+      setLoading(false);
+    });
+  }
+
   return (
-    <div style={{ marginBottom: 8 }}>
+    <div style={{ marginBottom: 12 }}>
       <div className={commonStyle.tableToolLeft}>
-        <Button
-          type={'primary'}
-          onClick={() => {
-            dispatch({ type: 'quickTask/updateTaskModalVisible', payload: true });
-          }}
-        >
+        <Button type={'primary'} onClick={openCreationModal} loading={loading}>
           <PlusOutlined /> <FormattedMessage id={'app.button.add'} />
         </Button>
         <Button danger disabled={selectedRowKeys.length === 0} onClick={batchDeleteQuickTasks}>
@@ -56,11 +66,11 @@ const QuickTaskTool = (props) => {
           <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
         </Button>
       </div>
-      <div style={{ textAlign: 'end' }}>
+      <Divider style={{ margin: '0 0 15px 0' }} />
+      <div>
         <Radio.Group
           buttonStyle='solid'
           value={viewType}
-          size={'small'}
           onChange={({ target }) => {
             dispatch({ type: 'quickTask/updateViewType', payload: target.value });
           }}

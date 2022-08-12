@@ -14,15 +14,15 @@ import {
   updateUserManage,
   updateUserPassword,
 } from '@/services/SSOService';
+import { AdminTColor, AdminTLabelMap, UserTColor } from './userManagerUtils';
 import RmsConfirm from '@/components/RmsConfirm';
 import TableWithPages from '@/components/TableWithPages';
-import { AdminTColor, AdminTLabelMap, UserTColor } from './userManagerUtils';
+import TablePageWrapper from '@/components/TablePageWrapper';
 import AddUserModal from './components/AddUser';
 import UpdatePasswordModal from './components/UpdatePassword';
 import SectionAssignModal from './components/SectionAssign';
 import RoleAssignModal from './components/RoleAssign';
 import commonStyles from '@/common.module.less';
-import TablePageWrapper from '@/components/TablePageWrapper';
 
 const AdminTypeLabelMap = AdminTLabelMap();
 const { Option } = Select;
@@ -57,56 +57,61 @@ class UserManager extends Component {
       title: <FormattedMessage id="sso.user.name" />,
       dataIndex: 'username',
       align: 'center',
-      fixed: 'left',
     },
     {
-      title: <FormattedMessage id="app.common.type" />,
+      title: <FormattedMessage id='app.common.type' />,
       dataIndex: 'userType',
+      align: 'center',
       render: (text) => {
         return (
           <Tag color={UserTColor[text]}>
             {text === 'USER' ? (
-              <FormattedMessage id="sso.user" />
+              <FormattedMessage id='sso.user' />
             ) : (
-              <FormattedMessage id="app.module" />
+              <FormattedMessage id='app.module' />
             )}
           </Tag>
         );
       },
-      align: 'center',
     },
     {
-      title: <FormattedMessage id="sso.user.adminType" />,
+      title: <FormattedMessage id='sso.user.adminType' />,
       dataIndex: 'adminType',
+      align: 'center',
       render: (text) => {
         const adminType = text || 'USER';
         return <Tag color={AdminTColor[adminType]}>{AdminTypeLabelMap[adminType]}</Tag>;
       },
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id='sso.user.email' />,
-      dataIndex: 'email',
-      align: 'center',
-      width: '15%',
-    },
-    {
-      title: <FormattedMessage id='translator.languageManage.language' />,
-      dataIndex: 'language',
-      align: 'center',
-      with: '150',
     },
     {
       title: <FormattedMessage id='sso.assignedRoles' />,
-      dataIndex: 'assignedRoles',
+      dataIndex: 'roles',
       align: 'center',
-      with: '150',
+      render: (value) => {
+        if (Array.isArray(value)) {
+          return value.map((item, index) => (
+            <Tag key={index} color={'blue'}>
+              {item}
+            </Tag>
+          ));
+        }
+        return null;
+      },
     },
     {
       title: <FormattedMessage id='sso.assignedSections' />,
-      dataIndex: 'assignedSections',
+      dataIndex: 'sections',
       align: 'center',
-      with: '150',
+      render: (value) => {
+        if (Array.isArray(value)) {
+          return value.map(({ sectionName, id }) => (
+            <Tag key={id} color={'blue'}>
+              {sectionName}
+            </Tag>
+          ));
+        }
+        return null;
+      },
     },
     {
       title: <FormattedMessage id="app.common.status" />,
@@ -129,10 +134,29 @@ class UserManager extends Component {
 
   expandColumns = [
     {
+      title: <FormattedMessage id='translator.languageManage.language' />,
+      dataIndex: 'language',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='sso.user.email' />,
+      dataIndex: 'email',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='app.common.creationTime' />,
+      dataIndex: 'createDate',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='app.common.remark' />,
+      dataIndex: 'description',
+      align: 'center',
+    },
+    {
       title: 'Token',
       dataIndex: 'token',
       align: 'center',
-      with: '150',
       render: (text, record) => {
         if (record.userType === 'APP') {
           return (
@@ -149,18 +173,6 @@ class UserManager extends Component {
           return null;
         }
       },
-    },
-    {
-      title: <FormattedMessage id='app.common.creationTime' />,
-      dataIndex: 'createDate',
-      align: 'center',
-      fixed: 'right',
-    },
-    {
-      title: <FormattedMessage id='app.common.remark' />,
-      dataIndex: 'description',
-      ellipsis: true,
-      align: 'center',
     },
   ];
 
