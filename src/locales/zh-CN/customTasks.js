@@ -11,8 +11,9 @@ export default {
   'taskTrigger.randomVariable': '随机',
   'taskTrigger.fixedVariable': '固定',
   'taskTrigger.time.tip': '请输入时间间隔(s)',
-  'taskTrigger.totaTimes': '总下发次数',
-  'taskTrigger.totaTimes.required': '总下发次数或结束时间必填',
+  'taskTrigger.totalTimes': '总下发次数',
+  'taskTrigger.totalTimes.required': '总下发次数或结束时间必填',
+  'taskTrigger.dispatchedTimes': '已下发次数',
 
   // **********  均衡限流器 ********** //
   'taskLimit.currentLimiting': '限流',

@@ -1,5 +1,9 @@
-import { formatMessage, isNull } from '@/utils/util';
+import React from 'react';
+import { isNull } from '@/utils/util';
 import { find } from 'lodash';
+import FormattedMessage from '@/components/FormattedMessage';
+import { Tag } from 'antd';
+import { ExclamationCircleOutlined, MinusCircleOutlined, SyncOutlined } from '@ant-design/icons';
 
 /**通过自定义任务的id 拿到sample**/
 export function getDefaultVariableById(idcodes, allTaskList) {
@@ -77,13 +81,23 @@ export function transformCurrentVariable(allTaskList, fixedVariable) {
 
 // 开始结束暂停 状态显示
 export function triggerStatus(status) {
-  let statusText;
-  if (['start'].includes(status)) {
-    statusText = formatMessage({ id: `app.triggerState.executing` });
+  if ('start' === status) {
+    return (
+      <Tag icon={<SyncOutlined spin />} color='processing'>
+        <FormattedMessage id={'app.triggerState.executing'} />
+      </Tag>
+    );
   } else if (status === 'pause') {
-    statusText = formatMessage({ id: `app.triggerState.paused` });
+    return (
+      <Tag icon={<ExclamationCircleOutlined />} color='warning'>
+        <FormattedMessage id={'app.triggerState.paused'} />
+      </Tag>
+    );
   } else {
-    statusText = formatMessage({ id: 'app.triggerState.end' });
+    return (
+      <Tag icon={<MinusCircleOutlined />} color='default'>
+        <FormattedMessage id={'app.triggerState.end'} />
+      </Tag>
+    );
   }
-  return statusText;
 }
