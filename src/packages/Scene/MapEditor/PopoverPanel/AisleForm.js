@@ -110,7 +110,6 @@ const AisleForm = (props) => {
         {/* 避让方向*/}
         <Form.Item
           name={'giveWayCellMap'}
-          rules={[{ required: true }]}
           label={formatMessage({ id: 'editor.tunnel.giveWay' })}
           initialValue={getGiveWayCellMap(aisle?.giveWayCellMap)}
         >

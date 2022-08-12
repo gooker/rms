@@ -44,7 +44,7 @@ const AislePanel = (props) => {
             return (
               <Tag key={index} color='blue'>
                 {naviSource}
-                <SwapRightOutlined />
+                <SwapRightOutlined />s
                 {naviTarget}
               </Tag>
             );
@@ -57,7 +57,7 @@ const AislePanel = (props) => {
   function getListData() {
     return aisles.map((item, index) => {
       const { tunnelName, cells, giveWayCellMap } = item;
-      return {
+      const result = {
         name: tunnelName,
         index,
         rawData: item,
@@ -66,12 +66,16 @@ const AislePanel = (props) => {
             label: <FormattedMessage id={'app.map.cell'} />,
             value: cells.map((cell) => getNaviIdById(cell, cellMap)),
           },
-          {
-            label: <FormattedMessage id={'editor.tunnel.giveWay'} />,
-            node: renderGiveWay(giveWayCellMap),
-          },
         ],
       };
+
+      if (!isNull(giveWayCellMap)) {
+        result.fields.push({
+          label: <FormattedMessage id={'editor.tunnel.giveWay'} />,
+          node: renderGiveWay(giveWayCellMap),
+        });
+      }
+      return result;
     });
   }
 
