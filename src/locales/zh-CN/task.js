@@ -132,6 +132,7 @@ export default {
   'app.taskDetail.action.fetch': '取',
   'app.taskDetail.action.put': '放',
   'app.taskDetail.actionName': '动作名称',
+  'app.taskDetail.blockingType': '阻塞类型',
   'app.taskDetail.actionParam': '动作参数',
   'app.taskDetail.event': '事件',
   'app.taskDetail.eventName': '事件名称',

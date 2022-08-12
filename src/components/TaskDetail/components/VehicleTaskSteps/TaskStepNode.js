@@ -44,6 +44,12 @@ const TaskStepNode = (props) => {
         },
       },
       {
+        title: formatMessage('app.taskDetail.blockingType'),
+        dataIndex: 'blockingType',
+        align: 'center',
+        width: 100,
+      },
+      {
         title: formatMessage({ id: 'app.taskDetail.endTime' }),
         dataIndex: 'finishTime',
         align: 'center',
@@ -55,6 +61,7 @@ const TaskStepNode = (props) => {
       const dataSourceItem = {
         actionName: action.actionType,
         action: action.actionId,
+        blockingType: action.blockingType,
         params: action.actionParameters ?? [],
         finishTime: action.finishTime
           ? convertToUserTimezone(action.finishTime).format('MM-DD HH:mm:ss')
