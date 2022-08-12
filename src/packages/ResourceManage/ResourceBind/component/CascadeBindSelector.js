@@ -13,6 +13,8 @@ import {
 } from '@/services/resourceService';
 import style from '../resourceBind.module.less';
 
+const { LOAD, LOAD_TYPE, CHARGE_STRATEGY, STORE } = BindableResourceType;
+
 const CascadeBindSelector = (props) => {
   const { datasource, refresh } = props;
 
@@ -94,18 +96,16 @@ const CascadeBindSelector = (props) => {
 
   function onSecondaryChange(value) {
     setSecondary(value);
-
     function getBindData() {
       const { needBindResource } = find(datasource, { resourceType: primary });
       if (Array.isArray(needBindResource) && needBindResource.length > 0) {
         const { bindData } = find(needBindResource, { resourceType: value });
         if (Array.isArray(bindData)) {
           // 统一一下数据格式: code, name
-          if ([BindableResourceType.LOAD_TYPE].includes(value)) {
-            return bindData;
-          }
-          if ([BindableResourceType.LOAD, BindableResourceType.CHARGE_STRATEGY].includes(value)) {
+          if ([LOAD, CHARGE_STRATEGY, STORE].includes(value)) {
             return bindData.map(({ groupName, ...rest }) => ({ ...rest, name: groupName }));
+          } else {
+            return bindData;
           }
         }
       }
@@ -152,7 +152,7 @@ const CascadeBindSelector = (props) => {
             </Col>
             <Col span={18}>
               <Form.Item noStyle name={'bindCodes'} rules={[{ required: true }]}>
-                <Select mode={'multiple'} style={{ width: '100%' }}>
+                <Select allowClear mode={'multiple'} style={{ width: '100%' }}>
                   {primaryResource.map(({ code, name }) => (
                     <Select.Option key={code} value={code}>
                       {name}

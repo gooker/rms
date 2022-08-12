@@ -3,7 +3,7 @@ import { Badge, Button, Divider, Table, Tooltip } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { TaskStateBageType } from '@/config/consts';
 import { fetchTaskRecord } from '@/services/taskService';
-import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull } from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull, renderLabel } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TaskSearch from './components/TaskManagementSearch';
@@ -64,6 +64,7 @@ class TaskHistory extends Component {
       title: <FormattedMessage id='app.task.type' />,
       dataIndex: 'customName',
       align: 'center',
+      render: renderLabel,
     },
     {
       title: formatMessage({ id: 'app.task.state' }),

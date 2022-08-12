@@ -24,6 +24,19 @@ export default {
   'taskLimit.limitTips': '提示: 若限流数量为空 则不会限流',
 
   // **********  自定义任务 ********** //
+  // 预制任务名称(不可删除)
+  'customTask.chargeRun': '充电',
+  'customTask.chargeRun.charge': '充电',
+  'customTask.emptyRun': '空跑',
+  'customTask.emptyRun.run': '空跑',
+  'customTask.runToRest': '去休息',
+  'customTask.runToRest.rest': '休息',
+  'customTask.carryLoad': '搬运',
+  'customTask.carryLoad.fetch': '取货',
+  'customTask.carryLoad.put': '送货',
+  'customTask.carryLoad.check': '检测货物',
+
+  // 表单
   'customTasks.example.field': '字段',
   'customTasks.example.default': '默认值',
   'customTask.backToList': '返回列表',

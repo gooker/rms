@@ -2,22 +2,21 @@ import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Button, Divider, message, Modal, Typography } from 'antd';
 import { DeleteOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/icons';
+import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull, renderLabel } from '@/utils/util';
 import { deleteCustomTasksById } from '@/services/commonService';
 import RmsConfirm from '@/components/RmsConfirm';
 import TaskBodyModal from './TaskBodyModal';
+import CopyCustomTaskModal from './CopyCustomTaskModal';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
 import styles from '../customTask.module.less';
-import { IconFont } from '@/components/IconFont';
-import CopyCustomTaskModal from '@/packages/SmartTask/CustomTask/components/CopyCustomTaskModal';
 
 const CustomTaskTable = (props) => {
   const { dispatch, listVisible, listData, loading } = props;
 
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const [copyVisible, setCopyVisible] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [exampleStructure, setExampleStructure] = useState(null); // 请求体结构
@@ -90,17 +89,19 @@ const CustomTaskTable = (props) => {
           >
             <FormattedMessage id={'app.button.copy'} />
           </Typography.Link>
-          <Divider type={'vertical'} />
 
           {/* 系统默认不支持编辑操作 */}
           {!record.readOnly && (
-            <Typography.Link
-              onClick={() => {
-                editRow(record);
-              }}
-            >
-              <FormattedMessage id={'app.button.edit'} />
-            </Typography.Link>
+            <>
+              <Divider type={'vertical'} />
+              <Typography.Link
+                onClick={() => {
+                  editRow(record);
+                }}
+              >
+                <FormattedMessage id={'app.button.edit'} />
+              </Typography.Link>
+            </>
           )}
         </>
       ),
@@ -146,7 +147,6 @@ const CustomTaskTable = (props) => {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
-        setDeleteLoading(true);
         const customListCodeMap = {};
         listData.forEach((item) => {
           customListCodeMap[item.code] = item;
@@ -157,7 +157,6 @@ const CustomTaskTable = (props) => {
           setSelectedRowKeys([]);
           refreshPage();
         }
-        setDeleteLoading(false);
       },
     });
   }
@@ -218,7 +217,7 @@ const CustomTaskTable = (props) => {
       {/* 自定义任务列表 */}
       <TableWithPages
         bordered
-        loading={loading || deleteLoading}
+        loading={loading}
         columns={columns}
         expandColumns={expandColumns}
         dataSource={listData}

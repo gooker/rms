@@ -1,38 +1,54 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect } from 'react';
+import { Form, Input } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import CommonModal from '@/components/CommonModal';
-import { Form, Input } from 'antd';
-import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, getRandomString, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, getRandomString, renderLabel } from '@/utils/util';
 import { saveCustomTask } from '@/services/commonService';
 
 const CopyCustomTaskModal = (props) => {
   const { dispatch, editingRow, visible, onCancel } = props;
 
-  const [name, setName] = useState(null);
+  const [formRef] = Form.useForm();
+
+  useEffect(() => {
+    if (visible) {
+      formRef.setFieldsValue({
+        name: `${renderLabel(editingRow.name, true)}_copy`,
+      });
+    } else {
+      formRef.resetFields();
+    }
+  }, [visible]);
 
   function onOk() {
-    const requestBody = {
-      name,
-      code: `cst_${getRandomString(8)}`,
-      codes: editingRow.codes,
-      customStart: editingRow.customStart,
-      customActions: editingRow.customActions,
-      customWaits: editingRow.customWaits,
-      customPodStatus: editingRow.customPodStatus,
-      customEnd: editingRow.customEnd,
-      priority: editingRow.priority,
-      desc: editingRow.desc,
-      sample: editingRow.sample,
-      sectionId: editingRow.sectionId,
-      type: editingRow.type,
-    };
-    saveCustomTask(requestBody).then((response) => {
-      if (!dealResponse(response)) {
-        closeModal();
-        dispatch({ type: 'customTask/getCustomTaskList' });
-      }
-    });
+    formRef
+      .validateFields()
+      .then((value) => {
+        const requestBody = {
+          name: value.name,
+          code: `cst_${getRandomString(8)}`,
+          codes: editingRow.codes,
+          customStart: editingRow.customStart,
+          customActions: editingRow.customActions,
+          customPreActions: editingRow.customPreActions,
+          customWaits: editingRow.customWaits,
+          customPodStatus: editingRow.customPodStatus,
+          customEnd: editingRow.customEnd,
+          priority: editingRow.priority,
+          desc: editingRow.desc,
+          sample: editingRow.sample,
+          sectionId: editingRow.sectionId,
+          type: editingRow.type,
+        };
+        saveCustomTask(requestBody).then((response) => {
+          if (!dealResponse(response)) {
+            closeModal();
+            dispatch({ type: 'customTask/getCustomTaskList' });
+          }
+        });
+      })
+      .catch(() => {
+      });
   }
 
   function closeModal() {
@@ -46,11 +62,16 @@ const CopyCustomTaskModal = (props) => {
       title={`${formatMessage('app.button.copy')}${formatMessage('menu.customTask')}`}
       onCancel={closeModal}
       onOk={onOk}
-      okButtonProps={{ disabled: isStrictNull(name) }}
     >
-      <Form.Item label={<FormattedMessage id={'customTask.form.name'} />}>
-        <Input value={name} onChange={(ev) => setName(ev.target.value)} />
-      </Form.Item>
+      <Form form={formRef}>
+        <Form.Item
+          name={'name'}
+          label={formatMessage('customTask.form.name')}
+          rules={[{ required: true }]}
+        >
+          <Input />
+        </Form.Item>
+      </Form>
     </CommonModal>
   );
 };

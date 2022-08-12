@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Col, Descriptions, Form, Row, Steps } from 'antd';
 import { ClockCircleOutlined, FrownOutlined, LoadingOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { convertToUserTimezone, formatMessage, isNull, isStrictNull } from '@/utils/util';
+import { convertToUserTimezone, formatMessage, isNull, isStrictNull, renderLabel } from '@/utils/util';
 import RenderVehicleTaskActions from './RenderVehicleTaskActions';
 import styles from './index.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -138,7 +138,7 @@ const VehicleTaskSteps = (props) => {
       <Row gutter={24}>
         <Col span={8}>
           <Form.Item label={formatMessage({ id: 'menu.customTask' })}>
-            {`${vehicleTask.customName} (${vehicleTask.customCode})`}
+            {renderLabel(vehicleTask.customName)}
           </Form.Item>
         </Col>
         <Col span={8}>

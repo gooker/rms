@@ -41,35 +41,42 @@ const CollapsePanel = (props) => {
   if (isEmpty(group)) {
     return <Empty />;
   }
-  return Object.values(group).map((item, index) => {
-    const { bindName } = item[0];
-    return (
-      <Card key={index} title={bindName}>
-        <Row {...GridResponsive} gutter={[16, 16]}>
-          {getInnerCardDataSource(item).map((item2) => {
-            const { id, resourceType, resourceTypeName } = item2[0];
-            return (
-              <Col key={resourceType}>
-                <Card size={'small'} type={'inner'} title={resourceTypeName}>
-                  {item2.map(({ resourceName }, index) => (
-                    <Tag
-                      key={index}
-                      closable
-                      onClose={(e) => {
-                        e.preventDefault();
-                        deleteItem(id);
-                      }}
-                    >
-                      {resourceName}
-                    </Tag>
-                  ))}
-                </Card>
-              </Col>
-            );
-          })}
-        </Row>
-      </Card>
-    );
-  });
+
+  return (
+    <Row gutter={[16, 16]}>
+      {Object.values(group).map((item, index) => {
+        const { bindName } = item[0];
+        return (
+          <Col key={index} {...GridResponsive}>
+            <Card hoverable title={bindName}>
+              <Row gutter={[16, 16]}>
+                {getInnerCardDataSource(item).map((item2) => {
+                  const { id, resourceType, resourceTypeName } = item2[0];
+                  return (
+                    <Col key={resourceType} {...GridResponsive}>
+                      <Card size={'small'} type={'inner'} title={resourceTypeName}>
+                        {item2.map(({ resourceName }, index) => (
+                          <Tag
+                            key={index}
+                            closable
+                            onClose={(e) => {
+                              e.preventDefault();
+                              deleteItem(id);
+                            }}
+                          >
+                            {resourceName}
+                          </Tag>
+                        ))}
+                      </Card>
+                    </Col>
+                  );
+                })}
+              </Row>
+            </Card>
+          </Col>
+        );
+      })}
+    </Row>
+  );
 };
 export default memo(CollapsePanel);

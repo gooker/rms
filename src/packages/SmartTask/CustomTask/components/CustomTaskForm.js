@@ -20,6 +20,7 @@ import {
   getFormLayout,
   getRandomString,
   isNull,
+  renderLabel,
 } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { IconFont } from '@/components/IconFont';
@@ -37,11 +38,7 @@ import WaitForm from './WaitForm';
 import PodSimulation from './PodSimulationForm';
 import EndForm from './EndForm';
 import styles from '../customTask.module.less';
-import {
-  generateCustomTaskForm,
-  generateSample,
-  restoreCustomTaskForm,
-} from '@/utils/customTaskUtil';
+import { generateCustomTaskForm, generateSample, restoreCustomTaskForm } from '@/utils/customTaskUtil';
 
 const CustomTypeIconMap = {
   [CustomNodeType.ACTION]: <BranchesOutlined />,
@@ -309,7 +306,7 @@ const CustomTaskForm = (props) => {
     return (
       <Space size={2}>
         {CustomTypeIconMap[type]}
-        {label}
+        {renderLabel(label)}
       </Space>
     );
   }

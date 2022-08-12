@@ -4,7 +4,7 @@ import { DeleteOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
 import { TaskStateBageType, VehicleStateColor } from '@/config/consts';
-import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull } from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull, renderLabel } from '@/utils/util';
 import { fetchExecutingTasks, fetchPipeLineTasks } from '@/services/taskService';
 import { deleteTaskQueueItems, fetchUpdateTaskPriority } from '@/services/commonService';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -58,6 +58,7 @@ class StandardTaskPool extends React.Component {
       title: <FormattedMessage id='app.task.type' />,
       dataIndex: 'customName',
       align: 'center',
+      render: renderLabel,
     },
     {
       title: <FormattedMessage id='vehicle.id' />,

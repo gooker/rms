@@ -11,8 +11,6 @@ const ResourceBind = () => {
   const [resource, setResource] = useState([]);
   const [dataSource, setDataSource] = useState([]);
 
-  const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     Promise.all([fetchAllResourceBindMapping(), fetchBindableResourceMapping()]).then(
       ([allBindMapping, bindableResource]) => {
@@ -39,7 +37,7 @@ const ResourceBind = () => {
   }
 
   function getTypePayloadLength(data) {
-    return Object.keys(groupBy(data, 'resourceType')).length;
+    return Object.keys(groupBy(data, 'bindCode')).length;
   }
 
   return (

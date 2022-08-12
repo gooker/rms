@@ -1046,12 +1046,16 @@ export function generateWebHookTestParam(dto, formValue) {
 
 /**
  * @param content {string}
+ * @param string
  */
-export function renderLabel(content) {
+export function renderLabel(content, string = false) {
   if (typeof content !== 'string' || isStrictNull(content)) return null;
   if (content.startsWith('@@')) {
     const i18nKey = content.replace('@@', '');
-    return formatMessage(i18nKey);
+    if (string) {
+      return formatMessage(i18nKey);
+    }
+    return <FormattedMessage id={i18nKey} />;
   }
   return content;
 }
