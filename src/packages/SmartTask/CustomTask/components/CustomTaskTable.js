@@ -1,14 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, Col, message, Modal, Row } from 'antd';
-import {
-  CopyOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  EyeOutlined,
-  FileTextOutlined,
-  RedoOutlined,
-} from '@ant-design/icons';
+import { Button, message, Modal } from 'antd';
+import { DeleteOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull, renderLabel } from '@/utils/util';
 import { deleteCustomTasksById } from '@/services/commonService';
@@ -20,6 +13,7 @@ import commonStyles from '@/common.module.less';
 import styles from '../customTask.module.less';
 import { IconFont } from '@/components/IconFont';
 import CopyCustomTaskModal from '@/packages/SmartTask/CustomTask/components/CopyCustomTaskModal';
+import { Divider, Typography } from '_antd@4.22.3@antd';
 
 const CustomTaskTable = (props) => {
   const { dispatch, listVisible, listData, loading } = props;
@@ -80,34 +74,36 @@ const CustomTaskTable = (props) => {
       align: 'center',
       fixed: 'right',
       render: (text, record) => (
-        <Row justify={'center'} gutter={16}>
-          <Col className={styles.tableIcon}>
-            <EyeOutlined
-              onClick={() => {
-                editRow({ ...record, viewMode: true }); // 标记当前是查看模式
-              }}
-            />
-          </Col>
+        <>
+          <Typography.Link
+            onClick={() => {
+              editRow({ ...record, viewMode: true }); // 标记当前是查看模式
+            }}
+          >
+            <FormattedMessage id={'app.button.check'} />
+          </Typography.Link>
+          <Divider type={'vertical'} />
 
-          <Col className={styles.tableIcon}>
-            <CopyOutlined
-              onClick={() => {
-                copy(record);
-              }}
-            />
-          </Col>
+          <Typography.Link
+            onClick={() => {
+              copy(record);
+            }}
+          >
+            <FormattedMessage id={'app.button.copy'} />
+          </Typography.Link>
+          <Divider type={'vertical'} />
 
           {/* 系统默认不支持编辑操作 */}
           {!record.readOnly && (
-            <Col className={styles.tableIcon}>
-              <EditOutlined
-                onClick={() => {
-                  editRow(record);
-                }}
-              />
-            </Col>
+            <Typography.Link
+              onClick={() => {
+                editRow(record);
+              }}
+            >
+              <FormattedMessage id={'app.button.edit'} />
+            </Typography.Link>
           )}
-        </Row>
+        </>
       ),
     },
   ];

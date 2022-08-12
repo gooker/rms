@@ -5,34 +5,35 @@ import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
 import { dealResponse, formatMessage, isNull, isStrictNull, renderLabel } from '@/utils/util';
 import { saveQuickTask } from '@/services/smartTaskService';
+import { executeCustomTask } from '@/services/commonService';
+import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
+import CloneQuickTask from './component/CloneQuickTask';
 import ExecuteQuickTaskModal from './component/ExecuteQuickTaskModal';
 import VariableModificationModal from '@/components/VariableModification/VariableModificationModal';
 import QuickTaskTool from './component/QuickTaskTool';
-import ShardDrawer from './component/ShardDrawer';
-import RmsConfirm from '@/components/RmsConfirm';
-import styles from './quickTask.module.less';
-import { checkQuickVariable, convertQuickTaskVarToRequestStruct } from '@/packages/SmartTask/QuickTask/quickTaskUtil';
-import { executeCustomTask } from '@/services/commonService';
+import { QuickTaskSource, QuickTaskTableView } from './quickTaskConstant';
+import { checkQuickVariable, convertQuickTaskVarToRequestStruct } from './quickTaskUtil';
 
 const Colors = Dictionary().color;
-const drawerWidth = 378;
 
 const QuickTask = (props) => {
   const {
-    editing,
     dispatch,
+    editing,
     loading,
+    tableLoading,
+    viewType,
+    quickTasks,
     customTasks,
-    userTasks,
     quickTaskGroups,
-    variableModalVisible,
-    shardTaskModalVisible,
   } = props;
 
+  const [dataSource, setDataSource] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [cloneVisible, setCloneVisible] = useState(false);
 
   useEffect(() => {
     dispatch({ type: 'quickTask/initQuickTaskPage' });
@@ -41,9 +42,18 @@ const QuickTask = (props) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (viewType === QuickTaskTableView.all) {
+      setDataSource(quickTasks);
+    }
+    if (viewType === QuickTaskTableView.me) {
+      setDataSource(quickTasks.filter((item) => item.source === QuickTaskSource.own));
+    }
+  }, [viewType, quickTasks]);
+
   const columns = [
     {
-      title: <FormattedMessage id="quickTask.group.belongs" />,
+      title: <FormattedMessage id='quickTask.group.belongs' />,
       dataIndex: 'groupId',
       align: 'center',
       render: (text) => {
@@ -60,7 +70,7 @@ const QuickTask = (props) => {
         }
         return (
           <span style={{ color: Colors.red }}>
-            <FormattedMessage id="quickTask.group.ismissing" />
+            <FormattedMessage id='quickTask.group.loss' />
           </span>
         );
       },
@@ -90,30 +100,49 @@ const QuickTask = (props) => {
       ),
     },
     {
-      title: <FormattedMessage id="quickTask.share" />,
+      title: <FormattedMessage id='quickTask.share' />,
       dataIndex: 'isShared',
       align: 'center',
-      render: (text, record) => <Switch checked={text} onClick={() => share(record, text)} />,
+      render: (text, record) => (
+        <Switch
+          disabled={record.source !== QuickTaskSource.own}
+          checked={text}
+          onClick={() => share(record, text)}
+        />
+      ),
     },
     {
       title: <FormattedMessage id="app.common.operation" />,
       align: 'center',
       render: (text, record) => (
         <>
+          {record.source === QuickTaskSource.own && (
+            <>
+              <Typography.Link
+                onClick={() => {
+                  edit(record);
+                }}
+              >
+                <FormattedMessage id={'app.button.edit'} />
+              </Typography.Link>
+              <Divider type={'vertical'} />
+              <Typography.Link
+                onClick={() => {
+                  editVariable(record);
+                }}
+              >
+                <FormattedMessage id='quickTask.button.modifyVariable' />
+              </Typography.Link>
+              <Divider type={'vertical'} />
+            </>
+          )}
+
           <Typography.Link
             onClick={() => {
-              edit(record);
+              copy(record);
             }}
           >
-            <FormattedMessage id={'app.button.edit'} />
-          </Typography.Link>
-          <Divider type={'vertical'} />
-          <Typography.Link
-            onClick={() => {
-              editVariable(record);
-            }}
-          >
-            <FormattedMessage id="quickTask.button.modifyVariable" />
+            <FormattedMessage id='app.button.copy' />
           </Typography.Link>
           <Divider type={'vertical'} />
           <Typography.Link
@@ -121,7 +150,7 @@ const QuickTask = (props) => {
               execute(record);
             }}
           >
-            <FormattedMessage id="app.button.execute" />
+            <FormattedMessage id='app.button.execute' />
           </Typography.Link>
         </>
       ),
@@ -130,6 +159,11 @@ const QuickTask = (props) => {
 
   function onSelectChange(newSelectedRowKeys) {
     setSelectedRowKeys(newSelectedRowKeys);
+  }
+
+  function copy(record) {
+    dispatch({ type: 'quickTask/updateEditing', payload: record });
+    setCloneVisible(true);
   }
 
   function edit(record) {
@@ -274,24 +308,17 @@ const QuickTask = (props) => {
         />
         <TableWithPages
           rowKey={({ id }) => id}
-          loading={loading}
+          loading={loading || tableLoading}
           columns={columns}
-          dataSource={userTasks}
-          rowSelection={{ selectedRowKeys, onChange: onSelectChange }}
-        />
-        <ShardDrawer />
-        <div
-          className={styles.drawerSwitcher}
-          style={{ left: shardTaskModalVisible ? drawerWidth : 0 }}
-          onClick={() => {
-            dispatch({
-              type: 'quickTask/updateShardTaskModalVisible',
-              payload: !shardTaskModalVisible,
-            });
+          dataSource={dataSource}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: onSelectChange,
+            getCheckboxProps: (record) => ({
+              disabled: record.source !== QuickTaskSource.own,
+            }),
           }}
-        >
-          <FormattedMessage id='quickTask.shared' />
-        </div>
+        />
       </TablePageWrapper>
 
       {/* 编辑任务变量 */}
@@ -304,14 +331,23 @@ const QuickTask = (props) => {
 
       {/*  执行快捷任务 */}
       <ExecuteQuickTaskModal customTask={getCustomTask()} />
+
+      {/* 克隆快捷任务 */}
+      <CloneQuickTask
+        visible={cloneVisible}
+        onCancel={() => {
+          setCloneVisible(false);
+        }}
+      />
     </>
   );
 };
 export default connect(({ quickTask, loading }) => ({
   editing: quickTask.editing,
-  userTasks: quickTask.userTasks,
+  viewType: quickTask.viewType,
+  quickTasks: quickTask.quickTasks,
   customTasks: quickTask.customTasks,
   quickTaskGroups: quickTask.quickTaskGroups,
-  shardTaskModalVisible: quickTask.shardTaskModalVisible,
   loading: loading.effects['quickTask/initQuickTaskPage'],
+  tableLoading: loading.effects['quickTask/getVisibleQuickTasks'],
 }))(memo(QuickTask));

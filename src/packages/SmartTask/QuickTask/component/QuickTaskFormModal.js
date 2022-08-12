@@ -101,7 +101,7 @@ const QuickTaskFormModal = (props) => {
         </Form.Item>
         <Form.Item
           name={'taskCode'}
-          label={formatMessage({ id: 'quickTask.customtask.associated' })}
+          label={formatMessage({ id: 'quickTask.customTask.associated' })}
           rules={[{ required: true }]}
         >
           <Select>

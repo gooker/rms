@@ -96,7 +96,7 @@ export default {
   'app.button.add': '新增',
   'app.button.edit': '编辑',
   'app.button.save': '保存',
-  'app.button.copy': '复制',
+  'app.button.copy': '克隆',
   'app.button.past': '粘贴',
   'app.button.import': '导入',
   'app.button.export': '导出',

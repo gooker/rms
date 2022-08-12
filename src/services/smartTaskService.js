@@ -11,7 +11,7 @@ export function saveQuickTask(param) {
 }
 
 // 获取当前用户创建的快捷任务，包括别人分享的
-export function fetchVisibleQuickTasks(param) {
+export function fetchVisibleQuickTasks() {
   return request(`/${NameSpace.Platform}/quickTask/getUserQuickTasks`, {
     method: 'GET',
   });

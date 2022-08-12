@@ -30,13 +30,13 @@ const CopyCustomTaskModal = (props) => {
     saveCustomTask(requestBody).then((response) => {
       if (!dealResponse(response)) {
         closeModal();
+        dispatch({ type: 'customTask/getCustomTaskList' });
       }
     });
   }
 
   function closeModal() {
     dispatch({ type: 'customTask/saveEditingRow', payload: null });
-    dispatch({ type: 'customTask/getCustomTaskList' });
     onCancel();
   }
 

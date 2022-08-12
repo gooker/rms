@@ -2,12 +2,12 @@ import { dealResponse } from '@/utils/util';
 import { fetchCustomParamType, fetchCustomTaskList } from '@/services/commonService';
 import { fetchAllQuickTaskGroups, fetchVisibleQuickTasks } from '@/services/smartTaskService';
 import { fetchAllLoadSpecification } from '@/services/resourceService';
+import { QuickTaskSource, QuickTaskTableView } from '@/packages/SmartTask/QuickTask/quickTaskConstant';
 
 const initState = {
-  userTasks: [],
-  sharedTasks: [],
-  quickTaskGroups: [],
+  quickTasks: [],
   customTasks: [],
+  quickTaskGroups: [],
   loadSpecification: [], // 载具规格
   storageSpecification: [], // 车辆容器规格
   targetSource: [],
@@ -16,9 +16,9 @@ const initState = {
   groupModalVisible: false,
   executeModalVisible: false,
   variableModalVisible: false,
-  shardTaskModalVisible: false,
 
   editing: null,
+  viewType: QuickTaskTableView.all,
 };
 
 export default {
@@ -91,11 +91,21 @@ export default {
       };
     },
     updateQuickTasks(state, { payload }) {
-      return {
-        ...state,
-        userTasks: payload.OWN,
-        sharedTasks: payload.SHARED,
-      };
+      const { OWN, SHARED } = payload;
+      let quickTasks = [];
+      if (Array.isArray(OWN)) {
+        quickTasks = [...quickTasks, ...OWN].map((item) => ({
+          ...item,
+          source: QuickTaskSource.own,
+        }));
+      }
+      if (Array.isArray(SHARED)) {
+        quickTasks = [...quickTasks, ...SHARED].map((item) => ({
+          ...item,
+          source: item.source ?? QuickTaskSource.shared,
+        }));
+      }
+      return { ...state, quickTasks };
     },
     updateQuickTaskGroups(state, { payload }) {
       return {
@@ -133,10 +143,10 @@ export default {
         groupModalVisible: payload,
       };
     },
-    updateShardTaskModalVisible(state, { payload }) {
+    updateViewType(state, { payload }) {
       return {
         ...state,
-        shardTaskModalVisible: payload,
+        viewType: payload,
       };
     },
   },
