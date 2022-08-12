@@ -1,18 +1,6 @@
 import { isNull } from './util';
 
 const DictionaryDataSource = {
-  // 小车状态
-  vehicleStatus: {
-    Error: 'vehicleState.Error',
-    Offline: 'vehicleState.Offline',
-    StandBy: 'vehicleState.StandBy',
-    Working: 'vehicleState.Working',
-    Charging: 'vehicleState.Charging',
-    Connecting: 'vehicleState.Connecting',
-    Waiting: 'vehicleState.Waiting',
-    Idle: 'vehicleState.Idle',
-  },
-
   // 充电桩方向
   chargerDirection: {
     0: 'app.direction.top',
@@ -21,31 +9,12 @@ const DictionaryDataSource = {
     3: 'app.direction.left',
   },
 
-  chargerStatus: {
-    ERROR: 'app.chargerState.ERROR',
-    OFFLINE: 'app.chargerState.OFFLINE',
-    ASSIGNED: 'app.chargerState.ASSIGNED',
-    CHARGING: 'app.chargerState.CHARGING',
-    AVAILABLE: 'app.chargerState.AVAILABLE',
-    CONNECTED: 'app.chargerState.CONNECTED',
-    CONNECTING: 'app.chargerState.CONNECTING',
-  },
-
+  // 充电桩类型
   chargerType: {
     0: 'app.chargerType.version0',
     1: 'app.chargerType.version1',
     2: 'app.chargerType.version2',
     3: 'app.chargerType.version3',
-  },
-
-  // 任务状态
-  taskStatus: {
-    New: 'app.task.state.New',
-    Executing: 'app.task.state.Executing',
-    Finished: 'app.task.state.Finished',
-    Error: 'app.task.state.Error',
-    Cancel: 'app.task.state.Cancel',
-    Wait: 'app.task.state.Wait',
   },
 
   // 小车方向
@@ -91,20 +60,22 @@ const DictionaryDataSource = {
     cyan: '#13c2c2',
   },
 
-  //  报表中心
-  reportCenterTable: {
-    vehicleId: 'vehicle.id',
-    currentVehicleId: 'vehicle.id',
-    count: 'app.reportCenter.reportCount',
-    createTime: 'app.common.creationTime',
-    errorDefinition_level: 'app.fault.level',
-    errorCode: 'app.fault.code',
-    taskStatus: 'app.task.state',
-    type: 'app.task.type',
-    vehicleTaskType: 'app.task.type',
+  // 潜伏料箱状态颜色
+  latentToteStatusColor: {
+    NEW: 'blue',
+    SENT: 'cyan',
+    GRABBING: 'lime',
+    GRABBING_FINISH: 'lime',
+    FINISH: 'green',
+    CANCEL: '#b3b2b2',
+    TALLY_TRANSPORTING: 'orange',
+    TALLYING: 'orange',
+    TALLIED: 'cyan',
+    PICK_STATION_TRANSPORTING: 'yellow',
+    PICK_STATION_WORKING: 'yellow',
   },
 
-  // toteOrderStatus
+  // 料箱订单状态
   latentToteOrderStatus: {
     NEW: 'app.activity.TaskNew', // 新建
     SENT: 'latentTote.orderStatus.SENT', // 已发送
@@ -119,18 +90,17 @@ const DictionaryDataSource = {
     PICK_STATION_WORKING: 'latentTote.orderStatus.PICK_STATION_WORKING', // 出库中
   },
 
-  latentToteStatusColor: {
-    NEW: 'blue',
-    SENT: 'cyan',
-    GRABBING: 'lime',
-    GRABBING_FINISH: 'lime',
-    FINISH: 'green',
-    CANCEL: '#b3b2b2',
-    TALLY_TRANSPORTING: 'orange',
-    TALLYING: 'orange',
-    TALLIED: 'cyan',
-    PICK_STATION_TRANSPORTING: 'yellow',
-    PICK_STATION_WORKING: 'yellow',
+  // 报表中心
+  reportCenterTable: {
+    vehicleId: 'vehicle.id',
+    currentVehicleId: 'vehicle.id',
+    count: 'app.reportCenter.reportCount',
+    createTime: 'app.common.creationTime',
+    errorDefinition_level: 'app.fault.level',
+    errorCode: 'app.fault.code',
+    taskStatus: 'app.task.state',
+    type: 'app.task.type',
+    vehicleTaskType: 'app.task.type',
   },
 };
 
