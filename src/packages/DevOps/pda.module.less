@@ -1,0 +1,87 @@
+@icon_height: 10px;
+@icon_color: #d0d0d0;
+
+.pda {
+  display: flex;
+  flex-flow: column nowrap;
+  width: 345px;
+  height: 700px;
+  border: 10px solid #000000;
+  border-radius: 30px;
+}
+
+.pdaBody {
+  flex: 1;
+}
+
+.pdaFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  padding: 0 64px;
+}
+
+.back {
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-right: 16px solid @icon_color;
+  border-bottom: 8px solid transparent;
+}
+
+.home {
+  width: 16px;
+  height: 16px;
+  background: @icon_color;
+  border-radius: 8px;
+}
+
+.task {
+  width: 16px;
+  height: 16px;
+  background: @icon_color;
+}
+
+// 状态栏
+.statusBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 20px;
+  padding: 0 16px;
+
+  & > div:nth-child(2) {
+    display: flex;
+
+    & > div:not(:last-child) {
+      margin-right: 3px;
+    }
+  }
+}
+
+.icon1 {
+  width: 30px;
+  height: @icon_height;
+  background: @icon_color;
+  border-radius: 5px;
+}
+
+.icon2 {
+  width: 10px;
+  height: @icon_height;
+  background: @icon_color;
+}
+
+.icon3 {
+  width: 10px;
+  height: @icon_height;
+  background: @icon_color;
+  border-radius: 5px;
+}
+
+.icon4 {
+  width: 10px;
+  height: @icon_height;
+  background: @icon_color;
+}

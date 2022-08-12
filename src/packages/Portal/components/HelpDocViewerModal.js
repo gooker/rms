@@ -58,10 +58,8 @@ const HelpDocViewerModal = (props) => {
       fileName = `${fileName}_${langShortName}`;
     }
     fileName = `${fileName}.html`;
-
-    // TODO: 帮助文档地址需要后续提供
-    const url = `http://localhost:5000/static/${fileName}`;
-    console.log('当前打开文档: ', url);
+    const origin = window.isProductionEnv ? window.location.origin : window.nameSpacesInfo.platform;
+    const url = `${origin}/help_doc/${fileName}?timestamp=${new Date().getTime()}`;
     setIframeSrc(url);
   }
 
