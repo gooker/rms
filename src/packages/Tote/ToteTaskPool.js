@@ -4,7 +4,7 @@ import { convertToUserTimezone } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TaskPoolComponent from '@/pages/TaskPool/TaskPoolComponent';
 import { VehicleType } from '@/config/config';
-import { TaskStateBageType } from '@/config/consts';
+import { TaskStatusColor } from '@/config/consts';
 
 const statusTransform = {
   New: 'New',
@@ -52,7 +52,7 @@ const ToteTaskPool = () => {
           if (text != null) {
             return (
               <Badge
-                status={TaskStateBageType[text]}
+                status={TaskStatusColor[text]}
                 text={<FormattedMessage id={`app.task.state.${statusTransform[text]}`} />}
               />
             );

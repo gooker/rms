@@ -30,7 +30,7 @@ export default {
   'customTask.chargeRun.charge': '充电',
   'customTask.emptyRun': '空跑',
   'customTask.emptyRun.run': '空跑',
-  'customTask.runToRest': '去休息',
+  'customTask.runToRest': '去停车',
   'customTask.runToRest.rest': '休息',
   'customTask.carryLoad': '搬运',
   'customTask.carryLoad.fetch': '取货',

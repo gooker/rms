@@ -3,7 +3,7 @@ import { Badge, Button, Divider, message, Row, Tooltip } from 'antd';
 import { DeleteOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
-import { TaskStateBageType, VehicleStateColor } from '@/config/consts';
+import { TaskStatusColor, VehicleStateColor } from '@/config/consts';
 import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull, renderLabel } from '@/utils/util';
 import { fetchExecutingTasks, fetchPipeLineTasks } from '@/services/taskService';
 import { deleteTaskQueueItems, fetchUpdateTaskPriority } from '@/services/commonService';
@@ -98,7 +98,7 @@ class StandardTaskPool extends React.Component {
         if (!isStrictNull(text)) {
           return (
             <Badge
-              status={TaskStateBageType[text]}
+              status={TaskStatusColor[text]}
               text={formatMessage({ id: `app.task.state.${text}` })}
             />
           );

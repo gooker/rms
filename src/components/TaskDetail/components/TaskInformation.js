@@ -29,21 +29,20 @@ class TaskInformation extends PureComponent {
   // 渲染任务状态
   renderStatus = (text) => {
     if (text != null && text !== '') {
-      const key = Dictionary('taskStatus', text);
       if (text === 'New') {
-        return <Badge status={taskStatusMap[0]} text={formatMessage({ id: key })} />;
+        return <Badge status={taskStatusMap[0]} text={formatMessage(`app.task.state.${text}`)} />;
       }
       if (text === 'Executing') {
-        return <Badge status={taskStatusMap[1]} text={formatMessage({ id: key })} />;
+        return <Badge status={taskStatusMap[1]} text={formatMessage(`app.task.state.${text}`)} />;
       }
       if (text === 'Finished') {
-        return <Badge status={taskStatusMap[2]} text={formatMessage({ id: key })} />;
+        return <Badge status={taskStatusMap[2]} text={formatMessage(`app.task.state.${text}`)} />;
       }
       if (text === 'Error') {
-        return <Badge status={taskStatusMap[3]} text={formatMessage({ id: key })} />;
+        return <Badge status={taskStatusMap[3]} text={formatMessage(`app.task.state.${text}`)} />;
       }
       if (text === 'Cancel') {
-        return <Badge status={taskStatusMap[4]} text={formatMessage({ id: key })} />;
+        return <Badge status={taskStatusMap[4]} text={formatMessage(`app.task.state.${text}`)} />;
       }
     } else {
       return null;

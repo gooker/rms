@@ -284,10 +284,9 @@ export function getDirectionLocale(angle) {
  */
 export function getVehicleStatusTag(vehicleStatus) {
   if (vehicleStatus != null) {
-    const vehicleStateMap = Dictionary().vehicleStatus;
     return (
       <Tag color={VehicleStateColor[vehicleStatus]}>
-        {formatMessage({ id: vehicleStateMap[vehicleStatus] })}
+        {formatMessage(`app.task.state.${vehicleStatus}`)}
       </Tag>
     );
   } else {

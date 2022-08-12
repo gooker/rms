@@ -9,6 +9,7 @@ import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
 import { GroupManager, GroupResourceMemberId } from '@/components/ResourceGroup';
 import commonStyles from '@/common.module.less';
+import { VehicleState } from '@/config/consts';
 
 const Colors = Dictionary().color;
 
@@ -27,10 +28,9 @@ const VehicleListTools = (props) => {
   }
 
   function renderVehicleStateFilter() {
-    const vehicleStates = Dictionary('vehicleStatus');
-    return Object.keys(vehicleStates).map((item) => (
+    return Object.values(VehicleState).map((item) => (
       <Select.Option key={item} value={item}>
-        <FormattedMessage id={vehicleStates[item]} />
+        {formatMessage(`app.task.state.${item}`)}
       </Select.Option>
     ));
   }

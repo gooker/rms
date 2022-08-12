@@ -1,16 +1,30 @@
 import React, { PureComponent } from 'react';
-import { Menu, Dropdown } from 'antd';
+import { Dropdown, Menu } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import styles from './Header.module.less';
 import { IconFont } from '@/components/IconFont';
 
-@connect(({ global, user }) => ({
+@connect(({ user }) => ({
   currentUser: user.currentUser,
 }))
 class SelectSection extends PureComponent {
+  changeSection = (record) => {
+    const { key } = record;
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'user/fetchUpdateUserCurrentSection',
+      payload: key, // key就是sectionId,
+    }).then((result) => {
+      if (result) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
+    });
+  };
+
   renderMenu = () => {
     const {
-      onMenuClick,
       currentUser: { sections },
     } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
@@ -21,7 +35,7 @@ class SelectSection extends PureComponent {
       ));
     }
     return (
-      <Menu selectedKeys={[sectionId]} onClick={onMenuClick}>
+      <Menu selectedKeys={[sectionId]} onClick={this.changeSection}>
         {menuData}
       </Menu>
     );

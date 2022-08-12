@@ -8,7 +8,7 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import RmsConfirm from '@/components/RmsConfirm';
 import TaskSearch from '../../packages/SmartTask/components/TaskManagementSearch';
 import commonStyles from '@/common.module.less';
-import { TaskStateBageType } from '@/config/consts';
+import { TaskStatusColor } from '@/config/consts';
 import styles from '../../packages/SmartTask/task.module.less';
 
 @connect(({ global }) => ({
@@ -74,7 +74,7 @@ class TaskLibraryComponent extends Component {
         if (text != null) {
           return (
             <Badge
-              status={TaskStateBageType[text]}
+              status={TaskStatusColor[text]}
               text={formatMessage({ id: `app.task.state.${text}` })}
             />
           );
