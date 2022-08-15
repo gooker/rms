@@ -2,7 +2,7 @@ import React from 'react';
 import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 import screenfull from 'screenfull';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, isNull, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { getHAInfo } from '@/services/XIHEService';
 import SelectEnvironment from './SelectEnvironment';
 import UserCenter from './UserCenter';
@@ -12,6 +12,7 @@ import HeaderTimezone from './HeaderTimezone';
 import HeaderHelpDoc from './HeaderHelpDoc';
 import styles from './Header.module.less';
 import HeaderAlertCenter from '@/packages/Portal/components/HeaderAlertCenter';
+import RmsConfirm from '@/components/RmsConfirm';
 
 @connect(({ global, user }) => ({
   logo: global.logo,
@@ -56,9 +57,21 @@ class Header extends React.Component {
     const { version } = this.props;
     const versionText = version?.PlatForm?.version;
     if (!isStrictNull(versionText)) {
-      return `v1.0.0`;
+      return `v${versionText}`;
     }
     return null;
+  };
+
+  exitDevMode = () => {
+    RmsConfirm({
+      content: formatMessage('app.global.exitDevModeConfirm'),
+      onOk: () => {
+        window.localStorage.removeItem('dev');
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      },
+    });
   };
 
   render() {
@@ -74,7 +87,9 @@ class Header extends React.Component {
         </div>
         <div className={styles.middleContent}>
           {window.localStorage.getItem('dev') === 'true' && (
-            <div className={styles.devFlag}>DEV</div>
+            <div className={styles.devFlag} onClick={this.exitDevMode}>
+              DEV
+            </div>
           )}
           {/*{isHA && <HA />}*/}
           {/*{sysAuthInfo <= 30 && <ExpiredTip days={sysAuthInfo} />}*/}

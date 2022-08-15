@@ -140,7 +140,7 @@ export const TaskStatusColor = {
   Executing: 'processing',
   Finished: 'success',
   Error: 'error',
-  Cancel: 'default',
+  Cancelled: 'default',
 };
 
 // 充电桩颜色

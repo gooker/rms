@@ -200,7 +200,7 @@ export function renderBattery(battery) {
 export function renderVehicleState(state) {
   if (!isStrictNull(state)) {
     return (
-      <Tag color={VehicleStateColor[state]}>
+      <Tag color={VehicleStateColor[state]} style={{ margin: 0 }}>
         <FormattedMessage id={`vehicleState.${state}`} />
       </Tag>
     );
@@ -286,7 +286,7 @@ export function getVehicleStatusTag(vehicleStatus) {
   if (vehicleStatus != null) {
     return (
       <Tag color={VehicleStateColor[vehicleStatus]}>
-        {formatMessage(`app.task.state.${vehicleStatus}`)}
+        {formatMessage(`vehicleState.${vehicleStatus}`)}
       </Tag>
     );
   } else {
@@ -959,8 +959,8 @@ export function transformVehicleList(allVehicles) {
     return {
       ...rest,
       ...vehicle,
-      currentCellId: vehicleInfo.currentCellId,
-      currentDirection: vehicleInfo.direction,
+      currentCellId: vehicleInfo?.currentCellId,
+      currentDirection: vehicleInfo?.direction,
       vehicleStatus: vehicleWorkStatusDTO?.vehicleStatus,
     };
   });

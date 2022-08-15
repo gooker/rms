@@ -12,6 +12,7 @@ import EnvironmentManager from '@/packages/Portal/EnvironmentManger';
 import LoginBackPicture from '@/../public/images/login_pic.png';
 import Logo from '@/../public/images/logoMain.png';
 import styles from './Login.module.less';
+import { fetchVersion } from '@/services/commonService';
 
 const Login = (props) => {
   const { history } = props;
@@ -27,20 +28,29 @@ const Login = (props) => {
   const [allEnvironments, setAllEnvironments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [platFormVersion, setPlatFormVersion] = useState(null);
 
   useEffect(() => {
+    // 挂载push函数
     window.RMS.push = history.push;
 
     if (!window.isProductionEnv) {
       window.localStorage.setItem('dev', 'true');
     }
 
-    getAllEnvironments(window.dbContext).then(({ allEnvs, activeEnv }) => {
-      setAllEnvironments(allEnvs);
-      if (window.localStorage.getItem('dev') === 'true') {
-        formRef.setFieldsValue({ environment: activeEnv });
-      }
-    });
+    // 获取自定义环境与版本数据
+    Promise.all([getAllEnvironments(window.dbContext), fetchVersion()]).then(
+      ([{ allEnvs, activeEnv }, version]) => {
+        setAllEnvironments(allEnvs);
+        if (window.localStorage.getItem('dev') === 'true') {
+          formRef.setFieldsValue({ environment: activeEnv });
+        }
+
+        if (!dealResponse(version)) {
+          setPlatFormVersion(version?.PlatForm?.version);
+        }
+      },
+    );
   }, []);
 
   /********************* 回车执行登录 *********************/
@@ -199,8 +209,7 @@ const Login = (props) => {
                 </Col>
               </Row>
             )}
-
-            <Form.Item>
+            <Form.Item noStyle>
               {loading ? (
                 <Button onClick={cancelLogin} style={{ width: '100%' }}>
                   <LoadingOutlined /> <FormattedMessage id={'app.login.cancelLogin'} />
@@ -213,6 +222,7 @@ const Login = (props) => {
             </Form.Item>
           </Form>
         </div>
+        {platFormVersion && <div className={styles.loginVersion}>v{platFormVersion}</div>}
       </div>
 
       {/*  环境配置 */}

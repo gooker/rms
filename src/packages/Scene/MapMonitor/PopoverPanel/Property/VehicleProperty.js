@@ -1,8 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
-import { message, Popconfirm } from 'antd';
-import { connect } from '@/utils/RmsDva';
+import { Popconfirm } from 'antd';
 import { withRouter } from 'react-router-dom';
 import FormattedMessage from '@/components/FormattedMessage';
+
 import {
   fetchManualMode,
   fetchVehicleInfo,
@@ -11,35 +11,26 @@ import {
 } from '@/services/commonService';
 import { goToCharge, goToRest } from '@/services/taskService';
 import { vehicleRemoteControl } from '@/services/monitorService';
-import {
-  dealResponse,
-  formatMessage,
-  isStrictNull,
-  renderBattery,
-  renderVehicleState,
-} from '@/utils/util';
+import { updateVehicleMaintain } from '@/services/resourceService';
+import { dealResponse, formatMessage, isNull, renderBattery, renderVehicleState } from '@/utils/util';
+import { connect } from '@/utils/RmsDva';
 import { AppCode } from '@/config/config';
 import styles from '../../monitorLayout.module.less';
-import style from './index.module.less';
-import { updateVehicleMaintain } from '@/services/resourceService';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const checkedColor = '#ff8400';
 
-const VehicleImg = {
-  latent: 'latent.png',
-  fork: 'fork.png',
-  sorter: 'sorter.png',
-};
-
 const VehicleElementProp = (props) => {
   const { data, dispatch, history, selectVehicle, showRoute } = props;
-  const [currentVehicleInfo, setCurrentVehicleInfo] = useState({});
+
+  const [loading, setLoading] = useState(false);
+  const [type, setType] = useState('');
   const [vehicleId, setVehicleId] = useState(null);
+  const [currentVehicleInfo, setCurrentVehicleInfo] = useState({});
   const [mainTain, setMainTain] = useState(false);
   const [manualMode, setManualMode] = useState(false);
   const [pathChecked, setPathChecked] = useState(false);
   const [vehicleAlarmList, setVehicleAlarmList] = useState([]);
-  const [type, setType] = useState('');
 
   useEffect(() => {
     async function init() {
@@ -56,6 +47,7 @@ const VehicleElementProp = (props) => {
   }, [data]);
 
   async function getVehicleInfo() {
+    setLoading(true);
     const { vehicleType } = data;
     const [response, alertResponse] = await Promise.all([
       fetchVehicleInfo(data.id, vehicleType),
@@ -64,10 +56,10 @@ const VehicleElementProp = (props) => {
 
     if (!dealResponse(response)) {
       const { vehicle = {} } = response;
-      setCurrentVehicleInfo({ ...response });
+      setCurrentVehicleInfo(response);
+      setType(vehicle?.vehicleType);
       setMainTain(vehicle?.maintain); // 维护
       setManualMode(vehicle?.manualMode); // 是否手动
-      setType(vehicle?.vehicleType);
     }
 
     if (alertResponse && !dealResponse(alertResponse)) {
@@ -82,6 +74,7 @@ const VehicleElementProp = (props) => {
       setVehicleAlarmList(newTaskAlarm);
       dispatch({ type: 'monitorView/saveVehicleAlarmList', payload: newTaskAlarm });
     }
+    setLoading(false);
   }
 
   function goToVehicleDetail() {
@@ -96,7 +89,7 @@ const VehicleElementProp = (props) => {
     });
   }
 
-  function showVehiclealert() {
+  function showVehicleAlert() {
     dispatch({
       type: 'monitor/saveCategoryModal',
       payload: 'VehicleAlert',
@@ -117,31 +110,31 @@ const VehicleElementProp = (props) => {
           });
         },
       );
-      dispatch({ type: 'monitor/saveVehicleRunningInfoList', payload: 'newInfoList' });
+      dispatch({ type: 'monitor/saveVehicleRunningInfoList', payload: newInfoList });
     }
     dispatch({ type: 'monitor/saveCategoryModal', payload: 'VehicleRunInfo' });
   }
 
   function goCharge() {
-    goToCharge({ vehicleId: vehicleId, vehicleType: data.vehicleType }).then((response) => {
-      return dealResponse(response, 1);
-    });
+    goToCharge({ vehicleId: vehicleId, vehicleType: data.vehicleType }).then((response) =>
+      dealResponse(response, true),
+    );
   }
 
   function toRest() {
     goToRest({ vehicleId: vehicleId, vehicleType: data.vehicleType }).then((response) => {
-      return dealResponse(response, 1);
+      dealResponse(response, true);
     });
   }
 
   // 发送小车Hex命令
-  async function sendVehicleHexCommand(hexCommand, actionContent) {
+  async function sendVehicleHexCommand(hexCommand) {
     const params = {
       vehicleId,
       rawCommandHex: hexCommand,
     };
     const response = await vehicleRemoteControl(type, params);
-    return dealResponse(response, 1);
+    dealResponse(response, true);
   }
 
   // 维护小车
@@ -210,142 +203,130 @@ const VehicleElementProp = (props) => {
     });
   }
 
+  // 车辆实时信息展示
+  function renderVehicle() {
+    if (loading) {
+      return <LoadingOutlined />;
+    }
+    return currentVehicleInfo?.vehicleId;
+  }
+
+  function renderBatteryState() {
+    if (loading) {
+      return <LoadingOutlined />;
+    }
+    const battery = currentVehicleInfo?.vehicleInfo?.battery;
+    return !isNull(battery) && renderBattery(battery);
+  }
+
+  function renderVehicleStatus() {
+    if (loading) {
+      return <LoadingOutlined />;
+    }
+    const status = currentVehicleInfo?.vehicleWorkStatusDTO?.vehicleStatus;
+    return status && renderVehicleState(status);
+  }
+
+  function renderVehicleLoad() {
+    if (loading) {
+      return <LoadingOutlined />;
+    }
+    return currentVehicleInfo?.vehicleInfo?.loadUniqueIds ?? '-';
+  }
+
+  function renderTask() {
+    if (loading) {
+      return <LoadingOutlined />;
+    }
+    const taskId = currentVehicleInfo?.taskId;
+    return !isNull(taskId) ? `*${taskId.substr(currentVehicleInfo.taskId.length - 6, 6)}` : '-';
+  }
+
   return (
     <>
+      {/* 内容头 */}
       <div>
         <FormattedMessage id={'app.common.prop'} />
       </div>
+      {/* 内容体 */}
       <div>
-        {/* 小车详情 */}
-        <div>
-          {/* 小车*/}
-          <div className={styles.rightSideContentDetail}>
-            <div>
-              <img
-                alt={'vehicle'}
-                style={{ width: 30, height: 'auto' }}
-                src={
-                  VehicleImg[data?.vehicleType] &&
-                  require(`../../category/${VehicleImg[data?.vehicleType]}`)?.default
-                }
-              />
-              <span>
-                <FormattedMessage id={'app.vehicle'} />
-              </span>
-            </div>
-            <div className={style.rightSideline} onClick={goToVehicleDetail}>
-              {currentVehicleInfo?.vehicleId}
-            </div>
+        {/* 车辆实时信息 */}
+        <div style={{ padding: '0 8px' }}>
+          <div
+            className={styles.rightSideContentDetail}
+            onClick={goToVehicleDetail}
+            style={{ cursor: 'pointer' }}
+          >
+            <img
+              alt={'vehicle'}
+              style={{ width: 35 }}
+              src={require('../../category/vehicle.svg')?.default}
+            />
+            <div style={{ textDecoration: 'underline' }}>{renderVehicle()}</div>
           </div>
 
           {/* 电量 */}
           <div className={styles.rightSideContentDetail}>
-            <div>
-              <img
-                alt={'vehicle'}
-                style={{ width: 35, height: 35 }}
-                src={require('@/packages/Scene/icons/electricity.png').default}
-              />
-              <span>
-                <FormattedMessage id={'vehicle.electricity'} />
-              </span>
-            </div>
-            <div>
-              {currentVehicleInfo?.vehicleInfo?.battery &&
-                renderBattery(currentVehicleInfo.vehicleInfo.battery)}
-            </div>
+            <img
+              alt={'electricity'}
+              src={require('@/packages/Scene/icons/electricity.png').default}
+            />
+            <div>{renderBatteryState()}</div>
           </div>
 
           {/* 小车状态 */}
           <div className={styles.rightSideContentDetail}>
-            <div>
-              <img
-                alt={'vehicle'}
-                style={{ width: 25, height: 25 }}
-                src={require('@/packages/Scene/icons/state.png').default}
-              />
-              <span>
-                <FormattedMessage id={'app.common.status'} />
-              </span>
-            </div>
-            <div>{renderVehicleState(currentVehicleInfo?.vehicleWorkStatusDTO?.vehicleStatus)}</div>
+            <img alt={'vehicle'} src={require('@/packages/Scene/icons/state.png').default} />
+            <div>{renderVehicleStatus()}</div>
           </div>
 
           {/* 载具 */}
           <div className={styles.rightSideContentDetail}>
-            <div>
-              <img
-                alt={'vehicle'}
-                style={{ width: 25, height: 25 }}
-                src={require('@/packages/Scene/icons/pod.png').default}
-              />
-              <span>
-                <FormattedMessage id={'resource.load'} />
-              </span>
-            </div>
-            <div>{currentVehicleInfo?.vehicleInfo?.loadUniqueIds}</div>
+            <img alt={'vehicle'} src={require('@/packages/Scene/icons/pod.png').default} />
+            <div>{renderVehicleLoad()}</div>
           </div>
 
           {/* 任务 */}
           <div className={styles.rightSideContentDetail}>
-            <div>
-              <img
-                alt={'vehicle'}
-                style={{ width: 25, height: 25 }}
-                src={require('@/packages/Scene/icons/task.png').default}
-              />
-              <span>
-                <FormattedMessage id={'app.task'} />
-              </span>
-            </div>
+            <img alt={'vehicle'} src={require('@/packages/Scene/icons/task.png').default} />
             <div
               style={{ cursor: 'pointer', color: '#fff' }}
-              className={style.rightSideline}
               onClick={() => {
                 checkTaskDetail(currentVehicleInfo?.taskId, type);
               }}
             >
-              {!isStrictNull(currentVehicleInfo?.taskId)
-                ? `*${currentVehicleInfo.taskId.substr(currentVehicleInfo.taskId.length - 6, 6)}`
-                : null}
-              {}
+              {renderTask()}
             </div>
           </div>
 
           {/* 异常 */}
           <div className={styles.rightSideContentDetail}>
-            <div>
-              <img
-                alt={'vehicle'}
-                style={{ width: 25, height: 25 }}
-                src={require('@/packages/Scene/icons/error.png').default}
-              />
-              <span>
-                <FormattedMessage id={'app.common.abnormal'} />
-              </span>
-            </div>
+            <img alt={'vehicle'} src={require('@/packages/Scene/icons/error.png').default} />
             <div
-              className={style.rightSideline}
-              style={{ color: '#ff0000' }}
-              onClick={showVehiclealert}
+              style={{ color: '#ff0000', textDecoration: 'underline', cursor: 'pointer' }}
+              onClick={showVehicleAlert}
             >
               {vehicleAlarmList?.length}
             </div>
           </div>
         </div>
 
-        {/* 操作区域*/}
+        {/* 操作区域 */}
         <div style={{ marginTop: 30 }}>
           {/* 充电、休息 */}
           <div className={styles.rightSideVehicleContentOperation}>
             <div className={styles.rightSideVehicleContentOperationItem} onClick={goCharge}>
-              <img alt={'vehicle'} src={require('@/packages/Scene/icons/charger.png').default} />
+              <div>
+                <img alt={'vehicle'} src={require('@/packages/Scene/icons/charger.png').default} />
+              </div>
               <div>
                 <FormattedMessage id={'monitor.right.charge'} />
               </div>
             </div>
             <div className={styles.rightSideVehicleContentOperationItem} onClick={toRest}>
-              <img alt={'vehicle'} src={require('@/packages/Scene/icons/rest.png').default} />
+              <div>
+                <img alt={'vehicle'} src={require('@/packages/Scene/icons/rest.png').default} />
+              </div>
               <div>
                 <FormattedMessage id={'monitor.right.goPark'} />
               </div>
@@ -419,7 +400,9 @@ const VehicleElementProp = (props) => {
               cancelText={formatMessage({ id: 'app.button.cancel' })}
             >
               <div className={styles.rightSideVehicleContentOperationItem}>
-                <img alt={'vehicle'} src={require('@/packages/Scene/icons/reset.png').default} />
+                <div>
+                  <img alt={'vehicle'} src={require('@/packages/Scene/icons/reset.png').default} />
+                </div>
                 <div>
                   <FormattedMessage id={'app.button.reset'} />
                 </div>
@@ -428,14 +411,14 @@ const VehicleElementProp = (props) => {
 
             <Popconfirm
               title={formatMessage({ id: 'app.message.doubleConfirm' })}
-              onConfirm={() =>
-                sendVehicleHexCommand('02 60 00 00', formatMessage({ id: 'monitor.reboot' }))
-              }
+              onConfirm={() => sendVehicleHexCommand('02 60 00 00')}
               okText={formatMessage({ id: 'app.button.confirm' })}
               cancelText={formatMessage({ id: 'app.button.cancel' })}
             >
               <div className={styles.rightSideVehicleContentOperationItem}>
-                <img alt={'vehicle'} src={require('@/packages/Scene/icons/reboot.png').default} />
+                <div>
+                  <img alt={'vehicle'} src={require('@/packages/Scene/icons/reboot.png').default} />
+                </div>
                 <div>
                   <FormattedMessage id={'monitor.reboot'} />
                 </div>
@@ -443,7 +426,9 @@ const VehicleElementProp = (props) => {
             </Popconfirm>
 
             <div className={styles.rightSideVehicleContentOperationItem} onClick={showRunInfo}>
-              <img alt={'vehicle'} src={require('@/packages/Scene/icons/runTime.png').default} />
+              <div>
+                <img alt={'vehicle'} src={require('@/packages/Scene/icons/runTime.png').default} />
+              </div>
               <div>
                 <FormattedMessage id={'monitor.runTime'} />
               </div>
