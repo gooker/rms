@@ -150,12 +150,6 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
-        path: `/${AppCode.ResourceManage}/resourceLock/targetLock`,
-        name: 'targetLock',
-        component: '/ResourceManage/ResourceLock/TargetLock',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
         path: `/${AppCode.ResourceManage}/resourceLock/vehicleLock`,
         name: 'vehicleLock',
         component: '/ResourceManage/ResourceLock/VehicleLock',
@@ -168,8 +162,14 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
+        path: `/${AppCode.ResourceManage}/resourceLock/targetLock`,
+        name: 'taskTargetLock',
+        component: '/ResourceManage/ResourceLock/TargetLock',
+        authority: ['ADMIN', 'SUPERMANAGER'],
+      },
+      {
         path: `/${AppCode.ResourceManage}/resourceLock/storageLock`,
-        name: 'storageLock',
+        name: 'taskStorageLock',
         component: '/ResourceManage/ResourceLock/StorageLock',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },

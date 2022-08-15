@@ -80,11 +80,13 @@ export default {
 
   // 资源锁
   'menu.resourceLock': '资源锁',
-  'menu.resourceLock.targetLock': '目标锁',
   'menu.resourceLock.vehicleLock': '车辆锁',
-  'menu.resourceLock.stationLock': '站点锁',
   'menu.resourceLock.loadLock': '载具锁',
-  'menu.resourceLock.storageLock': '储位锁',
+  'menu.resourceLock.taskTargetLock': '任务目标锁',
+  'menu.resourceLock.taskStorageLock': '任务储位锁',
+  'menu.resourceLock.vehicleTargetLock': '车辆目标锁',
+  'menu.resourceLock.loadStorageLock': '载具储位锁',
+  'menu.resourceLock.chargerLock': '充电桩锁',
   'menu.resourceGroupMapping': '资源分组绑定',
 
   // 任务

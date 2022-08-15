@@ -4,7 +4,7 @@ import { debounce } from 'lodash';
 import { Route, useHistory } from 'react-router-dom';
 import { connect } from '@/utils/RmsDva';
 import EventManager from '@/utils/EventManager';
-import { formatMessage, getSortedAppList, isStrictNull } from '@/utils/util';
+import { formatMessage, getSortedAppList, isNull, isStrictNull } from '@/utils/util';
 import TabsBar from '@/components/TabsBar';
 import TaskDetail from '@/components/TaskDetail';
 import style from '@/layout/homeLayout.module.less';
@@ -36,13 +36,14 @@ const Content = (props) => {
   useEffect(() => {
     if (!isStrictNull(activeTab)) {
       history.push(activeTab);
-      // 首页状态下默认显示的APP菜单
       if (activeTab === '/') {
-        const sortedAppList = getSortedAppList(grantedAPP, currentUser.username === 'admin');
-        dispatch({
-          type: 'global/saveCurrentApp',
-          payload: sortedAppList[0],
-        });
+        if (isNull(currentApp)) {
+          const sortedAppList = getSortedAppList(grantedAPP, currentUser.username === 'admin');
+          dispatch({
+            type: 'global/saveCurrentApp',
+            payload: sortedAppList[0],
+          });
+        }
       } else {
         const _currentApp = activeTab.split('/')[1];
         // 如果是切换了APP，那么Menu会主动更新openKeys

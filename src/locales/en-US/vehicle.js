@@ -7,6 +7,9 @@ export default {
   'app.vehicle.register.status': '注册状态',
   'app.vehicle.simulator': '模拟车辆',
 
+  // 车辆管理
+  'vehicle.unregister.confirm': '车辆取消注册后, 车辆将不可用。是否确定继续操作?',
+
   // 车辆类型
   'app.vehicleType': '车辆类型',
   'app.vehicleType.detail': '车辆类型详情',
@@ -30,6 +33,7 @@ export default {
   'vehicle.realTime': '车辆实时状态',
   'vehicle.batteryRealTime': '电池实时状态',
   'vehicle.workingState': '车辆任务状态',
+  'vehicle.moduleInformation': '车辆模块信息',
   'vehicle.id': '车辆ID',
   'vehicle.uniqueId': '唯一ID',
   'vehicle.brand': '品牌',

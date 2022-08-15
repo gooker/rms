@@ -8,6 +8,7 @@ import { fetchAllVehicleList, fetchVehicleInfo } from '@/services/commonService'
 import VehicleInformationCard from './VehicleInformation';
 import VehicleRealTimeCard from './VehicleRealTime';
 import VehicleBatteryStateCard from './VehicleBatteryState';
+import VehicleModuleInfoCard from './VehicleModuleInformation';
 import commonStyles from '@/common.module.less';
 import styles from './index.module.less';
 
@@ -77,6 +78,7 @@ class VehicleRealTime extends React.Component {
             <VehicleInformationCard data={vehicle ?? {}} />
             <VehicleRealTimeCard data={vehicle ?? {}} />
             <VehicleBatteryStateCard data={vehicle ?? {}} />
+            <VehicleModuleInfoCard data={vehicle?.vehicle?.baseInfo?.otherInfo ?? {}} />
           </div>
         </Spin>
       </div>
