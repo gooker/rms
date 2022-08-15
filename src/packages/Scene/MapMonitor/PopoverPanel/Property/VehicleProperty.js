@@ -1,22 +1,15 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Popconfirm } from 'antd';
 import { withRouter } from 'react-router-dom';
+import { LoadingOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-
-import {
-  fetchManualMode,
-  fetchVehicleInfo,
-  fetchVehicleRunningInfo,
-  getAlertCentersByTaskIdOrVehicleId,
-} from '@/services/commonService';
 import { goToCharge, goToRest } from '@/services/taskService';
 import { vehicleRemoteControl } from '@/services/monitorService';
-import { updateVehicleMaintain } from '@/services/resourceService';
+import { updateVehicleMaintain, updateVehicleManualMode } from '@/services/resourceService';
+import { fetchVehicleInfo, getAlertCentersByTaskIdOrVehicleId } from '@/services/commonService';
 import { dealResponse, formatMessage, isNull, renderBattery, renderVehicleState } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
-import { AppCode } from '@/config/config';
 import styles from '../../monitorLayout.module.less';
-import { LoadingOutlined } from '@ant-design/icons';
 
 const checkedColor = '#ff8400';
 
@@ -24,24 +17,22 @@ const VehicleElementProp = (props) => {
   const { data, dispatch, history, selectVehicle, showRoute } = props;
 
   const [loading, setLoading] = useState(false);
-  const [type, setType] = useState('');
-  const [vehicleId, setVehicleId] = useState(null);
-  const [currentVehicleInfo, setCurrentVehicleInfo] = useState({});
-  const [mainTain, setMainTain] = useState(false);
+  const [vehicle, setVehicle] = useState({});
+  const [maintain, setMaintain] = useState(false);
   const [manualMode, setManualMode] = useState(false);
+
   const [pathChecked, setPathChecked] = useState(false);
   const [vehicleAlarmList, setVehicleAlarmList] = useState([]);
 
   useEffect(() => {
     async function init() {
-      setVehicleId(JSON.parse(data.id));
       if (selectVehicle.includes(data.uniqueId) && showRoute) {
         setPathChecked(true);
       } else {
         setPathChecked(false);
       }
       // 1.获取小车属性
-      await getVehicleInfo();
+      getVehicleInfo();
     }
     init();
   }, [data]);
@@ -56,9 +47,8 @@ const VehicleElementProp = (props) => {
 
     if (!dealResponse(response)) {
       const { vehicle = {} } = response;
-      setCurrentVehicleInfo(response);
-      setType(vehicle?.vehicleType);
-      setMainTain(vehicle?.maintain); // 维护
+      setVehicle(response);
+      setMaintain(vehicle?.maintain); // 维护
       setManualMode(vehicle?.manualMode); // 是否手动
     }
 
@@ -96,33 +86,33 @@ const VehicleElementProp = (props) => {
     });
   }
 
-  // 运行时
-  async function showRunInfo() {
-    const response = await fetchVehicleRunningInfo({ vehicleId: vehicleId });
-    if (!dealResponse(response)) {
-      const newInfoList = [];
-      Object.values(response).forEach(
-        ({ vehicleRunningStatus, vehicleInfoTypeI18n, detailFormat }) => {
-          newInfoList.push({
-            type: vehicleRunningStatus,
-            title: vehicleInfoTypeI18n,
-            message: detailFormat,
-          });
-        },
-      );
-      dispatch({ type: 'monitor/saveVehicleRunningInfoList', payload: newInfoList });
-    }
-    dispatch({ type: 'monitor/saveCategoryModal', payload: 'VehicleRunInfo' });
-  }
+  // 获取运行时信息
+  // async function showRunInfo() {
+  // const response = await fetchVehicleRunningInfo({ vehicleId: vehicleId });
+  // if (!dealResponse(response)) {
+  //   const newInfoList = [];
+  //   Object.values(response).forEach(
+  //     ({ vehicleRunningStatus, vehicleInfoTypeI18n, detailFormat }) => {
+  //       newInfoList.push({
+  //         type: vehicleRunningStatus,
+  //         title: vehicleInfoTypeI18n,
+  //         message: detailFormat,
+  //       });
+  //     },
+  //   );
+  //   dispatch({ type: 'monitor/saveVehicleRunningInfoList', payload: newInfoList });
+  // }
+  // dispatch({ type: 'monitor/saveCategoryModal', payload: 'VehicleRunInfo' });
+  // }
 
   function goCharge() {
-    goToCharge({ vehicleId: vehicleId, vehicleType: data.vehicleType }).then((response) =>
+    goToCharge({ vehicleId: vehicle.vehicleId, vehicleType: data.vehicleType }).then((response) =>
       dealResponse(response, true),
     );
   }
 
   function toRest() {
-    goToRest({ vehicleId: vehicleId, vehicleType: data.vehicleType }).then((response) => {
+    goToRest({ vehicleId: vehicle.vehicleId, vehicleType: data.vehicleType }).then((response) => {
       dealResponse(response, true);
     });
   }
@@ -130,43 +120,48 @@ const VehicleElementProp = (props) => {
   // 发送小车Hex命令
   async function sendVehicleHexCommand(hexCommand) {
     const params = {
-      vehicleId,
+      vehicleId: vehicle.vehicleId,
       rawCommandHex: hexCommand,
     };
-    const response = await vehicleRemoteControl(type, params);
+    const response = await vehicleRemoteControl(vehicle.vehicleType, params);
     dealResponse(response, true);
   }
 
   // 维护小车
-  async function mainTainVehicle() {
+  async function maintainVehicle() {
     const params = {
-      disabled: !mainTain,
+      disabled: !maintain,
       vehicleInfos: [
         {
-          adapterType: currentVehicleInfo?.adapterType?.adapterType,
-          vehicleId,
+          adapterType: vehicle?.vehicle?.adapterType,
+          vehicleId: vehicle.vehicleId,
         },
       ],
     };
     const response = await updateVehicleMaintain(params);
-    if (!dealResponse(response, 1)) {
-      setMainTain(!mainTain);
+    if (!dealResponse(response, true)) {
+      setMaintain(!maintain);
     }
   }
 
   // 切换小车手动模式
   async function switchManualMode() {
     const params = {
-      vehicleId,
-      manualMode: !manualMode,
+      disabled: !manualMode,
+      vehicleInfos: [
+        {
+          adapterType: vehicle?.vehicle?.adapterType,
+          vehicleId: vehicle.vehicleId,
+        },
+      ],
     };
-    const response = await fetchManualMode(type, params);
-    if (!dealResponse(response, 1)) {
+    const response = await updateVehicleManualMode(params);
+    if (!dealResponse(response, true)) {
       setManualMode(!manualMode);
     }
   }
 
-  function vehiclePthchanged() {
+  function vehiclePathChanged() {
     let allSelectedVehicleUniqueIds = [...selectVehicle];
     showRoutePollingCallback(false);
     if (pathChecked) {
@@ -208,14 +203,14 @@ const VehicleElementProp = (props) => {
     if (loading) {
       return <LoadingOutlined />;
     }
-    return currentVehicleInfo?.vehicleId;
+    return vehicle?.vehicleId;
   }
 
   function renderBatteryState() {
     if (loading) {
       return <LoadingOutlined />;
     }
-    const battery = currentVehicleInfo?.vehicleInfo?.battery;
+    const battery = vehicle?.vehicleInfo?.battery;
     return !isNull(battery) && renderBattery(battery);
   }
 
@@ -223,7 +218,7 @@ const VehicleElementProp = (props) => {
     if (loading) {
       return <LoadingOutlined />;
     }
-    const status = currentVehicleInfo?.vehicleWorkStatusDTO?.vehicleStatus;
+    const status = vehicle?.vehicleWorkStatusDTO?.vehicleStatus;
     return status && renderVehicleState(status);
   }
 
@@ -231,15 +226,15 @@ const VehicleElementProp = (props) => {
     if (loading) {
       return <LoadingOutlined />;
     }
-    return currentVehicleInfo?.vehicleInfo?.loadUniqueIds ?? '-';
+    return vehicle?.vehicleInfo?.loadUniqueIds ?? '-';
   }
 
   function renderTask() {
     if (loading) {
       return <LoadingOutlined />;
     }
-    const taskId = currentVehicleInfo?.taskId;
-    return !isNull(taskId) ? `*${taskId.substr(currentVehicleInfo.taskId.length - 6, 6)}` : '-';
+    const taskId = vehicle?.taskId;
+    return !isNull(taskId) ? `*${taskId.substr(vehicle.taskId.length - 6, 6)}` : '-';
   }
 
   return (
@@ -292,7 +287,7 @@ const VehicleElementProp = (props) => {
             <div
               style={{ cursor: 'pointer', color: '#fff' }}
               onClick={() => {
-                checkTaskDetail(currentVehicleInfo?.taskId, type);
+                checkTaskDetail(vehicle?.taskId, vehicle.vehicleType);
               }}
             >
               {renderTask()}
@@ -338,7 +333,7 @@ const VehicleElementProp = (props) => {
           <div className={styles.rightSideVehicleContentOperation}>
             <div
               className={styles.rightSideVehicleContentOperationItem2}
-              onClick={vehiclePthchanged}
+              onClick={vehiclePathChanged}
             >
               <div style={{ background: pathChecked ? checkedColor : '' }}>
                 <img alt={'vehicle'} src={require('@/packages/Scene/icons/path.png').default} />
@@ -351,12 +346,12 @@ const VehicleElementProp = (props) => {
             {/* 维护 */}
             <Popconfirm
               title={formatMessage({ id: 'app.message.doubleConfirm' })}
-              onConfirm={mainTainVehicle}
+              onConfirm={maintainVehicle}
               okText={formatMessage({ id: 'app.button.confirm' })}
               cancelText={formatMessage({ id: 'app.button.cancel' })}
             >
               <div className={styles.rightSideVehicleContentOperationItem2}>
-                <div style={{ background: mainTain ? checkedColor : '' }}>
+                <div style={{ background: maintain ? checkedColor : '' }}>
                   <img
                     alt={'vehicle'}
                     src={require('@/packages/Scene/icons/maintain.png').default}
@@ -391,10 +386,7 @@ const VehicleElementProp = (props) => {
             <Popconfirm
               title={formatMessage({ id: 'app.message.doubleConfirm' })}
               onConfirm={() =>
-                sendVehicleHexCommand(
-                  type === AppCode.ForkLifting ? '02' : '80',
-                  formatMessage({ id: 'app.button.reset' }),
-                )
+                sendVehicleHexCommand('80', formatMessage({ id: 'app.button.reset' }))
               }
               okText={formatMessage({ id: 'app.button.confirm' })}
               cancelText={formatMessage({ id: 'app.button.cancel' })}
@@ -425,7 +417,7 @@ const VehicleElementProp = (props) => {
               </div>
             </Popconfirm>
 
-            <div className={styles.rightSideVehicleContentOperationItem} onClick={showRunInfo}>
+            <div className={styles.rightSideVehicleContentOperationItem}>
               <div>
                 <img alt={'vehicle'} src={require('@/packages/Scene/icons/runTime.png').default} />
               </div>

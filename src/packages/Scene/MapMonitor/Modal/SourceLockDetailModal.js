@@ -8,12 +8,12 @@ import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import { SourceLockCategory } from './SourceLockPanel';
 import {
-  batchDeletePodTaskLock,
-  batchDeleteStorageLock,
-  fetchBatchDeleteTargetCellLock,
+  batchDeleteLoadTaskLock,
+  batchDeleteTaskStorageLock,
+  batchDeleteTaskTargetLock,
   fetchLoadTaskLockList,
-  fetchStorageLockList,
-  fetchTargetCellLockList,
+  fetchTaskStorageLockList,
+  fetchTaskTargetLockList,
 } from '@/services/commonService';
 
 const SourceLockDetailModal = (props) => {
@@ -47,11 +47,11 @@ const SourceLockDetailModal = (props) => {
       onOk: async () => {
         let response;
         if (category === SourceLockCategory.targetLock) {
-          response = await fetchBatchDeleteTargetCellLock([record]);
+          response = await batchDeleteTaskTargetLock([record]);
         } else if (category === SourceLockCategory.storageLock) {
-          response = await batchDeleteStorageLock([record]);
+          response = await batchDeleteTaskStorageLock([record]);
         } else {
-          response = await batchDeletePodTaskLock([record]);
+          response = await batchDeleteLoadTaskLock([record]);
         }
         if (!dealResponse(response)) {
           message.success(formatMessage({ id: 'app.message.operateSuccess' }));
@@ -70,7 +70,7 @@ const SourceLockDetailModal = (props) => {
     let response;
     switch (category) {
       case SourceLockCategory.targetLock: {
-        response = await fetchTargetCellLockList();
+        response = await fetchTaskTargetLockList();
         break;
       }
       case SourceLockCategory.loadLock: {
@@ -78,7 +78,7 @@ const SourceLockDetailModal = (props) => {
         break;
       }
       default: {
-        response = await fetchStorageLockList();
+        response = await fetchTaskStorageLockList();
       }
     }
     if (!dealResponse(response)) {

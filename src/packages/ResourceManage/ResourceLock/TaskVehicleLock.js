@@ -11,7 +11,7 @@ import commonStyles from '@/common.module.less';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 
-const VehicleLock = (props) => {
+const TaskVehicleLock = (props) => {
   const { dispatch } = props;
 
   const [loading, setLoading] = useState(false);
@@ -63,7 +63,6 @@ const VehicleLock = (props) => {
       result = result.filter((item) => currentVehicleType.includes(item.vehicleType));
     }
     setCurrentVehicletLockList(result);
-    return;
   }
 
   function checkTaskDetail(taskId) {
@@ -102,22 +101,6 @@ const VehicleLock = (props) => {
         align: 'center',
         fixed: 'left',
       },
-      // {
-      //   title: <FormattedMessage id="lockManage.vehicle.status" />,
-      //   dataIndex: 'lockStatus',
-      //   render: (text) => {
-      //     if (text === 0) {
-      //       return <FormattedMessage id="lockManage.vehicle.fullLock" />;
-      //     }
-      //     if (text === 1) {
-      //       return <FormattedMessage id="lockManage.vehicle.missingTaskLock" />;
-      //     }
-      //     if (text === 2) {
-      //       return <FormattedMessage id="lockManage.vehicle.missingVehicleLock" />;
-      //     }
-      //     return <FormattedMessage id="app.common.notAvailable" />;
-      //   },
-      // },
       {
         title: <FormattedMessage id="app.task.id" />,
         dataIndex: 'taskId',
@@ -159,7 +142,6 @@ const VehicleLock = (props) => {
       </div>
       <TableWithPages
         bordered
-        scroll={{ x: 'max-content' }}
         loading={loading}
         columns={getColumn(checkTaskDetail)}
         dataSource={currentVehicleLockList}
@@ -173,4 +155,4 @@ const VehicleLock = (props) => {
   );
 };
 
-export default connect(() => ({}))(memo(VehicleLock));
+export default connect(() => ({}))(memo(TaskVehicleLock));

@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { message, Modal, Result } from 'antd';
-import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import { getAuthorityInfo } from '@/services/SSOService';
 import AuthorityPanel from './AuthorityPanel';
 import AuthorityInformation from './AuthorityInformation';
@@ -24,8 +24,10 @@ const AuthorizationCenter = () => {
   async function getAuthorityInformation() {
     setAutoDownloadToken(false);
     const response = await getAuthorityInfo();
-    if (!isStrictNull(response) && !dealResponse(response)) {
+    if (!dealResponse(response)) {
       setAuthorityInfo(response);
+    } else {
+      setAuthorityInfo('NULL');
     }
   }
 
@@ -55,9 +57,9 @@ const AuthorizationCenter = () => {
     // 未获取到授权信息
     if (authorityInfo === 'NULL') {
       return (
-        <Result status="warning" title={formatMessage({ id: 'app.authCenter.fetchInfo.failed' })} />
+        <Result status='warning' title={formatMessage({ id: 'app.authCenter.fetchInfo.failed' })} />
       );
-    } else if (isNull(authorityInfo)) {
+    } else if (isStrictNull(authorityInfo)) {
       // 没有授权
       return <AuthorityPanel autoDownload={autoDownloadToken} />;
     } else {

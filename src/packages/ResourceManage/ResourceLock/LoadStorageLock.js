@@ -1,16 +1,16 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, Row, Tooltip } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import { batchDeleteStorageLock, fetchStorageLockList } from '@/services/commonService';
+import { fetchLoadStorageLockList } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
-import commonStyles from '@/common.module.less';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import SearchTargetLock from './components/SearchTargetLock';
+import commonStyles from '@/common.module.less';
 
-const StorageLock = (props) => {
+const TaskStorageLock = (props) => {
   const [loading, setLoading] = useState(false);
   const [dataSourceList, setDataSourceList] = useState([]);
   const [currentDataList, setCurrentDataList] = useState([]);
@@ -19,7 +19,7 @@ const StorageLock = (props) => {
 
   const columns = [
     {
-      title: <FormattedMessage id="app.map.cell" />,
+      title: <FormattedMessage id='app.map.cell' />,
       dataIndex: 'cellId',
       align: 'center',
     },
@@ -29,12 +29,12 @@ const StorageLock = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.common.type" />,
+      title: <FormattedMessage id='app.common.type' />,
       dataIndex: 'loadType',
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.task.id" />,
+      title: <FormattedMessage id='app.task.id' />,
       dataIndex: 'taskId',
       align: 'center',
       render: (text, record) => {
@@ -60,6 +60,7 @@ const StorageLock = (props) => {
     async function init() {
       await freshData();
     }
+
     init();
   }, []);
 
@@ -80,16 +81,17 @@ const StorageLock = (props) => {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
-        const response = await batchDeleteStorageLock(selectedRow);
-        if (!dealResponse(response, true)) {
-          freshData();
-        }
+        // const response = await batchDeleteTaskStorageLock(selectedRow);
+        // if (!dealResponse(response, true)) {
+        //   freshData();
+        // }
       },
     });
   }
+
   async function freshData() {
     setLoading(true);
-    const response = await fetchStorageLockList();
+    const response = await fetchLoadStorageLockList();
     if (!dealResponse(response)) {
       setDataSourceList(response);
       filterData(response);
@@ -126,12 +128,12 @@ const StorageLock = (props) => {
           loadType={true}
         />
         <Row>
-          <Col flex="auto" className={commonStyles.tableToolLeft}>
+          <Col flex='auto' className={commonStyles.tableToolLeft}>
             <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteTargetLock}>
-              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
+              <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
             </Button>
             <Button onClick={freshData}>
-              <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
+              <ReloadOutlined /> <FormattedMessage id='app.button.refresh' />
             </Button>
           </Col>
         </Row>
@@ -151,4 +153,4 @@ const StorageLock = (props) => {
     </TablePageWrapper>
   );
 };
-export default memo(StorageLock);
+export default memo(TaskStorageLock);

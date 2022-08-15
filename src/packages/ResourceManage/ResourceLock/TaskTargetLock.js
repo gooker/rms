@@ -1,33 +1,40 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Col, Row, Tooltip } from 'antd';
+import { connect } from '@/utils/RmsDva';
+import { Button, Col, message, Row, Tooltip } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import { batchDeletePodTaskLock, fetchLoadTaskLockList } from '@/services/commonService';
+import { batchDeleteTaskTargetLock, fetchTaskTargetLockList } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
-import commonStyles from '@/common.module.less';
+import SearchTargetLock from './components/SearchTargetLock';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
-import SearchTargetLock from './components/SearchTargetLock';
+import commonStyles from '@/common.module.less';
 
-const LoadLock = (props) => {
+const TaskTargetLock = (props) => {
   const [loading, setLoading] = useState(false);
-  const [containerLockList, setContainerLockList] = useState([]);
-  const [currentLockList, setCurrentLockList] = useState([]);
+  const [targetLockList, setTargetLockList] = useState([]);
+  const [currentTargetLockList, setCurrentTargetLockList] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRow, setSelectedRow] = useState([]);
 
   const columns = [
     {
-      title: <FormattedMessage id='resource.load.id' />,
-      dataIndex: 'loadId',
+      title: <FormattedMessage id='app.map.cell' />,
+      dataIndex: 'cellId',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id="app.vehicle" />,
+      dataIndex: 'vehicleId',
       align: 'center',
     },
     {
       title: <FormattedMessage id="app.common.type" />,
-      dataIndex: 'loadType',
+      dataIndex: 'vehicleType',
       align: 'center',
     },
+
     {
       title: <FormattedMessage id="app.task.id" />,
       dataIndex: 'taskId',
@@ -52,11 +59,44 @@ const LoadLock = (props) => {
   ];
 
   useEffect(() => {
-    async function init() {
-      await freshData();
-    }
-    init();
+    freshData();
   }, []);
+
+  async function freshData() {
+    setLoading(true);
+    const response = await fetchTaskTargetLockList();
+    if (!dealResponse(response)) {
+      setTargetLockList(response);
+      filterData(response);
+    }
+    setLoading(false);
+  }
+
+  function filterData(list, formValues) {
+    let result = [...list];
+    if (isNull(formValues)) {
+      setCurrentTargetLockList(result);
+      return;
+    }
+    const { vehicleId, vehicleType, taskId } = formValues;
+    if (!isStrictNull(vehicleId)) {
+      result = result.filter((item) => {
+        return item.vehicleId === vehicleId;
+      });
+    }
+    if (!isStrictNull(vehicleType)) {
+      const currentVehicleType = [];
+      vehicleType?.map((value) => {
+        currentVehicleType.push(value.split('@')[1]);
+      });
+
+      result = result.filter((item) => currentVehicleType.includes(item.vehicleType));
+    }
+    if (!isStrictNull(taskId)) {
+      result = result.filter((item) => item.taskId === taskId);
+    }
+    setCurrentTargetLockList(result);
+  }
 
   function checkTaskDetail(taskId, vehicleType) {
     const { dispatch } = props;
@@ -75,58 +115,28 @@ const LoadLock = (props) => {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
-        const response = await batchDeletePodTaskLock(selectedRow);
-        if (!dealResponse(response, true)) {
+        const response = await batchDeleteTaskTargetLock(selectedRow);
+        if (!dealResponse(response)) {
+          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
           freshData();
+        } else {
+          message.success(formatMessage({ id: 'app.tip.operateFailed' }));
         }
       },
     });
-  }
-  async function freshData() {
-    setLoading(true);
-    const response = await fetchLoadTaskLockList();
-    if (!dealResponse(response)) {
-      setContainerLockList(response);
-      filterData(response);
-    }
-    setLoading(false);
-  }
-
-  function filterData(list, formValues) {
-    let result = [...list];
-    if (isNull(formValues)) {
-      setCurrentLockList(result);
-      return;
-    }
-    const { taskId, loadType } = formValues;
-    if (!isStrictNull(taskId)) {
-      result = result.filter((item) => {
-        return item.taskId === taskId;
-      });
-    }
-    if (!isStrictNull(loadType)) {
-      result = result.filter((item) => loadType === item.loadType);
-    }
-
-    setCurrentLockList(result);
   }
 
   return (
     <TablePageWrapper>
       <div>
-        <SearchTargetLock
-          search={filterData}
-          data={containerLockList}
-          verhicleHide={true}
-          loadType={true}
-        />
+        <SearchTargetLock search={filterData} data={targetLockList} />
         <Row>
-          <Col flex="auto" className={commonStyles.tableToolLeft}>
+          <Col flex='auto' className={commonStyles.tableToolLeft}>
             <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteTargetLock}>
-              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
+              <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
             </Button>
             <Button onClick={freshData}>
-              <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
+              <ReloadOutlined /> <FormattedMessage id='app.button.refresh' />
             </Button>
           </Col>
         </Row>
@@ -136,7 +146,7 @@ const LoadLock = (props) => {
         scroll={{ x: 'max-content' }}
         loading={loading}
         columns={columns}
-        dataSource={currentLockList}
+        dataSource={currentTargetLockList}
         rowKey={(record) => record.vehicleUniqueId}
         rowSelection={{
           selectedRowKeys,
@@ -146,4 +156,5 @@ const LoadLock = (props) => {
     </TablePageWrapper>
   );
 };
-export default memo(LoadLock);
+
+export default connect(() => ({}))(memo(TaskTargetLock));

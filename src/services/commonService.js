@@ -252,14 +252,6 @@ export async function fetchUpdateFileTask(vehicleType, params) {
   });
 }
 
-// 请求切换小车手动模式
-export async function fetchManualMode(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/vehicle/action/manualMode`, {
-    method: 'GET',
-    data: params,
-  });
-}
-
 /**** 日志下载 ****/
 // 下载小车上的日志文件到云端SFTP
 export async function startCreatingLog(vehicleType, params) {
@@ -537,28 +529,30 @@ export async function deleteWebHooks(param) {
   });
 }
 
-// 获取目标点锁
-export async function fetchTargetCellLockList() {
+/************************** 资源锁 *****************************/
+// 获取任务目标点锁
+export async function fetchTaskTargetLockList() {
   return request(`/${NameSpace.Platform}/resource/lock/getTargetCellLockList`, {
     method: 'GET',
   });
 }
 
-// 批量删除目标点锁
-export async function fetchBatchDeleteTargetCellLock(params) {
+// 批量删除任务目标点锁
+export async function batchDeleteTaskTargetLock(params) {
   return request(`/${NameSpace.Platform}/resource/lock/batchDeleteTargetCellLock`, {
     method: 'POST',
     data: params,
   });
 }
 
-// 获取车辆锁
+// 获取车辆任务锁
 export async function fetchVehicleTaskLockList() {
   return request(`/${NameSpace.Platform}/resource/lock/getVehicleTaskLockList`, {
     method: `GET`,
   });
 }
-//车辆锁删除
+
+// 删除车辆任务锁
 export async function batchDeleteVehicleTaskLock(params) {
   return request(`/${NameSpace.Platform}/resource/lock/batchDeleteVehicleTaskLock`, {
     method: 'POST',
@@ -566,15 +560,15 @@ export async function batchDeleteVehicleTaskLock(params) {
   });
 }
 
-// 获取存储点锁
-export async function fetchStorageLockList() {
+// 获取任务储位点锁
+export async function fetchTaskStorageLockList() {
   return request(`/${NameSpace.Platform}/resource/lock/getStoreCellLockList`, {
     method: 'GET',
   });
 }
 
-// 批量删除存储点锁
-export async function batchDeleteStorageLock(params) {
+// 批量删除任务储位点锁
+export async function batchDeleteTaskStorageLock(params) {
   return request(`/${NameSpace.Platform}/resource/lock/batchDeleteStoreCellLock`, {
     method: 'POST',
     data: params,
@@ -587,11 +581,41 @@ export async function fetchLoadTaskLockList() {
     method: 'GET',
   });
 }
+
 // 批量删除pod任务锁
-export async function batchDeletePodTaskLock(params) {
+export async function batchDeleteLoadTaskLock(params) {
   return request(`/${NameSpace.Platform}/resource/lock/batchDeleteLoadTaskLock`, {
     method: 'POST',
     data: params,
+  });
+}
+
+// 获取section的小车目标点锁
+export async function fetchVehicleTargetLockList() {
+  return request(`/${NameSpace.Platform}/resource/lock/getVehicleTargetCellLockList`, {
+    method: 'GET',
+  });
+}
+
+// 获取载具存储点锁
+export async function fetchLoadStorageLockList() {
+  return request(`/${NameSpace.Platform}/resource/lock/getLoadStoreCellLockList`, {
+    method: 'GET',
+  });
+}
+
+// 获取充电桩锁
+export async function fetchChargerLockList(param) {
+  return request(`/${NameSpace.Platform}/resource/lock/getChargerLockedCell`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 充电桩解锁
+export async function unlockCharger() {
+  return request(`/${NameSpace.Platform}/resource/lock/unlockCharger`, {
+    method: 'GET',
   });
 }
 

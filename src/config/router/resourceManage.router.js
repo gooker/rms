@@ -150,28 +150,61 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
-        path: `/${AppCode.ResourceManage}/resourceLock/vehicleLock`,
-        name: 'vehicleLock',
-        component: '/ResourceManage/ResourceLock/VehicleLock',
-        authority: ['ADMIN', 'SUPERMANAGER'],
+        path: `/${AppCode.ResourceManage}/resourceLock/occupancy`,
+        name: 'occupancy',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+        routes: [
+          {
+            path: `/${AppCode.ResourceManage}/resourceLock/occupancy/vehicleTargetLock`,
+            name: 'vehicleTargetLock',
+            component: '/ResourceManage/ResourceLock/VehicleTargetLock',
+            authority: ['ADMIN', 'SUPERMANAGER'],
+          },
+          {
+            path: `/${AppCode.ResourceManage}/resourceLock/occupancy/loadStorageLock`,
+            name: 'loadStorageLock',
+            component: '/ResourceManage/ResourceLock/LoadStorageLock',
+            authority: ['ADMIN', 'SUPERMANAGER'],
+          },
+          {
+            path: `/${AppCode.ResourceManage}/resourceLock/occupancy/chargerLock`,
+            name: 'chargerLock',
+            component: '/ResourceManage/ResourceLock/ChargerLock',
+            authority: ['ADMIN', 'SUPERMANAGER'],
+          },
+        ],
       },
       {
-        path: `/${AppCode.ResourceManage}/resourceLock/loadLock`,
-        name: 'loadLock',
-        component: '/ResourceManage/ResourceLock/LoadLock',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/resourceLock/targetLock`,
-        name: 'taskTargetLock',
-        component: '/ResourceManage/ResourceLock/TargetLock',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/resourceLock/storageLock`,
-        name: 'taskStorageLock',
-        component: '/ResourceManage/ResourceLock/StorageLock',
-        authority: ['ADMIN', 'SUPERMANAGER'],
+        path: `/${AppCode.ResourceManage}/resourceLock/task`,
+        name: 'taskLock',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+        routes: [
+          {
+            path: `/${AppCode.ResourceManage}/resourceLock/taskLock/taskVehicleLock`,
+            name: 'taskVehicleLock',
+            component: '/ResourceManage/ResourceLock/TaskVehicleLock',
+            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+          },
+          {
+            path: `/${AppCode.ResourceManage}/resourceLock/taskLock/taskLoadLock`,
+            name: 'taskLoadLock',
+            component: '/ResourceManage/ResourceLock/TaskLoadLock',
+            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+          },
+
+          {
+            path: `/${AppCode.ResourceManage}/resourceLock/taskLock/taskTargetLock`,
+            name: 'taskTargetLock',
+            component: '/ResourceManage/ResourceLock/TaskTargetLock',
+            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+          },
+          {
+            path: `/${AppCode.ResourceManage}/resourceLock/taskLock/taskStorageLock`,
+            name: 'taskStorageLock',
+            component: '/ResourceManage/ResourceLock/TaskStorageLock',
+            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+          },
+        ],
       },
     ],
   },

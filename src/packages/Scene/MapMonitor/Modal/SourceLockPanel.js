@@ -4,7 +4,7 @@ import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from 
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 import { Button, Form } from 'antd';
-import { fetchLoadTaskLockList, fetchStorageLockList, fetchTargetCellLockList } from '@/services/commonService';
+import { fetchLoadTaskLockList, fetchTaskStorageLockList, fetchTaskTargetLockList } from '@/services/commonService';
 import { connect } from '@/utils/RmsDva';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 19);
@@ -22,7 +22,7 @@ const SourceLockPanel = (props) => {
     let response;
     switch (category) {
       case SourceLockCategory.targetLock: {
-        response = await fetchTargetCellLockList();
+        response = await fetchTaskTargetLockList();
         break;
       }
       case SourceLockCategory.loadLock: {
@@ -30,7 +30,7 @@ const SourceLockPanel = (props) => {
         break;
       }
       default: {
-        response = await fetchStorageLockList();
+        response = await fetchTaskStorageLockList();
       }
     }
     if (!dealResponse(response)) {
