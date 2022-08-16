@@ -50,111 +50,123 @@ const QuickTask = (props) => {
     }
   }, [viewType, quickTasks]);
 
-  const columns = [
-    {
-      title: <FormattedMessage id='quickTask.group.belongs' />,
-      dataIndex: 'groupId',
-      align: 'center',
-      render: (text) => {
-        if (isStrictNull(text)) {
+  function getColumns() {
+    const columns = [
+      {
+        title: <FormattedMessage id='quickTask.group.belongs' />,
+        dataIndex: 'groupId',
+        align: 'center',
+        render: (text) => {
+          if (isStrictNull(text)) {
+            return (
+              <span style={{ color: Colors.red }}>
+                <FormattedMessage id='quickTask.group.noExist' />
+              </span>
+            );
+          }
+          const group = find(quickTaskGroups, { id: text });
+          if (group) {
+            return group.name;
+          }
           return (
             <span style={{ color: Colors.red }}>
-              <FormattedMessage id='quickTask.group.noExist' />
+              <FormattedMessage id='quickTask.group.loss' />
             </span>
           );
-        }
-        const group = find(quickTaskGroups, { id: text });
-        if (group) {
-          return group.name;
-        }
-        return (
-          <span style={{ color: Colors.red }}>
-            <FormattedMessage id='quickTask.group.loss' />
-          </span>
-        );
+        },
       },
-    },
-    {
-      title: <FormattedMessage id="app.common.name" />,
-      dataIndex: 'name',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="menu.customTask" />,
-      dataIndex: 'taskCode',
-      align: 'center',
-      render: (text) => {
-        const targetCustomTask = find(customTasks, { code: text });
-        return renderLabel(targetCustomTask?.name);
+      {
+        title: <FormattedMessage id='app.common.name' />,
+        dataIndex: 'name',
+        align: 'center',
       },
-    },
-    {
-      title: <FormattedMessage id="quickTask.operate.isConfirm" />,
-      dataIndex: 'isNeedConfirm',
-      align: 'center',
-      render: (text) => (
-        <Tag color="blue">
-          <FormattedMessage id={`app.common.${text}`} />
-        </Tag>
-      ),
-    },
-    {
-      title: <FormattedMessage id='quickTask.share' />,
-      dataIndex: 'isShared',
-      align: 'center',
-      render: (text, record) => (
-        <Switch
-          disabled={viewType === QuickTaskSource.shared}
-          checked={text}
-          onClick={() => share(record, text)}
-        />
-      ),
-    },
-    {
-      title: <FormattedMessage id="app.common.operation" />,
-      align: 'center',
-      render: (text, record) => (
-        <>
-          {viewType === QuickTaskSource.own && (
-            <>
-              <Typography.Link
-                onClick={() => {
-                  edit(record);
-                }}
-              >
-                <FormattedMessage id={'app.button.edit'} />
-              </Typography.Link>
-              <Divider type={'vertical'} />
-              <Typography.Link
-                onClick={() => {
-                  editVariable(record);
-                }}
-              >
-                <FormattedMessage id='quickTask.button.modifyVariable' />
-              </Typography.Link>
-              <Divider type={'vertical'} />
-            </>
-          )}
+      {
+        title: <FormattedMessage id='menu.customTask' />,
+        dataIndex: 'taskCode',
+        align: 'center',
+        render: (text) => {
+          const targetCustomTask = find(customTasks, { code: text });
+          return renderLabel(targetCustomTask?.name);
+        },
+      },
+      {
+        title: <FormattedMessage id='quickTask.operate.isConfirm' />,
+        dataIndex: 'isNeedConfirm',
+        align: 'center',
+        render: (text) => (
+          <Tag color='blue'>
+            <FormattedMessage id={`app.common.${text}`} />
+          </Tag>
+        ),
+      },
+      {},
+      {
+        title: <FormattedMessage id='app.common.operation' />,
+        align: 'center',
+        render: (text, record) => (
+          <>
+            {viewType === QuickTaskSource.own && (
+              <>
+                <Typography.Link
+                  onClick={() => {
+                    edit(record);
+                  }}
+                >
+                  <FormattedMessage id={'app.button.edit'} />
+                </Typography.Link>
+                <Divider type={'vertical'} />
+                <Typography.Link
+                  onClick={() => {
+                    editVariable(record);
+                  }}
+                >
+                  <FormattedMessage id='quickTask.button.modifyVariable' />
+                </Typography.Link>
+                <Divider type={'vertical'} />
+              </>
+            )}
 
-          <Typography.Link
-            onClick={() => {
-              setCopyItem(record);
-            }}
-          >
-            <FormattedMessage id='app.button.clone' />
-          </Typography.Link>
-          <Divider type={'vertical'} />
-          <Typography.Link
-            onClick={() => {
-              execute(record);
-            }}
-          >
-            <FormattedMessage id='app.button.execute' />
-          </Typography.Link>
-        </>
-      ),
-    },
-  ];
+            <Typography.Link
+              onClick={() => {
+                setCopyItem(record);
+              }}
+            >
+              <FormattedMessage id='app.button.clone' />
+            </Typography.Link>
+            <Divider type={'vertical'} />
+            <Typography.Link
+              onClick={() => {
+                execute(record);
+              }}
+            >
+              <FormattedMessage id='app.button.execute' />
+            </Typography.Link>
+          </>
+        ),
+      },
+    ];
+    if (viewType === QuickTaskSource.own) {
+      columns.splice(4, 1, {
+        title: <FormattedMessage id='quickTask.share' />,
+        dataIndex: 'isShared',
+        align: 'center',
+        render: (text, record) => (
+          <Switch
+            disabled={viewType === QuickTaskSource.shared}
+            checked={text}
+            onClick={() => share(record, text)}
+          />
+        ),
+      });
+    } else {
+      columns.splice(4, 1, {
+        title: formatMessage('app.common.creator'),
+        dataIndex: 'createdByUser',
+        align: 'center',
+      });
+    }
+    return columns;
+  }
 
   function onSelectChange(newSelectedRowKeys) {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -303,13 +315,13 @@ const QuickTask = (props) => {
         <TableWithPages
           rowKey={({ id }) => id}
           loading={loading || tableLoading}
-          columns={columns}
+          columns={getColumns()}
           dataSource={dataSource}
           rowSelection={{
             selectedRowKeys,
             onChange: onSelectChange,
-            getCheckboxProps: (record) => ({
-              disabled: record.source !== QuickTaskSource.own,
+            getCheckboxProps: () => ({
+              disabled: viewType === QuickTaskSource.shared,
             }),
           }}
         />
