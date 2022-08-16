@@ -333,14 +333,6 @@ export async function fetchIdleHourChargeStrategy(param) {
   });
 }
 
-// 保存闲时策略
-export async function saveIdleHoursStrategy(param) {
-  return request(`/${NameSpace.Platform}/saveIdleHoursStrategy`, {
-    method: 'POST',
-    data: param,
-  });
-}
-
 /***载具 start**/
 
 // 查询载具类型

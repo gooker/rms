@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Tabs, Modal, Button, Row, Input, message, InputNumber,Form } from 'antd';
+import { Tabs, Modal, Button, Row, Input, message, InputNumber, Form } from 'antd';
 import ChargingStrategyForm from './ChargingStrategyForm';
 import {
   fetchChargingStrategyById,
@@ -14,7 +14,7 @@ import { dealResponse, isNull, getRandomString } from '@/utils/util';
 const { TabPane } = Tabs;
 
 const ChargingStrategyComponent = (props) => {
-  const { title, visible, width = '60%' } = props;
+  const { title, visible, width = '70%' } = props;
   const { onOk, onCancel, editing } = props;
   const [activeKey, setActiveKey] = useState('Normal'); // Tab
   const [strategyId, setStrategyId] = useState(null); // 充电策略id
@@ -27,7 +27,9 @@ const ChargingStrategyComponent = (props) => {
 
   const [chargeStrategy, setChargeStrategy] = useState(null); // 当前策略详情 {code:'xx',name:'vvv',Normal:{},IdleHours:{}}
 
-  const [form] = Form.useForm();// 闲时策略使用
+  const [idleStrategyDetail, setIdleStrategyDetail] = useState(null); // 闲时策略详情 {code:'xx',name:'vvv',Normal:{},IdleHours:{}}
+
+  const [form] = Form.useForm(); // 闲时策略使用
 
   useEffect(() => {
     if (visible && !isNull(editing)) {
@@ -69,11 +71,16 @@ const ChargingStrategyComponent = (props) => {
     setCode(data?.code || `cStrategy_${getRandomString(8)}`);
     setIsGlobal(data?.isGlobal || false);
     setChargeStrategy(data);
+    configRecommendValue(data); // 新增：默认用锂电池推荐配置
+
+    // 闲时策略
+    const { idleStrategyDetail = {} } = data;
+    setIdleStrategyDetail(idleStrategyDetail);
   }
 
   // 锂电池推荐配置
-  function configRecommendValue() {
-    const currentData = { ...chargeStrategy };
+  function configRecommendValue(data) {
+    const currentData = data ? data : { ...chargeStrategy };
     currentData.strategyValue.Normal.vehicleChargingVoltageMinValue = parseInt(46.5 * 1); // 起始电压
     currentData.strategyValue.Normal.vehicleFullChargingVoltageMaxValue = parseInt(53.5 * 1); // 满充电压
     currentData.strategyValue.Normal.vehicleFullChargingBatteryMaxValue = 99; // 满充电量
@@ -105,7 +112,7 @@ const ChargingStrategyComponent = (props) => {
     }
     const normalData = chargeStrategy.strategyValue?.Normal;
     const idlelData = chargeStrategy.strategyValue?.IdleHours;
-    const params = {
+    const strateParams = {
       name,
       priority: priority ?? 5,
       code,
@@ -123,17 +130,59 @@ const ChargingStrategyComponent = (props) => {
         },
       },
     };
-    const response = await saveChargingStrategy(params);
+    const requestBody = {
+      test: strateParams,
+      idle: getIdleHoursStrategy(),
+    };
+    console.log(requestBody);
+    return;
+    const response = await saveChargingStrategy(requestBody);
     if (!dealResponse(response, 1)) {
       onOk();
     }
   }
 
+  // 闲时策略
+  function getIdleHoursStrategy() {
+    const values = form.getFieldsValue();
+    const { idleHoursQuantumDTOS } = values;
+    let result = null;
+    if (!isNull(idleHoursQuantumDTOS)) {
+      result = idleHoursQuantumDTOS.map((record) => {
+        const { time, weeks } = record;
+        const obj = { weeks };
+        if (!isNull(time)) {
+          obj.startTime = time[0] ? time[0].format('HH:mm') : null;
+          obj.endTime = time[1] ? time[1].format('HH:mm') : null;
+        }
+        return obj;
+      });
+    }
+
+    const requestBody = {
+      ...idleStrategyDetail,
+      id: idleHoursStrategyId,
+      chargeStrategyId: strategyId,
+      idleHoursQuantumDTOS: result,
+    };
+    return requestBody;
+  }
+
+  // 闲时策略-编辑赋值
+
+  function generateIdleHoursDetail(currentData, type) {
+    let newIdleStrategyDetail =
+      isNull(idleStrategyDetail) || Object.keys(idleStrategyDetail).length === 0
+        ? {}
+        : { ...idleStrategyDetail };
+
+    newIdleStrategyDetail[type] = currentData;
+    setIdleStrategyDetail(newIdleStrategyDetail);
+  }
+
   async function switchTab(key) {
     setActiveKey(key);
   }
-
-
 
   return (
     <Modal
@@ -149,7 +198,13 @@ const ChargingStrategyComponent = (props) => {
         <Button key="defaultValue" onClick={configDefaultValue} style={{ marginLeft: '15px' }}>
           <FormattedMessage id="app.chargeStrategy.defaultConfig" />
         </Button>,
-        <Button key="recommendValue" onClick={configRecommendValue} style={{ marginLeft: '15px' }}>
+        <Button
+          key="recommendValue"
+          onClick={() => {
+            configRecommendValue();
+          }}
+          style={{ marginLeft: '15px' }}
+        >
           <FormattedMessage id="app.chargeStrategy.recommendedConfigOfLithiumIron" />
         </Button>,
         <Button
@@ -204,7 +259,9 @@ const ChargingStrategyComponent = (props) => {
               type="IdleHours"
               data={chargeStrategy?.strategyValue?.IdleHours ?? {}}
               onChangeStrategy={changeStrategy}
+              onChangeIdleStrategy={generateIdleHoursDetail}
               form={form}
+              idleDetail={idleStrategyDetail}
             />
           </TabPane>
         </Tabs>

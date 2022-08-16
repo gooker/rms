@@ -14,7 +14,8 @@ const BatteryStrategy = (props) => {
       <div className={styles.electricity}>
         <div className={styles.electricityBattery}>
           <Tooltip placement="top" title={electricity.tip}>
-            {electricity.title} <InfoCircleOutlined />
+            <span style={{whiteSpace:'nowrap',wordBreak:'break-all'}}> {electricity.title} </span>
+            <InfoCircleOutlined />
           </Tooltip>
           <Battery value={electricity.value || 0} onChange={electricity.onChange} />
         </div>

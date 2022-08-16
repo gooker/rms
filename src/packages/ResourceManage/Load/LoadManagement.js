@@ -47,12 +47,7 @@ const ContainerManage = () => {
   }, []);
 
   const columns = [
-    { title: <FormattedMessage id="resource.load.id" />, dataIndex: 'loadId', align: 'center' },
-    {
-      title: <FormattedMessage id="app.common.name" />,
-      dataIndex: 'loadSpecification',
-      align: 'center',
-    },
+    { title: <FormattedMessage id="resource.load.code" />, dataIndex: 'loadId', align: 'center' },
     {
       title: <FormattedMessage id="app.common.angle" />,
       dataIndex: 'angle',

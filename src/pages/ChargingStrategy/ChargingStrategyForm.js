@@ -7,9 +7,9 @@ import BatterStrategy from './BatterStrategy/BatterStrategy';
 import IdleChargingStrategy from './IdleChargingStrategy';
 import styles from './chargingStrategy.module.less';
 
-const PanelHeight = 300; // 表单行的高度
+const PanelHeight = 290; // 表单行的高度
 const ChargingStrategyForm = (props) => {
-  const { type, data, onChangeStrategy, form } = props;
+  const { type, data, onChangeStrategy, form, onChangeIdleStrategy, idleDetail } = props;
 
   function handleChanged(value, key) {
     let newData = { ...data };
@@ -23,7 +23,13 @@ const ChargingStrategyForm = (props) => {
       <div>
         {/* 标准 */}
         <div className={styles.content}>
-          {type === 'IdleHours' && <IdleChargingStrategy form={form} />}
+          {type === 'IdleHours' && (
+            <IdleChargingStrategy
+              form={form}
+              onChangeIdleStrategy={onChangeIdleStrategy}
+              idleDetail={idleDetail}
+            />
+          )}
 
           {/* 第一行 */}
           <Card title={formatMessage({ id: 'app.chargeStrategy.normalCharge' })} bordered={false}>
