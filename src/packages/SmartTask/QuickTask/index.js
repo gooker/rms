@@ -14,7 +14,7 @@ import CloneQuickTask from './component/CloneQuickTask';
 import ExecuteQuickTaskModal from './component/ExecuteQuickTaskModal';
 import VariableModificationModal from '@/components/VariableModification/VariableModificationModal';
 import QuickTaskTool from './component/QuickTaskTool';
-import { QuickTaskSource, QuickTaskTableView } from './quickTaskConstant';
+import { QuickTaskSource } from './quickTaskConstant';
 import { checkQuickVariable, convertQuickTaskVarToRequestStruct } from './quickTaskUtil';
 
 const Colors = Dictionary().color;
@@ -33,7 +33,6 @@ const QuickTask = (props) => {
 
   const [dataSource, setDataSource] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [cloneVisible, setCloneVisible] = useState(false);
   const [copyItem, setCopyItem] = useState(null);
 
   useEffect(() => {
@@ -44,11 +43,10 @@ const QuickTask = (props) => {
   }, []);
 
   useEffect(() => {
-    if (viewType === QuickTaskTableView.all) {
-      setDataSource(quickTasks);
-    }
-    if (viewType === QuickTaskTableView.me) {
-      setDataSource(quickTasks.filter((item) => item.source === QuickTaskSource.own));
+    if (viewType === QuickTaskSource.own) {
+      setDataSource(quickTasks[QuickTaskSource.own] ?? []);
+    } else {
+      setDataSource(quickTasks[QuickTaskSource.shared] ?? []);
     }
   }, [viewType, quickTasks]);
 
@@ -106,7 +104,7 @@ const QuickTask = (props) => {
       align: 'center',
       render: (text, record) => (
         <Switch
-          disabled={record.source !== QuickTaskSource.own}
+          disabled={viewType === QuickTaskSource.shared}
           checked={text}
           onClick={() => share(record, text)}
         />
@@ -117,7 +115,7 @@ const QuickTask = (props) => {
       align: 'center',
       render: (text, record) => (
         <>
-          {record.source === QuickTaskSource.own && (
+          {viewType === QuickTaskSource.own && (
             <>
               <Typography.Link
                 onClick={() => {
@@ -143,7 +141,7 @@ const QuickTask = (props) => {
               setCopyItem(record);
             }}
           >
-            <FormattedMessage id='app.button.copy' />
+            <FormattedMessage id='app.button.clone' />
           </Typography.Link>
           <Divider type={'vertical'} />
           <Typography.Link

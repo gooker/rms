@@ -1,17 +1,5 @@
 import React, { memo, useState } from 'react';
-import {
-  Form,
-  Checkbox,
-  Input,
-  Select,
-  Modal,
-  Radio,
-  Row,
-  Col,
-  InputNumber,
-  Button,
-  message,
-} from 'antd';
+import { Button, Checkbox, Col, Form, Input, InputNumber, message, Modal, Radio, Row, Select } from 'antd';
 import { flatten } from 'lodash';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
@@ -153,7 +141,7 @@ const SimulationTaskComponent = (props) => {
                     <Col span={22}>
                       <Form.Item
                         {...restField}
-                        label={formatMessage({ id: 'app.task.type' })}
+                        label={formatMessage({ id: 'app.task.name' })}
                         initialValue={'STATION_TO_POD'}
                         name={[name, 'toteTaskType']}
                         fieldKey={[fieldKey, 'toteTaskType']}

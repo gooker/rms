@@ -59,7 +59,7 @@ const CopyCustomTaskModal = (props) => {
   return (
     <CommonModal
       visible={visible}
-      title={`${formatMessage('app.button.copy')}${formatMessage('menu.customTask')}`}
+      title={`${formatMessage('app.button.clone')}${formatMessage('menu.customTask')}`}
       onCancel={closeModal}
       onOk={onOk}
     >

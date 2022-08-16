@@ -2,6 +2,7 @@ export default {
   // 任务属性
   'app.task': '任务',
   'app.task.id': '任务ID',
+  'app.task.code': '任务编码',
   'app.task.customId': '客户任务ID',
   'app.task.poolId': '料箱池任务ID',
   'app.task.action': '任务细节',
@@ -13,7 +14,7 @@ export default {
   'app.task.detail': '任务详情',
   'app.task.info': '任务数据',
   'app.task.record': '任务记录',
-  'app.task.type': '任务名称', //任务类型
+  'app.task.name': '任务名称', //任务类型
   'app.task.log': '任务日志',
 
   // 任务状态
@@ -82,7 +83,6 @@ export default {
   'app.taskDetail.chargerId': '充电ID',
   'app.taskDetail.chargingRecord': '充电记录',
   'app.taskDetail.common': '共',
-  'app.taskDetail.createUser': '创建用户',
   'app.taskDetail.endCondition': '结束条件',
   'app.taskDetail.endPower': '结束电量',
   'app.taskDetail.endTime': '结束时间',

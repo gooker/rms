@@ -82,7 +82,7 @@ const HealthCarSearchForm = (props) => {
 
         {type === 'taskload' ? (
           <Col span={12}>
-            <Form.Item name={'taskType'} label={<FormattedMessage id="app.task.type" />}>
+            <Form.Item name={'taskType'} label={<FormattedMessage id='app.task.name' />}>
               <Select allowClear style={{ width: 200 }}>
                 {Object.keys(allTaskTypes).map((type) => (
                   <Select.Option key={type} value={type}>

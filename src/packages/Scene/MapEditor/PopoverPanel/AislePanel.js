@@ -44,7 +44,7 @@ const AislePanel = (props) => {
             return (
               <Tag key={index} color='blue'>
                 {naviSource}
-                <SwapRightOutlined />s
+                <SwapRightOutlined />
                 {naviTarget}
               </Tag>
             );

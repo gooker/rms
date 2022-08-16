@@ -305,7 +305,7 @@ class TaskInformation extends PureComponent {
                 </Col>
                 {/*<Col {...colProps}>*/}
                 {/*  <DescriptionItem*/}
-                {/*    title={<FormattedMessage id="app.task.type" />}*/}
+                {/*    title={<FormattedMessage id="app.task.name" />}*/}
                 {/*    content={*/}
                 {/*      allTaskTypes?.[detailInfo.vehicleTaskType] || detailInfo.vehicleTaskType*/}
                 {/*    }*/}

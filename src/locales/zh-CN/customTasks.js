@@ -180,8 +180,8 @@ export default {
     '分享该快捷任务后, 其他用户会浏览到该记录并且可以进行复制操作, 是否确定分享?',
   'quickTask.share.cancel.message':
     '取消分享该快捷任务后, 其他用户将无法浏览到该条记录, 是否确定取消分享?',
-  'quickTask.viewType.all': '显示所有',
-  'quickTask.viewType.me': '仅显示我的',
+  'quickTask.viewType.own': '我的',
+  'quickTask.viewType.shared': '分享的',
 
   // **********  分组管理 ********** //
   'groupManage.management': '分组配置',

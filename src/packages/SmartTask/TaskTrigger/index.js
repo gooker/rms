@@ -231,7 +231,7 @@ class TaskTrigger extends Component {
     const { pasteFlag, updateTrigger } = this.state;
     let title = null;
     if (pasteFlag) {
-      title = formatMessage({ id: 'app.button.copy' });
+      title = formatMessage({ id: 'app.button.clone' });
     } else {
       if (isNull(updateTrigger)) {
         title = formatMessage({ id: 'app.button.add' });

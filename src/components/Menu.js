@@ -4,7 +4,7 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { connect } from '@/utils/RmsDva';
 import MenuIcon from '@/utils/MenuIcon';
-import { extractOpenKeys, formatMessage, isNull } from '@/utils/util';
+import { extractOpenKeys, formatMessage, getSortedAppList, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import Portal from '@/packages/Portal/components/Portal/Portal';
 import styles from '../layout/homeLayout.module.less';
@@ -30,6 +30,8 @@ const AppMenu = (prop) => {
     if (_selectedKeys.length > 0) {
       const currentApp = pathname.split('/')[1];
       dispatch({ type: 'global/saveCurrentApp', payload: currentApp });
+    } else {
+      getSortedAppList();
     }
     dispatch({ type: 'menu/saveSelectedKeys', payload: _selectedKeys });
   }, []);

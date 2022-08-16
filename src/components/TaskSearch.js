@@ -1,14 +1,12 @@
-import React, { memo, useState } from 'react';
-import { Button, Form, Row } from 'antd';
-import { Col, Select } from 'antd';
-import { formatMessage, generateVehicleTypeOptions } from '@/utils/util';
+import React, { memo } from 'react';
+import { Button, Col, Form, Input, Row, Select } from 'antd';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
+import { connect } from '@/utils/RmsDva';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const TaskSearch = (props) => {
-  const { vehicles = [], form, gutter, span, onSearch, children } = props;
-
-  const [typeVehicles, setTypeVehicles] = useState([]);
+  const { allTaskTypes, form, span = 8, onSearch, children } = props;
 
   function search() {
     form.validateFields().then((values) => {
@@ -16,40 +14,55 @@ const TaskSearch = (props) => {
     });
   }
 
-  function getTypeVehicles(type) {
-    const _typeVehicles = vehicles.filter((item) => item.vehicleType === type);
-    setTypeVehicles(_typeVehicles);
+  function renderVehicleTaskTypeOption() {
+    return Object.keys(allTaskTypes).map((type) => (
+      <Select.Option key={type} value={type}>
+        {allTaskTypes[type]}
+      </Select.Option>
+    ));
   }
 
   return (
     <Form form={form}>
-      <Row gutter={gutter}>
+      <Row gutter={24}>
         <Col span={span}>
-          <Form.Item
-            name={'vehicleType'}
-            label={formatMessage({ id: 'app.vehicleType' })}
-            getValueFromEvent={(value) => {
-              getTypeVehicles(value);
-              return value;
-            }}
-          >
-            <Select allowClear>{generateVehicleTypeOptions(vehicles)}</Select>
+          <Form.Item name={'taskId'} label={formatMessage({ id: 'app.task.id' })}>
+            <Input allowClear />
           </Form.Item>
         </Col>
+
         <Col span={span}>
-          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'vehicle.id' })}>
-            <Select allowClear mode={'tags'}>
-              {typeVehicles.map(({ vehicleId }) => (
-                <Select.Option key={vehicleId} value={vehicleId}>
-                  {vehicleId}
-                </Select.Option>
-              ))}
+          <Form.Item name={'taskStatus'} label={formatMessage({ id: 'app.task.state' })}>
+            <Select allowClear>
+              <Select.Option value={'New'}>
+                <FormattedMessage id={'app.task.state.New'} />
+              </Select.Option>
+              <Select.Option value={'Executing'}>
+                <FormattedMessage id={'app.task.state.Executing'} />
+              </Select.Option>
+              <Select.Option value={'Wait'}>
+                <FormattedMessage id={'app.task.state.Wait'} />
+              </Select.Option>
+            </Select>
+          </Form.Item>
+        </Col>
+
+        <Col span={span}>
+          <Form.Item name={'taskName'} label={formatMessage({ id: 'app.task.name' })}>
+            <Select
+              allowClear
+              showSearch
+              optionFilterProp='children'
+              filterOption={(input, option) =>
+                option.children.toLowerCase().includes(input.toLowerCase())
+              }
+            >
+              {renderVehicleTaskTypeOption()}
             </Select>
           </Form.Item>
         </Col>
 
         {/* 额外的字段 */}
-
         {React.isValidElement(children) ? (
           <Col span={span}>{children}</Col>
         ) : (
@@ -78,4 +91,6 @@ const TaskSearch = (props) => {
     </Form>
   );
 };
-export default memo(TaskSearch);
+export default connect(({ global }) => ({
+  allTaskTypes: global.allTaskTypes,
+}))(memo(TaskSearch));

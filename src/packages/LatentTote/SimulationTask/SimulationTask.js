@@ -365,7 +365,7 @@ const SimulationTask = (props) => {
       },
     },
     {
-      title: <FormattedMessage id="app.task.type" />,
+      title: <FormattedMessage id='app.task.name' />,
       dataIndex: 'toteTaskType',
       render: (text) => {
         if (isStrictNull(text)) return '-';

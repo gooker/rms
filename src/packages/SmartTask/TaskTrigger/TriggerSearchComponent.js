@@ -21,22 +21,22 @@ const TriggerSearchComponent = (props) => {
     <div className={commonStyles.tableToolLeft}>
       <Row justify="space-between">
         <Col>
-          <Button type="primary" onClick={onAdd}>
-            <PlusOutlined /> <FormattedMessage id="app.button.add" />
+          <Button type='primary' onClick={onAdd}>
+            <PlusOutlined /> <FormattedMessage id='app.button.add' />
           </Button>
           <Button
             style={{ margin: '0 15px' }}
             disabled={checkedList?.length !== 1}
             onClick={onPaste}
           >
-            <BgColorsOutlined /> <FormattedMessage id="app.button.copy" />
+            <BgColorsOutlined /> <FormattedMessage id='app.button.clone' />
           </Button>
           <Button
             onClick={() => {
               onRefresh();
             }}
           >
-            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
+            <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
           </Button>
         </Col>
         <Col>

@@ -58,7 +58,7 @@ const errorHandler = (error) => {
     if (netStateMessage) {
       if (status === 401) {
         setTimeout(() => {
-          window.RMS('/login');
+          window.RMS.push('/login');
         }, 1500);
       }
       return { code: '-1', data: null, message: netStateMessage };

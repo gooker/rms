@@ -93,7 +93,7 @@ export default {
       }
     },
 
-    * logout({ payload }, { call }) {
+    * logout({ payload }, { call, put }) {
       const { keepDev } = payload;
       const token = window.sessionStorage.getItem('token');
       const response = yield call(fetchLogout, { token });
@@ -103,6 +103,20 @@ export default {
         if (keepDev) {
           window.localStorage.setItem('dev', 'true');
         }
+
+        // 清空一些数据
+        yield put({
+          type: 'global/updateStateInBatch',
+          payload: {
+            grantedAPP: [],
+            currentApp: null,
+            menuCollapsed: false,
+            isFullscreen: false,
+            isInnerFullscreen: false,
+            textureLoaded: false,
+            editI18N: false,
+          },
+        });
       }
       window.RMS.push('/login');
     },

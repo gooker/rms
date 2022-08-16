@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
-import { Checkbox, Tooltip, DatePicker, Select } from 'antd';
+import { Checkbox, DatePicker, Select, Tooltip } from 'antd';
 import { connect } from '@/utils/RmsDva';
 
 import { formatMessage } from '@/utils/util';
@@ -68,7 +68,7 @@ class KpiSearchConditions extends PureComponent {
         )}
         <Select
           value={taskType}
-          placeholder={formatMessage({ id: 'app.task.type' })}
+          placeholder={formatMessage({ id: 'app.task.name' })}
           defaultValue={'ALL'}
           defaultActiveFirstOption
           style={{ width: '125px' }}

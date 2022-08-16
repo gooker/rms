@@ -42,7 +42,7 @@ const CloneQuickTask = (props) => {
 
   return (
     <CommonModal
-      title={`${formatMessage('app.button.copy')}${formatMessage('menu.quickTask')}`}
+      title={`${formatMessage('app.button.clone')}${formatMessage('menu.quickTask')}`}
       visible={visible}
       onCancel={closeModal}
       onOk={submit}

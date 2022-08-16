@@ -9,7 +9,7 @@ import { deleteQuickTask } from '@/services/smartTaskService';
 import GroupManagementModal from './QuickTaskGroupModal';
 import QuickTaskFormModal from './QuickTaskFormModal';
 import commonStyle from '@/common.module.less';
-import { QuickTaskTableView } from '@/packages/SmartTask/QuickTask/quickTaskConstant';
+import { QuickTaskSource } from '@/packages/SmartTask/QuickTask/quickTaskConstant';
 import { fetchCustomTaskList } from '@/services/commonService';
 
 const QuickTaskTool = (props) => {
@@ -75,11 +75,11 @@ const QuickTaskTool = (props) => {
             dispatch({ type: 'quickTask/updateViewType', payload: target.value });
           }}
         >
-          <Radio.Button value={QuickTaskTableView.all}>
-            <FormattedMessage id={'quickTask.viewType.all'} />
+          <Radio.Button value={QuickTaskSource.own}>
+            <FormattedMessage id={'quickTask.viewType.own'} />
           </Radio.Button>
-          <Radio.Button value={QuickTaskTableView.me}>
-            <FormattedMessage id={'quickTask.viewType.me'} />
+          <Radio.Button value={QuickTaskSource.shared}>
+            <FormattedMessage id={'quickTask.viewType.shared'} />
           </Radio.Button>
         </Radio.Group>
       </div>

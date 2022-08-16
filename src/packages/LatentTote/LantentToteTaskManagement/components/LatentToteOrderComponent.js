@@ -68,7 +68,7 @@ class LatentToteOrderComponent extends Component {
       },
     },
     {
-      title: <FormattedMessage id="app.task.type" />,
+      title: <FormattedMessage id='app.task.name' />,
       dataIndex: 'toteHandleType',
       render: (text) => {
         if (isStrictNull(text)) return '-';

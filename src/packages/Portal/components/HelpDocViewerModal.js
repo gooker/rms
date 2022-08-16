@@ -76,7 +76,7 @@ const HelpDocViewerModal = (props) => {
         footer={null}
       >
         <div className={style.helpDocContainer}>
-          <div className={styles.menu} style={{ paddingTop: 8 }}>
+          <div className={styles.menu} style={{ paddingTop: 8, height: 'auto' }}>
             <HelpDocPortal />
             <div style={{ width: menuCollapsed ? 50 : 200 }}>
               <HelpDocMenu currentPage={currentPage} />
