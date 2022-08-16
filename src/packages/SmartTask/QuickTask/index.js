@@ -34,6 +34,7 @@ const QuickTask = (props) => {
   const [dataSource, setDataSource] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [cloneVisible, setCloneVisible] = useState(false);
+  const [copyItem, setCopyItem] = useState(null);
 
   useEffect(() => {
     dispatch({ type: 'quickTask/initQuickTaskPage' });
@@ -60,7 +61,7 @@ const QuickTask = (props) => {
         if (isStrictNull(text)) {
           return (
             <span style={{ color: Colors.red }}>
-              <FormattedMessage id="quickTask.group.noExist" />
+              <FormattedMessage id='quickTask.group.noExist' />
             </span>
           );
         }
@@ -139,7 +140,7 @@ const QuickTask = (props) => {
 
           <Typography.Link
             onClick={() => {
-              copy(record);
+              setCopyItem(record);
             }}
           >
             <FormattedMessage id='app.button.copy' />
@@ -159,11 +160,6 @@ const QuickTask = (props) => {
 
   function onSelectChange(newSelectedRowKeys) {
     setSelectedRowKeys(newSelectedRowKeys);
-  }
-
-  function copy(record) {
-    dispatch({ type: 'quickTask/updateEditing', payload: record });
-    setCloneVisible(true);
   }
 
   function edit(record) {
@@ -334,9 +330,9 @@ const QuickTask = (props) => {
 
       {/* 克隆快捷任务 */}
       <CloneQuickTask
-        visible={cloneVisible}
+        copy={copyItem}
         onCancel={() => {
-          setCloneVisible(false);
+          setCopyItem(null);
         }}
       />
     </>

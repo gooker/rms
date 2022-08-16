@@ -2,12 +2,14 @@ import React, { memo } from 'react';
 import { Form, Input, Select } from 'antd';
 import CommonModal from '@/components/CommonModal';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import { saveQuickTask } from '@/services/smartTaskService';
 
 const CloneQuickTask = (props) => {
-  const { dispatch, visible, onCancel, editing, quickTaskGroups } = props;
+  const { dispatch, copy, onCancel, quickTaskGroups } = props;
   const [formRef] = Form.useForm();
+
+  const visible = !isNull(copy);
 
   function submit() {
     formRef
@@ -15,10 +17,10 @@ const CloneQuickTask = (props) => {
       .then((values) => {
         const requestBody = {
           ...values,
-          desc: editing.desc,
-          taskCode: editing.taskCode,
-          variable: editing.variable,
-          isNeedConfirm: editing.isNeedConfirm,
+          desc: copy.desc,
+          taskCode: copy.taskCode,
+          variable: copy.variable,
+          isNeedConfirm: copy.isNeedConfirm,
           isShared: false,
         };
         saveQuickTask(requestBody).then((response) => {
@@ -67,6 +69,5 @@ const CloneQuickTask = (props) => {
   );
 };
 export default connect(({ quickTask }) => ({
-  editing: quickTask.editing,
   quickTaskGroups: quickTask.quickTaskGroups,
 }))(memo(CloneQuickTask));

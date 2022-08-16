@@ -88,21 +88,21 @@ const VehicleElementProp = (props) => {
 
   // 获取运行时信息
   // async function showRunInfo() {
-  // const response = await fetchVehicleRunningInfo({ vehicleId: vehicleId });
-  // if (!dealResponse(response)) {
-  //   const newInfoList = [];
-  //   Object.values(response).forEach(
-  //     ({ vehicleRunningStatus, vehicleInfoTypeI18n, detailFormat }) => {
-  //       newInfoList.push({
-  //         type: vehicleRunningStatus,
-  //         title: vehicleInfoTypeI18n,
-  //         message: detailFormat,
-  //       });
-  //     },
-  //   );
-  //   dispatch({ type: 'monitor/saveVehicleRunningInfoList', payload: newInfoList });
-  // }
-  // dispatch({ type: 'monitor/saveCategoryModal', payload: 'VehicleRunInfo' });
+  //   const response = await fetchVehicleRunningInfo({ vehicleId: vehicle.vehicleId });
+  //   if (!dealResponse(response)) {
+  //     const newInfoList = [];
+  //     Object.values(response).forEach(
+  //       ({ vehicleRunningStatus, vehicleInfoTypeI18n, detailFormat }) => {
+  //         newInfoList.push({
+  //           type: vehicleRunningStatus,
+  //           title: vehicleInfoTypeI18n,
+  //           message: detailFormat,
+  //         });
+  //       },
+  //     );
+  //     dispatch({ type: 'monitor/saveVehicleRunningInfoList', payload: newInfoList });
+  //   }
+  //   dispatch({ type: 'monitor/saveCategoryModal', payload: 'VehicleRunInfo' });
   // }
 
   function goCharge() {
@@ -130,7 +130,7 @@ const VehicleElementProp = (props) => {
   // 维护小车
   async function maintainVehicle() {
     const params = {
-      disabled: !maintain,
+      disable: !maintain,
       vehicleInfos: [
         {
           adapterType: vehicle?.vehicle?.adapterType,
@@ -147,7 +147,7 @@ const VehicleElementProp = (props) => {
   // 切换小车手动模式
   async function switchManualMode() {
     const params = {
-      disabled: !manualMode,
+      disable: !manualMode,
       vehicleInfos: [
         {
           adapterType: vehicle?.vehicle?.adapterType,

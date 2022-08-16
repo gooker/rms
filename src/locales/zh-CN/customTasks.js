@@ -36,6 +36,7 @@ export default {
   'customTask.carryLoad.fetch': '取货',
   'customTask.carryLoad.put': '送货',
   'customTask.carryLoad.check': '检测货物',
+  'customTask.runToSafetyArea': '去安全区',
 
   // 表单
   'customTasks.example.field': '字段',
