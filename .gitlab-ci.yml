@@ -68,7 +68,7 @@ nt16-dev-staging:
 nt17-dev-staging:
   stage: build
   tags:
-    - prod_group_nt_node7
+    - irms_group_nt_node7
   script:
     - node -v
     - npm -v
