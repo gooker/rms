@@ -8,22 +8,6 @@ export async function fetchTaskTypes() {
   });
 }
 
-// 批量更新排程池任务优先级: {taskIdList:[], value: int}
-export function updateTaskPriority(param) {
-  return request(`/${NameSpace.Platform}/task/batchUpdatePipeLineTaskPriority`, {
-    method: 'POST',
-    data: param,
-  });
-}
-
-// 取消任务: {taskIdList:[], value: int}
-export function cancelTask(param) {
-  return request(`/${NameSpace.Platform}/platform/task/cancelTask`, {
-    method: 'POST',
-    data: param,
-  });
-}
-
 // 查询任务详情（如果任务是充电任务，将充电记录也查出来封装返回出去）
 export function fetchTaskDetail(taskId) {
   return request(`/${NameSpace.Platform}/task/vehicleTaskDetail`, {
@@ -87,6 +71,22 @@ export function fetchExecutingTasks() {
 // 分页查询任务记录
 export function fetchTaskRecord(param) {
   return request(`/${NameSpace.Platform}/task/vehicleTaskInfo`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 取消任务: {taskIdList:[]}
+export function cancelTask(param) {
+  return request(`/${NameSpace.Platform}/platform/task/cancelTask`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 批量更新排程池任务优先级: {taskIdList:[], value: int}
+export function updateTaskPriority(param) {
+  return request(`/${NameSpace.Platform}/task/batchUpdatePipeLineTaskPriority`, {
     method: 'POST',
     data: param,
   });
