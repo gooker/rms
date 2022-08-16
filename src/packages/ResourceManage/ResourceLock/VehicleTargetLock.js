@@ -1,42 +1,36 @@
 import React, { memo, useEffect, useState } from 'react';
+import { Tooltip } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { Button, Col, Row, Tooltip } from 'antd';
-import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import RmsConfirm from '@/components/RmsConfirm';
+import { dealResponse, isNull, isStrictNull } from '@/utils/util';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import SearchTargetLock from './components/SearchTargetLock';
+import VehicleTargetSearch from './components/VehicleTargetLockSearch';
 import { fetchVehicleTargetLockList } from '@/services/commonService';
-import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import commonStyles from '@/common.module.less';
 
 const TaskTargetLock = (props) => {
   const [loading, setLoading] = useState(false);
-  const [targetLockList, setTargetLockList] = useState([]);
-  const [currentTargetLockList, setCurrentTargetLockList] = useState([]);
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [selectedRow, setSelectedRow] = useState([]);
+  const [datasource, setDatasource] = useState([]);
 
   const columns = [
     {
-      title: <FormattedMessage id='app.map.cell' />,
+      title: <FormattedMessage id="app.map.cell" />,
       dataIndex: 'cellId',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.vehicle' />,
-      dataIndex: 'vehicleId',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id='app.common.type' />,
+      title: <FormattedMessage id="app.vehicleType" />,
       dataIndex: 'vehicleType',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.task.id' />,
+      title: <FormattedMessage id="vehicle.code" />,
+      dataIndex: 'vehicleId',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id="app.task.id" />,
       dataIndex: 'taskId',
       align: 'center',
       render: (text, record) => {
@@ -62,40 +56,31 @@ const TaskTargetLock = (props) => {
     freshData();
   }, []);
 
-  async function freshData() {
+  async function freshData(formValue = {}) {
     setLoading(true);
     const response = await fetchVehicleTargetLockList();
     if (!dealResponse(response)) {
-      setTargetLockList(response);
-      filterData(response);
+      filterData(response, formValue);
     }
     setLoading(false);
   }
 
   function filterData(list, formValues) {
-    let result = [...list];
-    if (isNull(formValues)) {
-      setCurrentTargetLockList(result);
-      return;
+    let dataSource = [...list];
+    const { taskId, cellId, vehicleType, vehicleCode } = formValues;
+    if (!isStrictNull(taskId)) {
+      dataSource = dataSource.filter((item) => item.taskId === taskId);
     }
-    const { vehicleId, vehicleType, taskId } = formValues;
-    if (!isStrictNull(vehicleId)) {
-      result = result.filter((item) => {
-        return item.vehicleId === vehicleId;
-      });
+    if (!isStrictNull(cellId)) {
+      dataSource = dataSource.filter((item) => cellId === item.cellId);
     }
     if (!isStrictNull(vehicleType)) {
-      const currentVehicleType = [];
-      vehicleType?.map((value) => {
-        currentVehicleType.push(value.split('@')[1]);
-      });
-
-      result = result.filter((item) => currentVehicleType.includes(item.vehicleType));
+      dataSource = dataSource.filter((item) => item.vehicleType === vehicleType);
     }
-    if (!isStrictNull(taskId)) {
-      result = result.filter((item) => item.taskId === taskId);
+    if (Array.isArray(vehicleCode)) {
+      dataSource = dataSource.filter((item) => vehicleCode.includes(item.vehicleId));
     }
-    setCurrentTargetLockList(result);
+    setDatasource(dataSource);
   }
 
   function checkTaskDetail(taskId, vehicleType) {
@@ -106,52 +91,14 @@ const TaskTargetLock = (props) => {
     });
   }
 
-  function onSelectChange(selectedKeys, selectedRow) {
-    setSelectedRowKeys(selectedKeys);
-    setSelectedRow(selectedRow);
-  }
-
-  async function deleteTargetLock() {
-    RmsConfirm({
-      content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
-      onOk: async () => {
-        // const response = await batchDeleteTaskTargetLock(selectedRow);
-        // if (!dealResponse(response)) {
-        //   message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-        //   freshData();
-        // } else {
-        //   message.success(formatMessage({ id: 'app.tip.operateFailed' }));
-        // }
-      },
-    });
-  }
-
   return (
     <TablePageWrapper>
-      <div>
-        <SearchTargetLock search={filterData} data={targetLockList} />
-        <Row>
-          <Col flex='auto' className={commonStyles.tableToolLeft}>
-            <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteTargetLock}>
-              <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
-            </Button>
-            <Button onClick={freshData}>
-              <ReloadOutlined /> <FormattedMessage id='app.button.refresh' />
-            </Button>
-          </Col>
-        </Row>
-      </div>
+      <VehicleTargetSearch onSearch={freshData} />
       <TableWithPages
-        bordered
-        scroll={{ x: 'max-content' }}
         loading={loading}
         columns={columns}
-        dataSource={currentTargetLockList}
-        rowKey={(record) => record.vehicleUniqueId}
-        rowSelection={{
-          selectedRowKeys,
-          onChange: onSelectChange,
-        }}
+        dataSource={datasource}
+        rowKey={({ vehicleUniqueId }) => vehicleUniqueId}
       />
     </TablePageWrapper>
   );

@@ -6,7 +6,7 @@ import { batchDeleteVehicleTaskLock, fetchVehicleTaskLockList } from '@/services
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
-import SearchTargetLock from '../ResourceLock/components/SearchTargetLock';
+import SearchTargetLock from './components/TargetLockSearch';
 import commonStyles from '@/common.module.less';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';

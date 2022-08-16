@@ -416,9 +416,10 @@ export async function fetchChargerLockList(param) {
 }
 
 // 充电桩解锁
-export async function unlockCharger() {
+export async function fetchUnlockCharger(param) {
   return request(`/${NameSpace.Platform}/resource/lock/unlockCharger`, {
-    method: 'GET',
+    method: 'POST',
+    data: param,
   });
 }
 
