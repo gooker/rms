@@ -192,7 +192,7 @@ export default class KpiSavedSeedModal extends Component {
       },
     },
     {
-      title: formatMessage({ id: 'app.task.type' }),
+      title: formatMessage({ id: 'app.task.name' }),
       dataIndex: 'kpiSearchParam.taskType',
       align: 'center',
       width: 200,

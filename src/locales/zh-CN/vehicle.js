@@ -1,5 +1,6 @@
 export default {
   'app.vehicle': '车辆',
+  'app.vehicleType': '车辆类型',
   'app.vehicle.found': '发现',
   'app.vehicleState': '车辆状态',
   'app.vehicleGroup': '车辆分组',
@@ -9,14 +10,6 @@ export default {
 
   // 车辆管理
   'vehicle.unregister.confirm': '车辆取消注册后, 车辆将不可用。是否确定继续操作?',
-
-  // 车辆类型
-  'app.vehicleType': '车辆类型',
-  'app.vehicleType.detail': '车辆类型详情',
-  'vehicleType.LatentLifting': '潜伏车',
-  'vehicleType.Tote': '料箱车',
-  'vehicleType.ForkLifting': '叉车',
-  'vehicleType.Sorter': '分拣车',
 
   // 小车状态
   'vehicleState.Idle': '空闲',
@@ -29,13 +22,8 @@ export default {
   'vehicleState.Waiting': '等待',
 
   // 小车属性
-  'vehicle.info': '车辆信息',
-  'vehicle.realTime': '车辆实时状态',
-  'vehicle.batteryRealTime': '电池实时状态',
-  'vehicle.workingState': '车辆任务状态',
-  'vehicle.moduleInformation': '车辆模块信息',
   'vehicle.id': '车辆ID',
-  'vehicle.uniqueId': '唯一ID',
+  'vehicle.code': '车辆编码',
   'vehicle.brand': '品牌',
   'vehicle.port': '端口号',
   'vehicle.direction': '小车方向',
@@ -48,6 +36,11 @@ export default {
   'vehicle.vehicleStorageStatue': '车内储位状态',
   'vehicle.subActionState': '分动作状态',
   'vehicle.version': '版本',
+  'vehicle.info': '车辆信息',
+  'vehicle.realTime': '车辆实时状态',
+  'vehicle.batteryRealTime': '电池实时状态',
+  'vehicle.workingState': '车辆任务状态',
+  'vehicle.moduleInformation': '车辆模块信息',
 
   'vehicle.manualMode': '手动状态',
   'vehicle.manualMode.true': '手动',

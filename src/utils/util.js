@@ -52,6 +52,10 @@ export function convertToUserTimezone(value) {
   return date;
 }
 
+export function fastConvertToUserTimezone(text) {
+  return convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss');
+}
+
 export function isEmptyPlainObject(obj) {
   return isPlainObject(obj) && isEmpty(obj);
 }

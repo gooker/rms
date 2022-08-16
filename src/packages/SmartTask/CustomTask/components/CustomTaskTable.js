@@ -87,7 +87,7 @@ const CustomTaskTable = (props) => {
               copy(record);
             }}
           >
-            <FormattedMessage id={'app.button.copy'} />
+            <FormattedMessage id={'app.button.clone'} />
           </Typography.Link>
 
           {/* 系统默认不支持编辑操作 */}
@@ -255,7 +255,7 @@ const CustomTaskTable = (props) => {
             <FormattedMessage id="app.button.turnOff" />
           </Button>,
           <Button key="copy" type="primary" onClick={copyTaskBody}>
-            <FormattedMessage id="app.button.copy" />
+            <FormattedMessage id='app.button.clone' />
           </Button>,
         ]}
       >

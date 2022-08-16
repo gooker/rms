@@ -1,14 +1,26 @@
-import React, { memo } from 'react';
+import React, { memo, useRef, useState } from 'react';
+import { Spin } from 'antd';
 import classnames from 'classnames';
-import pdaStyle from './pda.module.less';
 import commonStyle from '@/common.module.less';
+import pdaStyle from './pda.module.less';
 
 const PDA = () => {
   const origin = window.isProductionEnv ? window.location.origin : window.nameSpacesInfo.platform;
   const url = `${origin}/pda?timestamp=${new Date().getTime()}`;
 
+  const [loaded, setLoaded] = useState(false);
+  const iframe = useRef(null);
+
+  function onload() {
+    setLoaded(true);
+    console.log('onload');
+  }
+
   return (
-    <div className={classnames(commonStyle.commonPageStyle, commonStyle.flexCenter)}>
+    <div
+      className={classnames(commonStyle.commonPageStyle, commonStyle.flexCenter)}
+      style={{ background: '#7f7f7f' }}
+    >
       <div className={pdaStyle.pda}>
         <div className={pdaStyle.statusBar}>
           <div>
@@ -21,7 +33,21 @@ const PDA = () => {
           </div>
         </div>
         <div className={pdaStyle.pdaBody}>
-          <iframe seamless title={'pda'} src={url} width={'100%'} height={'100%'} frameBorder={0} />
+          {!loaded && (
+            <div className={pdaStyle.loading}>
+              <Spin size='large' />
+            </div>
+          )}
+          <iframe
+            seamless
+            ref={iframe}
+            title={'pda'}
+            src={url}
+            width={'100%'}
+            height={'100%'}
+            frameBorder={0}
+            onLoad={onload}
+          />
         </div>
         <div className={pdaStyle.pdaFooter}>
           <div className={pdaStyle.back} />

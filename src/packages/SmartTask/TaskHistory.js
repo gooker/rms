@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Badge, Button, Divider, Table, Tooltip } from 'antd';
+import { Badge, Button, Divider, Tooltip } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { TaskStatusColor } from '@/config/consts';
 import { fetchTaskRecord } from '@/services/taskService';
-import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull, renderLabel } from '@/utils/util';
+import { dealResponse, fastConvertToUserTimezone, formatMessage, isStrictNull, renderLabel } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TaskSearch from './components/TaskManagementSearch';
@@ -11,6 +11,7 @@ import styles from './task.module.less';
 import commonStyles from '@/common.module.less';
 import RmsConfirm from '@/components/RmsConfirm';
 import { fetchCancelTask } from '@/services/commonService';
+import TableWithPages from '@/components/TableWithPages';
 
 @connect(({ global }) => ({
   allTaskTypes: global.allTaskTypes,
@@ -32,7 +33,7 @@ class TaskHistory extends Component {
 
   columns = [
     {
-      title: formatMessage({ id: 'app.task.id' }),
+      title: <FormattedMessage id='app.task.id' />,
       dataIndex: 'taskId',
       align: 'center',
       render: (text) => {
@@ -51,69 +52,107 @@ class TaskHistory extends Component {
       },
     },
     {
-      title: formatMessage({ id: 'vehicle.id' }),
-      dataIndex: 'currentVehicleId',
+      title: <FormattedMessage id='app.taskDetail.externalCode' />,
+      // dataIndex: 'externalCode',
       align: 'center',
-      render: (text, record) => {
-        if (!isStrictNull(text) && !isStrictNull(record.vehicleType)) {
-          return `${record.vehicleType}: ${text}`;
-        }
-      },
     },
     {
-      title: <FormattedMessage id='app.task.type' />,
+      title: <FormattedMessage id='app.task.name' />,
       dataIndex: 'customName',
       align: 'center',
       render: renderLabel,
     },
     {
-      title: formatMessage({ id: 'app.task.state' }),
+      title: <FormattedMessage id='app.task.code' />,
+      dataIndex: 'customCode',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='app.vehicleType' />,
+      dataIndex: 'vehicleType',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='vehicle.code' />,
+      dataIndex: 'currentVehicleId',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='resource.load.type' />,
+      // dataIndex: 'vehicleType',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='resource.load.code' />,
+      // dataIndex: 'appointedVehicleId',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='app.task.state' />,
       dataIndex: 'taskStatus',
       align: 'center',
       render: (text) => {
-        if (text != null) {
+        if (!isStrictNull(text)) {
           return (
             <Badge
               status={TaskStatusColor[text]}
               text={formatMessage({ id: `app.task.state.${text}` })}
             />
           );
-        } else {
-          return '--';
         }
       },
     },
     {
-      title: formatMessage({ id: 'app.common.targetCell' }),
-      dataIndex: 'targetCellId',
+      title: <FormattedMessage id='app.common.targetCell' />,
+      // dataIndex: 'targetCellId',
       align: 'center',
+      // render: (text, record) => {
+      //   if (record.isLockTargetCell == null) {
+      //     return <span>{text}</span>;
+      //   }
+      //   if (record.isLockTargetCell) {
+      //     return <span style={{ color: green }}>{text}</span>;
+      //   } else {
+      //     return <span style={{ color: red }}>{text}</span>;
+      //   }
+      // },
     },
     {
-      title: formatMessage({ id: 'app.common.creator' }),
+      title: <FormattedMessage id='app.taskQueue.reason' />,
+      dataIndex: 'prepareFailedReason',
+      align: 'center',
+    },
+  ];
+
+  expandColumns = [
+    {
+      title: <FormattedMessage id='app.common.creator' />,
       dataIndex: 'createdByUser',
       align: 'center',
     },
-
     {
-      title: formatMessage({ id: 'app.common.creationTime' }),
+      title: <FormattedMessage id='app.common.creationTime' />,
       dataIndex: 'createTime',
       align: 'center',
       render: (text) => {
-        if (!text) {
-          return '--';
+        if (!isStrictNull(text)) {
+          return fastConvertToUserTimezone(text);
         }
-        return <span>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
       },
     },
     {
-      title: formatMessage({ id: 'app.common.updateTime' }),
+      title: <FormattedMessage id='app.common.updater' />,
+      dataIndex: 'updatedByUser',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='app.common.updateTime' />,
       dataIndex: 'updateTime',
       align: 'center',
       render: (text) => {
-        if (!text) {
-          return '--';
+        if (!isStrictNull(text)) {
+          return fastConvertToUserTimezone(text);
         }
-        return <span>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
       },
     },
   ];
@@ -200,11 +239,12 @@ class TaskHistory extends Component {
           >
             <FormattedMessage id={'app.taskDetail.cancelTask'} />
           </Button>
-          <Table
+          <TableWithPages
             loading={loading}
             rowKey={({ taskId }) => taskId}
             dataSource={dataSource}
             columns={this.columns}
+            expandColumns={this.expandColumns}
             rowSelection={{
               selectedRowKeys,
               onChange(selectedRowKeys) {

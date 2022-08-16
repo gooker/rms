@@ -31,7 +31,7 @@ export async function fetchGlobalExtraData() {
       message.error(
         `${formatMessage(
           { id: 'app.message.fetchFailTemplate' },
-          { type: formatMessage({ id: 'app.task.type' }) },
+          { type: formatMessage({ id: 'app.task.name' }) },
         )}`,
       );
     }

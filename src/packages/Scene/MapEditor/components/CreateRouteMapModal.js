@@ -1,5 +1,5 @@
 import React, { memo, useEffect } from 'react';
-import { Button, Col, Form, Input, Select, Modal, Popconfirm, Row } from 'antd';
+import { Button, Col, Form, Input, Modal, Popconfirm, Row, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getFormLayout, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -150,8 +150,8 @@ const CreateRouteMapModal = (props) => {
               <Input style={{ width: 300 }} />
             </Form.Item>
 
-            {/* 复制 */}
-            <Form.Item name={'copy'} label={formatMessage({ id: 'app.button.copy' })}>
+            {/* 克隆 */}
+            <Form.Item name={'copy'} label={formatMessage({ id: 'app.button.clone' })}>
               <Select allowClear style={{ width: 300 }}>
                 {selectOptions}
               </Select>

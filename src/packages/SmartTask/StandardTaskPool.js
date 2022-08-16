@@ -2,9 +2,8 @@ import React from 'react';
 import { Badge, Button, Divider, message, Row, Tooltip } from 'antd';
 import { DeleteOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import Dictionary from '@/utils/Dictionary';
-import { TaskStatusColor, VehicleStateColor } from '@/config/consts';
-import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull, renderLabel } from '@/utils/util';
+import { TaskStatusColor } from '@/config/consts';
+import { dealResponse, fastConvertToUserTimezone, formatMessage, isStrictNull, renderLabel } from '@/utils/util';
 import { fetchExecutingTasks, fetchPipeLineTasks } from '@/services/taskService';
 import { deleteTaskQueueItems, fetchUpdateTaskPriority, fetchVehicleStatusStatistics } from '@/services/commonService';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -13,14 +12,10 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import FormattedMessage from '@/components/FormattedMessage';
 import UpdateTaskPriority from './components/UpdateTaskPriority';
 import StandardTaskPoolSearch from './components/StandardTaskPoolSearch';
-import taskQueueStyles from './task.module.less';
 import commonStyles from '@/common.module.less';
+import VehicleStatusOverview from '@/packages/SmartTask/components/UpdateTaskPriority/VehicleStatusOverview';
 
-const { red, green } = Dictionary('color');
-
-@connect(({ global }) => ({
-  allTaskTypes: global.allTaskTypes,
-}))
+@connect()
 class StandardTaskPool extends React.Component {
   state = {
     dataSource: [],
@@ -55,14 +50,19 @@ class StandardTaskPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id='app.task.type' />,
+      title: <FormattedMessage id='app.taskDetail.externalCode' />,
+      // dataIndex: 'externalCode',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='app.task.name' />,
       dataIndex: 'customName',
       align: 'center',
       render: renderLabel,
     },
     {
-      title: <FormattedMessage id='vehicle.id' />,
-      dataIndex: 'appointedVehicleId',
+      title: <FormattedMessage id='app.task.code' />,
+      dataIndex: 'customCode',
       align: 'center',
     },
     {
@@ -71,23 +71,18 @@ class StandardTaskPool extends React.Component {
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.common.targetCell' />,
-      dataIndex: 'targetCellId',
+      title: <FormattedMessage id='vehicle.code' />,
+      dataIndex: 'currentVehicleId',
       align: 'center',
-      render: (text, record) => {
-        if (record.isLockTargetCell == null) {
-          return <span>{text}</span>;
-        }
-        if (record.isLockTargetCell) {
-          return <span style={{ color: green }}>{text}</span>;
-        } else {
-          return <span style={{ color: red }}>{text}</span>;
-        }
-      },
     },
     {
-      title: <FormattedMessage id='app.common.priority' />,
-      dataIndex: 'jobPriority',
+      title: <FormattedMessage id='resource.load.type' />,
+      // dataIndex: 'vehicleType',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='resource.load.code' />,
+      // dataIndex: 'appointedVehicleId',
       align: 'center',
     },
     {
@@ -106,14 +101,24 @@ class StandardTaskPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id='app.common.creationTime' />,
-      dataIndex: 'createTimeMilliseconds',
+      title: <FormattedMessage id='app.common.priority' />,
+      dataIndex: 'jobPriority',
       align: 'center',
-      render: (text) => {
-        if (!isStrictNull(text)) {
-          return <span>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
-        }
-      },
+    },
+    {
+      title: <FormattedMessage id='app.common.targetCell' />,
+      // dataIndex: 'targetCellId',
+      align: 'center',
+      // render: (text, record) => {
+      //   if (record.isLockTargetCell == null) {
+      //     return <span>{text}</span>;
+      //   }
+      //   if (record.isLockTargetCell) {
+      //     return <span style={{ color: green }}>{text}</span>;
+      //   } else {
+      //     return <span style={{ color: red }}>{text}</span>;
+      //   }
+      // },
     },
     {
       title: <FormattedMessage id='app.taskQueue.reason' />,
@@ -124,62 +129,34 @@ class StandardTaskPool extends React.Component {
 
   expandColumns = [
     {
-      title: <FormattedMessage id='app.executionQ.isReleased' />,
-      dataIndex: 'isReleased',
+      title: <FormattedMessage id='app.common.creator' />,
+      dataIndex: 'createdByUser',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='app.common.creationTime' />,
+      dataIndex: 'createTime',
       align: 'center',
       render: (text) => {
-        if (text) {
-          return (
-            <span style={{ color: green }}>
-              <FormattedMessage id='app.executionQ.released' />
-            </span>
-          );
-        } else {
-          return (
-            <span style={{ color: red }}>
-              <FormattedMessage id='app.executionQ.unreleased' />
-            </span>
-          );
+        if (!isStrictNull(text)) {
+          return fastConvertToUserTimezone(text);
         }
       },
     },
     {
-      title: <FormattedMessage id='app.executionQ.chargerHardwareId' />,
-      dataIndex: 'chargerHardwareId',
+      title: <FormattedMessage id='app.common.updater' />,
+      dataIndex: 'updatedByUser',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.executionQ.chargerDirection' />,
-      dataIndex: 'chargerDirection',
+      title: <FormattedMessage id='app.common.updateTime' />,
+      dataIndex: 'updateTime',
       align: 'center',
       render: (text) => {
-        if (text != null) {
-          return formatMessage({ id: Dictionary('chargerDirection', text) });
-        } else {
-          return null;
+        if (!isStrictNull(text)) {
+          return fastConvertToUserTimezone(text);
         }
       },
-    },
-    {
-      title: <FormattedMessage id='app.executionQ.chargerSpotId' />,
-      dataIndex: 'chargerCellId',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id='app.taskQueue.lastExecutedTimestamp' />,
-      dataIndex: 'lastExecutedTimestamp',
-      align: 'center',
-      render: (text) => {
-        if (!text) {
-          return '--';
-        }
-        return <span>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
-      },
-    },
-    {
-      title: <FormattedMessage id='app.taskQueue.triedTimes' />,
-      dataIndex: 'triedTimes',
-      align: 'center',
     },
   ];
 
@@ -189,24 +166,24 @@ class StandardTaskPool extends React.Component {
 
   filterTableList = async (filterValue = {}) => {
     this.setState({ loading: true });
-    let dataSource = await this.getCombinedDatasource();
-    const { vehicleType, vehicleId, taskId, vehicleTaskType, taskStatus } = filterValue;
-    if (!isStrictNull(vehicleType)) {
-      dataSource = dataSource.filter((item) => item.vehicleType === vehicleType);
-    }
-    if (Array.isArray(vehicleId)) {
-      dataSource = dataSource.filter((item) => vehicleId.includes(item.vehicle.id));
-    }
+    let [dataSource, vehicleOverallStatus] = await this.getCombinedDatasource();
+    const { taskId, taskName, taskStatus, vehicleType, vehicleCode } = filterValue;
     if (!isStrictNull(taskId)) {
       dataSource = dataSource.filter((item) => item.taskId === taskId);
     }
-    if (Array.isArray(vehicleTaskType)) {
-      dataSource = dataSource.filter((item) => vehicleTaskType.includes(item.vehicleTaskType));
+    if (!isStrictNull(taskStatus)) {
+      dataSource = dataSource.filter((item) => taskName === item.customName);
     }
     if (!isStrictNull(taskStatus)) {
       dataSource = dataSource.filter((item) => item.taskStatus === taskStatus);
     }
-    this.setState({ dataSource, loading: false });
+    if (!isStrictNull(vehicleType)) {
+      dataSource = dataSource.filter((item) => item.vehicleType === vehicleType);
+    }
+    if (Array.isArray(vehicleCode)) {
+      dataSource = dataSource.filter((item) => vehicleCode.includes(item.currentVehicleId));
+    }
+    this.setState({ dataSource, vehicleOverallStatus, loading: false });
   };
 
   getCombinedDatasource = async () => {
@@ -216,29 +193,20 @@ class StandardTaskPool extends React.Component {
       fetchVehicleStatusStatistics(),
     ]);
     let dataSource = [];
-    if (!dealResponse(waiting)) {
-      const data = waiting.map((item) => ({
-        ...item,
-        appointedVehicleId: item.currentVehicleId,
-      }));
-      dataSource = dataSource.concat(data);
+    if (!dealResponse(waiting) && Array.isArray(waiting)) {
+      dataSource = dataSource.concat(waiting);
     }
-    if (!dealResponse(executing)) {
-      const data = executing.map((item) => ({
-        ...item,
-        appointedVehicleId: item.currentVehicleId,
-      }));
-      dataSource = dataSource.concat(data);
+    if (!dealResponse(executing) && Array.isArray(executing)) {
+      dataSource = dataSource.concat(executing);
     }
-    return dataSource;
+    return [dataSource, vehicleStatus];
   };
 
   deleteQueueTasks = () => {
     const _this = this;
     const { selectedRowKeys, dataSource } = this.state;
     const { vehicleType } = this.props;
-    const sectionId = window.localStorage.getItem('sectionId');
-    const requestParam = { sectionId, taskIdList: selectedRowKeys };
+    const requestParam = { taskIdList: selectedRowKeys };
 
     RmsConfirm({
       content: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
@@ -306,80 +274,7 @@ class StandardTaskPool extends React.Component {
     return (
       <TablePageWrapper>
         <div>
-          <Row className={taskQueueStyles.vehicleStatusBadgeContainer}>
-            <Badge
-              showZero
-              style={{ background: VehicleStateColor.available }}
-              count={vehicleOverallStatus.availableVehicleNumber || 0}
-            >
-              <span
-                className={taskQueueStyles.vehicleStatusBadge}
-                style={{ background: VehicleStateColor.available }}
-              >
-                <FormattedMessage id={'vehicleState.Idle'} />
-              </span>
-            </Badge>
-            <Badge
-              showZero
-              style={{ background: VehicleStateColor.StandBy }}
-              count={vehicleOverallStatus.standByVehicleNumber || 0}
-            >
-              <span
-                className={taskQueueStyles.vehicleStatusBadge}
-                style={{ background: VehicleStateColor.StandBy }}
-              >
-                <FormattedMessage id={'vehicleState.StandBy'} />
-              </span>
-            </Badge>
-            <Badge
-              showZero
-              style={{ background: VehicleStateColor.Working }}
-              count={vehicleOverallStatus.workVehicleNumber || 0}
-            >
-              <span
-                className={taskQueueStyles.vehicleStatusBadge}
-                style={{ background: VehicleStateColor.Working }}
-              >
-                <FormattedMessage id={'vehicleState.Working'} />
-              </span>
-            </Badge>
-            <Badge
-              showZero
-              style={{ background: VehicleStateColor.Charging }}
-              count={vehicleOverallStatus.chargerVehicleNumber || 0}
-            >
-              <span
-                className={taskQueueStyles.vehicleStatusBadge}
-                style={{ background: VehicleStateColor.Charging }}
-              >
-                <FormattedMessage id={'vehicleState.Charging'} />
-              </span>
-            </Badge>
-            <Badge
-              showZero
-              style={{ background: VehicleStateColor.Error }}
-              count={vehicleOverallStatus.lowerBatteryVehicleNumber || 0}
-            >
-              <span
-                className={taskQueueStyles.vehicleStatusBadge}
-                style={{ background: VehicleStateColor.Error }}
-              >
-                <FormattedMessage id={'vehicleState.Error'} />
-              </span>
-            </Badge>
-            <Badge
-              showZero
-              style={{ background: VehicleStateColor.Offline }}
-              count={vehicleOverallStatus.offlineVehicleNumber || 0}
-            >
-              <span
-                className={taskQueueStyles.vehicleStatusBadge}
-                style={{ background: VehicleStateColor.Offline }}
-              >
-                <FormattedMessage id={'vehicleState.Offline'} />
-              </span>
-            </Badge>
-          </Row>
+          <VehicleStatusOverview data={vehicleOverallStatus} />
           <StandardTaskPoolSearch allTaskTypes={allTaskTypes || {}} search={this.filterTableList} />
           <Divider style={{ margin: '0 0 24px 0' }} />
           <Row className={commonStyles.tableToolLeft}>
@@ -426,5 +321,4 @@ class StandardTaskPool extends React.Component {
     );
   }
 }
-
 export default StandardTaskPool;

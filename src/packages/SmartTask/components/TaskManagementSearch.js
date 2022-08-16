@@ -48,8 +48,11 @@ const TaskManagementSearch = (props) => {
       <Form.Item name={'taskId'} label={formatMessage({ id: 'app.task.id' })}>
         <Input allowClear />
       </Form.Item>
-      <Form.Item name={'vehicleTaskType'} label={formatMessage({ id: 'app.task.type' })}>
-        <Select mode="multiple" allowClear>
+      <Form.Item name={'createDate'} label={formatMessage({ id: 'app.taskDetail.queryTime' })}>
+        <RangePicker showTime style={{ width: '100%' }} />
+      </Form.Item>
+      <Form.Item name={'vehicleTaskType'} label={formatMessage({ id: 'app.task.name' })}>
+        <Select mode='multiple' allowClear>
           {renderVehicleTaskTypeOption()}
         </Select>
       </Form.Item>

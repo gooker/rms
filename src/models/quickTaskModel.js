@@ -2,7 +2,7 @@ import { dealResponse } from '@/utils/util';
 import { fetchCustomParamType, fetchCustomTaskList } from '@/services/commonService';
 import { fetchAllQuickTaskGroups, fetchVisibleQuickTasks } from '@/services/smartTaskService';
 import { fetchAllLoadSpecification } from '@/services/resourceService';
-import { QuickTaskSource, QuickTaskTableView } from '@/packages/SmartTask/QuickTask/quickTaskConstant';
+import { QuickTaskSource } from '@/packages/SmartTask/QuickTask/quickTaskConstant';
 
 const initState = {
   quickTasks: [],
@@ -18,7 +18,7 @@ const initState = {
   variableModalVisible: false,
 
   editing: null,
-  viewType: QuickTaskTableView.all,
+  viewType: QuickTaskSource.own,
 };
 
 export default {
@@ -35,7 +35,6 @@ export default {
     },
 
     * initQuickTaskPage(_, { call, put }) {
-      const validateBindCustomTask = { own: false, customTask: false };
       const [quickTasks, quickTaskGroups, customTasks, loadSpecification, targetSource] =
         yield Promise.allSettled([
           fetchVisibleQuickTasks(),
@@ -45,7 +44,6 @@ export default {
           fetchCustomParamType(), // 目标点
         ]);
       if (quickTasks.status === 'fulfilled' && !dealResponse(quickTasks.value)) {
-        validateBindCustomTask.own = true;
         yield put({ type: 'updateQuickTasks', payload: quickTasks.value });
       }
 
@@ -54,7 +52,6 @@ export default {
         payload.quickTaskGroups = quickTaskGroups.value;
       }
       if (customTasks.status === 'fulfilled' && !dealResponse(customTasks.value)) {
-        validateBindCustomTask.customTask = true;
         payload.customTasks = customTasks.value;
       }
       if (loadSpecification.status === 'fulfilled' && !dealResponse(loadSpecification.value)) {
@@ -64,11 +61,6 @@ export default {
         payload.targetSource = targetSource.value;
       }
       yield put({ type: 'updateState', payload });
-
-      if (validateBindCustomTask.own && validateBindCustomTask.customTask) {
-        // TODO: 检查own的快捷任务所绑定的自定义任务是否被删除
-        // message.error(formatMessage({ id: 'variable.customTaskData.missing' }));
-      }
     },
   },
 
@@ -91,21 +83,7 @@ export default {
       };
     },
     updateQuickTasks(state, { payload }) {
-      const { OWN, SHARED } = payload;
-      let quickTasks = [];
-      if (Array.isArray(OWN)) {
-        quickTasks = [...quickTasks, ...OWN].map((item) => ({
-          ...item,
-          source: QuickTaskSource.own,
-        }));
-      }
-      if (Array.isArray(SHARED)) {
-        quickTasks = [...quickTasks, ...SHARED].map((item) => ({
-          ...item,
-          source: item.source ?? QuickTaskSource.shared,
-        }));
-      }
-      return { ...state, quickTasks };
+      return { ...state, quickTasks: payload };
     },
     updateQuickTaskGroups(state, { payload }) {
       return {

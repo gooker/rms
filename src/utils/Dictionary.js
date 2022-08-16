@@ -99,8 +99,8 @@ const DictionaryDataSource = {
     errorDefinition_level: 'app.fault.level',
     errorCode: 'app.fault.code',
     taskStatus: 'app.task.state',
-    type: 'app.task.type',
-    vehicleTaskType: 'app.task.type',
+    type: 'app.task.name',
+    vehicleTaskType: 'app.task.name',
   },
 };
 

@@ -1,14 +1,15 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Form, Input, Select } from 'antd';
-import { fetchAllVehicleList } from '@/services/commonService';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { Form, Select } from 'antd';
 import TaskSearch from '@/components/TaskSearch';
-import FormattedMessage from '@/components/FormattedMessage';
+import { fetchAllVehicleList } from '@/services/commonService';
+import { dealResponse, formatMessage, generateVehicleTypeOptions } from '@/utils/util';
 
 const StandardTaskPoolSearch = (props) => {
-  const { search, allTaskTypes } = props;
+  const { search } = props;
+
   const [form] = Form.useForm();
   const [vehicles, setVehicles] = useState([]);
+  const [typeVehicles, setTypeVehicles] = useState([]);
 
   useEffect(() => {
     fetchAllVehicleList().then((response) => {
@@ -18,35 +19,33 @@ const StandardTaskPoolSearch = (props) => {
     });
   }, []);
 
-  function renderVehicleTaskTypeOption() {
-    return Object.keys(allTaskTypes).map((type) => (
-      <Select.Option key={type} value={type}>
-        {allTaskTypes[type]}
-      </Select.Option>
-    ));
+  function getTypeVehicles(type) {
+    const _typeVehicles = vehicles.filter((item) => item.vehicleType === type);
+    setTypeVehicles(_typeVehicles);
   }
 
   return (
-    <TaskSearch form={form} gutter={24} span={8} vehicles={vehicles} onSearch={search}>
-      <Form.Item name={'vehicleTaskType'} label={formatMessage({ id: 'app.task.type' })}>
-        <Select allowClear mode='multiple'>
-          {renderVehicleTaskTypeOption()}
-        </Select>
+    <TaskSearch form={form} onSearch={search}>
+      {/* 车辆类型 */}
+      <Form.Item
+        name={'vehicleType'}
+        label={formatMessage({ id: 'app.vehicleType' })}
+        getValueFromEvent={(value) => {
+          getTypeVehicles(value);
+          return value;
+        }}
+      >
+        <Select allowClear>{generateVehicleTypeOptions(vehicles)}</Select>
       </Form.Item>
-      <Form.Item name={'taskId'} label={formatMessage({ id: 'app.task.id' })}>
-        <Input allowClear />
-      </Form.Item>
-      <Form.Item name={'taskStatus'} label={formatMessage({ id: 'app.task.state' })}>
-        <Select allowClear>
-          <Select.Option value={'New'}>
-            <FormattedMessage id={'app.task.state.New'} />
-          </Select.Option>
-          <Select.Option value={'Executing'}>
-            <FormattedMessage id={'app.task.state.Executing'} />
-          </Select.Option>
-          <Select.Option value={'Wait'}>
-            <FormattedMessage id={'app.task.state.Wait'} />
-          </Select.Option>
+
+      {/* 车辆编码 */}
+      <Form.Item name={'vehicleCode'} label={formatMessage({ id: 'vehicle.code' })}>
+        <Select allowClear mode={'tags'}>
+          {typeVehicles.map(({ vehicleId }) => (
+            <Select.Option key={vehicleId} value={vehicleId}>
+              {vehicleId}
+            </Select.Option>
+          ))}
         </Select>
       </Form.Item>
     </TaskSearch>

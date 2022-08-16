@@ -16,6 +16,7 @@ export default {
   // 载具
   'resource.load': '载具',
   'resource.load.id': '载具ID',
+  'resource.load.code': '载具编码',
   'resource.load.type': '载具类型',
   'resource.load.length': '长',
   'resource.load.width': '宽',
@@ -29,7 +30,6 @@ export default {
   'resource.load.source.storage': '之前位置',
   'resource.load.changeTime': '变更时间',
   'resource.load.triggeror': '触发人',
-  'resource.load.code': '载具码',
   'resource.load.startCode': '开始载具码',
   'resource.load.endCode': '结束载具码',
 
