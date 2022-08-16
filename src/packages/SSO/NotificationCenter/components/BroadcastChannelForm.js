@@ -1,12 +1,13 @@
 import React, { memo, useState } from 'react';
 import { Button, Form, Input, Select, Switch } from 'antd';
 import { getFormLayout, formatMessage } from '@/utils/util';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { BroadCastPattern, BroadCastTiming, ContentType, BroadCastType } from '../enum';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 const BroadcastChannelForm = (props) => {
-  const { data, onSubmit, loading } = props;
+  const { data, onSubmit, loading, systemLanguage } = props;
 
   const [formRef] = Form.useForm();
   const [broadCastPattern, setBroadCastPattern] = useState(data?.broadCastPattern || null);
@@ -163,10 +164,11 @@ const BroadcastChannelForm = (props) => {
         initialValue={data?.languageType || null}
       >
         <Select>
-          <Select.Option value={'zh-CN'}>中文</Select.Option>
-          <Select.Option value={'en-US'}>English</Select.Option>
-          <Select.Option value={'ko-KR'}>한국어</Select.Option>
-          <Select.Option value={'vi-VN'}>Tiếng Việt</Select.Option>
+          {systemLanguage?.map(({ code, name }) => (
+            <Select.Option value={code} key={code}>
+              {name}
+            </Select.Option>
+          ))}
         </Select>
       </Form.Item>
       <Form.Item
@@ -186,4 +188,7 @@ const BroadcastChannelForm = (props) => {
     </Form>
   );
 };
-export default memo(BroadcastChannelForm);
+
+export default connect(({ global }) => ({
+  systemLanguage: global.systemLanguage,
+}))(BroadcastChannelForm);

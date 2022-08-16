@@ -11,6 +11,7 @@ export default {
   'app.map.label': '区域标签',
   'app.map.cell': '点位',
   'app.map.cellGroup': '点位组',
+  'app.map.cellCode': '点位编码',
   'app.map.route': '路线',
   'app.map.view': '显示',
   'app.map.function': '功能',

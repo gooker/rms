@@ -6,7 +6,7 @@ import { batchDeleteTaskTargetLock, fetchTaskTargetLockList } from '@/services/c
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
-import SearchTargetLock from './components/SearchTargetLock';
+import SearchTargetLock from './components/TargetLockSearch';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';

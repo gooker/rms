@@ -3,9 +3,20 @@ import { Badge, Button, Divider, message, Row, Tooltip } from 'antd';
 import { DeleteOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { TaskStatusColor } from '@/config/consts';
-import { dealResponse, fastConvertToUserTimezone, formatMessage, isStrictNull, renderLabel } from '@/utils/util';
-import { fetchExecutingTasks, fetchPipeLineTasks } from '@/services/taskService';
-import { deleteTaskQueueItems, fetchUpdateTaskPriority, fetchVehicleStatusStatistics } from '@/services/commonService';
+import {
+  dealResponse,
+  fastConvertToUserTimezone,
+  formatMessage,
+  isStrictNull,
+  renderLabel,
+} from '@/utils/util';
+import {
+  cancelTask,
+  fetchExecutingTasks,
+  fetchPipeLineTasks,
+  updateTaskPriority,
+} from '@/services/taskService';
+import { fetchVehicleStatusStatistics } from '@/services/commonService';
 import RmsConfirm from '@/components/RmsConfirm';
 import TableWithPages from '@/components/TableWithPages';
 import TablePageWrapper from '@/components/TablePageWrapper';
@@ -50,43 +61,43 @@ class StandardTaskPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id='app.taskDetail.externalCode' />,
+      title: <FormattedMessage id="app.taskDetail.externalCode" />,
       // dataIndex: 'externalCode',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.task.name' />,
+      title: <FormattedMessage id="app.task.name" />,
       dataIndex: 'customName',
       align: 'center',
       render: renderLabel,
     },
     {
-      title: <FormattedMessage id='app.task.code' />,
+      title: <FormattedMessage id="app.task.code" />,
       dataIndex: 'customCode',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.vehicleType' />,
+      title: <FormattedMessage id="app.vehicleType" />,
       dataIndex: 'vehicleType',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='vehicle.code' />,
+      title: <FormattedMessage id="vehicle.code" />,
       dataIndex: 'currentVehicleId',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='resource.load.type' />,
+      title: <FormattedMessage id="resource.load.type" />,
       // dataIndex: 'vehicleType',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='resource.load.code' />,
+      title: <FormattedMessage id="resource.load.code" />,
       // dataIndex: 'appointedVehicleId',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.task.state' />,
+      title: <FormattedMessage id="app.task.state" />,
       dataIndex: 'taskStatus',
       align: 'center',
       render: (text) => {
@@ -101,12 +112,12 @@ class StandardTaskPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id='app.common.priority' />,
+      title: <FormattedMessage id="app.common.priority" />,
       dataIndex: 'jobPriority',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.common.targetCell' />,
+      title: <FormattedMessage id="app.common.targetCell" />,
       // dataIndex: 'targetCellId',
       align: 'center',
       // render: (text, record) => {
@@ -121,7 +132,7 @@ class StandardTaskPool extends React.Component {
       // },
     },
     {
-      title: <FormattedMessage id='app.taskQueue.reason' />,
+      title: <FormattedMessage id="app.taskQueue.reason" />,
       dataIndex: 'prepareFailedReason',
       align: 'center',
     },
@@ -129,12 +140,12 @@ class StandardTaskPool extends React.Component {
 
   expandColumns = [
     {
-      title: <FormattedMessage id='app.common.creator' />,
+      title: <FormattedMessage id="app.common.creator" />,
       dataIndex: 'createdByUser',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.common.creationTime' />,
+      title: <FormattedMessage id="app.common.creationTime" />,
       dataIndex: 'createTime',
       align: 'center',
       render: (text) => {
@@ -144,12 +155,12 @@ class StandardTaskPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id='app.common.updater' />,
+      title: <FormattedMessage id="app.common.updater" />,
       dataIndex: 'updatedByUser',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.common.updateTime' />,
+      title: <FormattedMessage id="app.common.updateTime" />,
       dataIndex: 'updateTime',
       align: 'center',
       render: (text) => {
@@ -166,7 +177,22 @@ class StandardTaskPool extends React.Component {
 
   filterTableList = async (filterValue = {}) => {
     this.setState({ loading: true });
-    let [dataSource, vehicleOverallStatus] = await this.getCombinedDatasource();
+
+    // 收集数据
+    const [waiting, executing, vehicleOverallStatus] = await Promise.all([
+      fetchPipeLineTasks(),
+      fetchExecutingTasks(),
+      fetchVehicleStatusStatistics(),
+    ]);
+    let dataSource = [];
+    if (!dealResponse(waiting) && Array.isArray(waiting)) {
+      dataSource = dataSource.concat(waiting);
+    }
+    if (!dealResponse(executing) && Array.isArray(executing)) {
+      dataSource = dataSource.concat(executing);
+    }
+
+    // 数据筛选
     const { taskId, taskName, taskStatus, vehicleType, vehicleCode } = filterValue;
     if (!isStrictNull(taskId)) {
       dataSource = dataSource.filter((item) => item.taskId === taskId);
@@ -186,49 +212,24 @@ class StandardTaskPool extends React.Component {
     this.setState({ dataSource, vehicleOverallStatus, loading: false });
   };
 
-  getCombinedDatasource = async () => {
-    const [waiting, executing, vehicleStatus] = await Promise.all([
-      fetchPipeLineTasks(),
-      fetchExecutingTasks(),
-      fetchVehicleStatusStatistics(),
-    ]);
-    let dataSource = [];
-    if (!dealResponse(waiting) && Array.isArray(waiting)) {
-      dataSource = dataSource.concat(waiting);
-    }
-    if (!dealResponse(executing) && Array.isArray(executing)) {
-      dataSource = dataSource.concat(executing);
-    }
-    return [dataSource, vehicleStatus];
-  };
-
   deleteQueueTasks = () => {
     const _this = this;
     const { selectedRowKeys, dataSource } = this.state;
-    const { vehicleType } = this.props;
-    const requestParam = { taskIdList: selectedRowKeys };
-
     RmsConfirm({
-      content: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
+      content: formatMessage({ id: 'app.message.deleteTaskSure' }),
       onOk: async () => {
         _this.setState({ deleteLoading: true });
-        const response = await deleteTaskQueueItems(vehicleType, requestParam);
-        if (
-          !dealResponse(
-            response,
-            formatMessage({ id: 'app.executionQ.deleteTaskSuccess' }),
-            formatMessage({ id: 'app.executionQ.deleteTaskFail' }),
-          )
-        ) {
+        const response = await cancelTask({ taskIdList: selectedRowKeys });
+        if (!dealResponse(response, true)) {
           // 这里不重复请求后台，手动对原数据进行处理
           const newDataSource = dataSource.filter((item) => !selectedRowKeys.includes(item.taskId));
           _this.setState({
-            deleteLoading: false,
             dataSource: newDataSource,
             selectedRow: [],
             selectedRowKeys: [],
           });
         }
+        _this.setState({ deleteLoading: false });
       },
     });
   };
@@ -252,10 +253,9 @@ class StandardTaskPool extends React.Component {
   submitTaskPriority = async () => {
     const { vehicleType } = this.props;
     const { selectedRowKeys, priorityValue } = this.state;
-    const response = await fetchUpdateTaskPriority(vehicleType, {
+    const response = await updateTaskPriority(vehicleType, {
       taskIdList: selectedRowKeys,
       value: priorityValue,
-      sectionId: window.localStorage.getItem('sectionId'),
     });
 
     if (dealResponse(response)) {
@@ -284,7 +284,7 @@ class StandardTaskPool extends React.Component {
               onClick={this.deleteQueueTasks}
               disabled={selectedRowKeys.length === 0}
             >
-              <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
+              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
             <Button
               disabled={selectedRowKeys.length === 0}
@@ -292,7 +292,7 @@ class StandardTaskPool extends React.Component {
                 this.switchTaskPriorityModal(true);
               }}
             >
-              <OrderedListOutlined /> <FormattedMessage id='app.taskQueue.reorderPriority' />
+              <OrderedListOutlined /> <FormattedMessage id="app.taskQueue.reorderPriority" />
             </Button>
           </Row>
         </div>

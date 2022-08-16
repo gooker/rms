@@ -1,10 +1,10 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect } from 'react';
 import moment from 'moment';
-import { Button, Card, Checkbox, Col, Form, InputNumber, message, Row, TimePicker } from 'antd';
+import { Button, Card, Checkbox, Col, Form, InputNumber, Row, TimePicker } from 'antd';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
-import { formatMessage, isStrictNull, dealResponse } from '@/utils/util';
+import { formatMessage, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { saveIdleHoursStrategy, fetchIdleHourChargeStrategy } from '@/services/resourceService';
+import { fetchIdleHourChargeStrategy } from '@/services/resourceService';
 
 import styles from './idleChargingStrategy.module.less';
 
@@ -13,94 +13,59 @@ const { RangePicker } = TimePicker;
 const Days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 
 const IdleChargingStrategy = (props) => {
-  const { idleHoursStrategyId, chargeStrategyId, form, onSave } = props;
-
-  const [pastMinuts, setPastMinuts] = useState(null);
-  const [percentage, setPercentage] = useState(null);
-  const [useVehicleStandByPercent, setUseVehicleStandByPercent] = useState(false); // 第一条策略
-  const [useIdleHours, setUseIdleHours] = useState(false); // 第二条策略
+  const { idleDetail, onChangeIdleStrategy, form } = props;
 
   useEffect(() => {
-    if (!isStrictNull(idleHoursStrategyId)) {
-      fetchIdleHourChargeStrategy({ Id: idleHoursStrategyId }).then((response) => {
-        if (!dealResponse(response)) {
-          const { idleHoursQuantumDTOS } = response;
-          setPastMinuts(response.vehicleStandbyMinute);
-          setPercentage(response.vehicleStandbyPercent);
-          setUseVehicleStandByPercent(response.useVehicleStandByPercent);
-          setUseIdleHours(response.useIdleHours);
-
-          const fieldsValue = idleHoursQuantumDTOS?.map(({ startTime, endTime, weeks }) => {
-            return {
-              weeks,
-              time: [startTime && moment(startTime, 'HH:mm'), endTime && moment(endTime, 'HH:mm')],
-            };
-          });
-          form.setFieldsValue({ idleHoursQuantumDTOS: fieldsValue || [] });
-        }
+    if (!isStrictNull(idleDetail)) {
+      const { idleHoursQuantumDTOS } = idleDetail;
+      const fieldsValue = idleHoursQuantumDTOS?.map(({ startTime, endTime, weeks }) => {
+        return {
+          weeks,
+          time: [startTime && moment(startTime, 'HH:mm'), endTime && moment(endTime, 'HH:mm')],
+        };
       });
+      form.setFieldsValue({ idleHoursQuantumDTOS: fieldsValue || [] });
     }
   }, []);
-
-  function submit() {
-    form.validateFields().then((values) => {
-      const { idleHoursQuantumDTOS } = values;
-      let result = null;
-      if (idleHoursQuantumDTOS != null) {
-        result = idleHoursQuantumDTOS.map((record) => {
-          const { time, weeks } = record;
-          const obj = { weeks };
-          if (time != null) {
-            obj.startTime = time[0] ? time[0].format('HH:mm') : null;
-            obj.endTime = time[1] ? time[1].format('HH:mm') : null;
-          }
-          return obj;
-        });
-      }
-
-      const requestBody = {
-        id: idleHoursStrategyId,
-        chargeStrategyId,
-        idleHoursQuantumDTOS: result,
-        vehicleStandbyMinute: pastMinuts,
-        vehicleStandbyPercent: percentage,
-        useVehicleStandByPercent,
-        useIdleHours,
-      };
-      saveIdleHoursStrategy(requestBody).then((response) => {
-        if (!dealResponse(response)) {
-          message.success(formatMessage({ id: 'app.chargeStrategy.idle.save.success' }));
-          onSave(response.id);
-        }
-      });
-    });
-  }
 
   return (
     <Card bordered={true} title={formatMessage({ id: 'app.chargeStrategy.idleHoursRules' })}>
       <div className={styles.strategyRow}>
         <div className={styles.checkBox}>
           <Checkbox
-            checked={useVehicleStandByPercent}
+            checked={idleDetail?.useVehicleStandByPercent}
             onChange={(ev) => {
-              setUseVehicleStandByPercent(ev.target.checked);
+              onChangeIdleStrategy(ev.target.checked, 'useVehicleStandByPercent');
             }}
           />
         </div>
-        <div style={{ flex: 1 }}>
+        <div>
           <FormattedMessage id="app.chargeStrategy.past" />
-          <InputNumber style={{ margin: '0 10px' }} value={pastMinuts} onChange={setPastMinuts} />
+          <InputNumber
+            style={{ margin: '0 10px' }}
+            value={idleDetail?.pastMinuts}
+            onChange={(ev) => {
+              onChangeIdleStrategy(ev, 'pastMinuts');
+            }}
+          />
           <FormattedMessage id="app.chargeStrategy.minute" />{' '}
           <FormattedMessage id="app.chargeStrategy.percentageOfFreeVehicle" />
-          <InputNumber style={{ margin: '0 10px' }} value={percentage} onChange={setPercentage} />%
+          <InputNumber
+            style={{ margin: '0 10px' }}
+            value={idleDetail?.percentage}
+            onChange={(ev) => {
+              onChangeIdleStrategy(ev, 'percentage');
+            }}
+          />
+          %
         </div>
       </div>
       <div className={styles.strategyRow}>
         <div className={styles.checkBox} style={{ alignItems: 'flex-start' }}>
           <Checkbox
-            checked={useIdleHours}
+            checked={idleDetail?.useIdleHours}
             onChange={(ev) => {
-              setUseIdleHours(ev.target.checked);
+              onChangeIdleStrategy(ev.target.checked, 'useIdleHours');
             }}
           />
         </div>
@@ -121,31 +86,36 @@ const IdleChargingStrategy = (props) => {
                       }}
                     >
                       <Col span={21}>
-                        {/* 时间区间 */}
-                        <Form.Item
-                          {...tailFormItemLayout}
-                          {...restField}
-                          name={[name, 'time']}
-                          fieldKey={[fieldKey, 'time']}
-                        >
-                          <RangePicker format={'HH:mm'} />
-                        </Form.Item>
-
-                        {/* 天 */}
-                        <Form.Item
-                          {...tailFormItemLayout}
-                          {...restField}
-                          name={[name, 'weeks']}
-                          fieldKey={[fieldKey, 'weeks']}
-                        >
-                          <Checkbox.Group style={{ width: '100%', display: 'flex' }}>
-                            {Days.map((item) => (
-                              <Col key={item} span={3}>
-                                <Checkbox value={item}>{item.slice(0, 3)}</Checkbox>
-                              </Col>
-                            ))}
-                          </Checkbox.Group>
-                        </Form.Item>
+                        <Row>
+                          <Col span={12}>
+                            {/* 时间区间 */}
+                            <Form.Item
+                              {...tailFormItemLayout}
+                              {...restField}
+                              name={[name, 'time']}
+                              fieldKey={[fieldKey, 'time']}
+                            >
+                              <RangePicker format={'HH:mm'} />
+                            </Form.Item>
+                          </Col>
+                          <Col flex="1">
+                            {/* 天 */}
+                            <Form.Item
+                              {...tailFormItemLayout}
+                              {...restField}
+                              name={[name, 'weeks']}
+                              fieldKey={[fieldKey, 'weeks']}
+                            >
+                              <Checkbox.Group style={{ width: '100%', display: 'flex' }}>
+                                {Days.map((item) => (
+                                  <Col key={item} span={3}>
+                                    <Checkbox value={item}>{item.slice(0, 3)}</Checkbox>
+                                  </Col>
+                                ))}
+                              </Checkbox.Group>
+                            </Form.Item>
+                          </Col>
+                        </Row>
                       </Col>
                       <Col span={3} style={{ textAlign: 'center' }}>
                         <Button

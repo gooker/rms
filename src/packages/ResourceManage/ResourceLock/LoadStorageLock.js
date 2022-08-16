@@ -1,40 +1,43 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Col, Row, Tooltip } from 'antd';
-import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import { fetchLoadStorageLockList } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
-import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
-import RmsConfirm from '@/components/RmsConfirm';
-import SearchTargetLock from './components/SearchTargetLock';
+import { dealResponse, isNull, isStrictNull } from '@/utils/util';
 import commonStyles from '@/common.module.less';
+import LoadStorageLockSearch from '@/packages/ResourceManage/ResourceLock/components/LoadStorageLockSearch';
+import { fetchAllLoadType } from '@/services/resourceService';
 
 const TaskStorageLock = (props) => {
   const [loading, setLoading] = useState(false);
-  const [dataSourceList, setDataSourceList] = useState([]);
-  const [currentDataList, setCurrentDataList] = useState([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [selectedRow, setSelectedRow] = useState([]);
+  const [loadTypes, setLoadTypes] = useState({});
+  const [datasource, setDatasource] = useState([]);
 
   const columns = [
     {
-      title: <FormattedMessage id='app.map.cell' />,
+      title: <FormattedMessage id="app.map.cell" />,
       dataIndex: 'cellId',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='resource.load.id' />,
+      title: <FormattedMessage id="resource.load.code" />,
       dataIndex: 'loadId',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.common.type' />,
+      title: <FormattedMessage id="resource.load.type" />,
       dataIndex: 'loadType',
+      align: 'center',
+      render: (text) => loadTypes[text]?.name,
+    },
+    {
+      title: <FormattedMessage id="resource.storage.code" />,
+      dataIndex: 'storeCode',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.task.id' />,
+      title: <FormattedMessage id="app.task.id" />,
       dataIndex: 'taskId',
       align: 'center',
       render: (text, record) => {
@@ -57,12 +60,50 @@ const TaskStorageLock = (props) => {
   ];
 
   useEffect(() => {
-    async function init() {
-      await freshData();
-    }
-
-    init();
+    freshData();
   }, []);
+
+  function freshData(formValues = {}) {
+    setLoading(true);
+    Promise.all([fetchLoadStorageLockList(), fetchAllLoadType()])
+      .then((response) => {
+        const [lock, loadType] = response;
+        if (!dealResponse(lock)) {
+          filterData(lock, formValues);
+        }
+        if (!dealResponse(loadType)) {
+          const _loadTypes = {};
+          loadType?.forEach((item) => {
+            _loadTypes[item.code] = item;
+          });
+          setLoadTypes(_loadTypes);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
+  function filterData(list, formValues) {
+    let dataSource = [...list];
+    const { taskId, cellId, loadType, loadCode, storageCode } = formValues;
+    if (!isStrictNull(taskId)) {
+      dataSource = dataSource.filter((item) => item.taskId === taskId);
+    }
+    if (!isStrictNull(cellId)) {
+      dataSource = dataSource.filter((item) => cellId === item.cellId);
+    }
+    if (!isStrictNull(loadType)) {
+      dataSource = dataSource.filter((item) => item.loadType === loadType);
+    }
+    if (!isStrictNull(loadCode)) {
+      dataSource = dataSource.filter((item) => item.loadId === loadCode);
+    }
+    if (!isStrictNull(storageCode)) {
+      dataSource = dataSource.filter((item) => item.storeCode === storageCode);
+    }
+    setDatasource(dataSource);
+  }
 
   function checkTaskDetail({ taskId, loadType }) {
     const { dispatch } = props;
@@ -72,83 +113,14 @@ const TaskStorageLock = (props) => {
     });
   }
 
-  function onSelectChange(selectedKeys, selectedRow) {
-    setSelectedRowKeys(selectedKeys);
-    setSelectedRow(selectedRow);
-  }
-
-  async function deleteTargetLock() {
-    RmsConfirm({
-      content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
-      onOk: async () => {
-        // const response = await batchDeleteTaskStorageLock(selectedRow);
-        // if (!dealResponse(response, true)) {
-        //   freshData();
-        // }
-      },
-    });
-  }
-
-  async function freshData() {
-    setLoading(true);
-    const response = await fetchLoadStorageLockList();
-    if (!dealResponse(response)) {
-      setDataSourceList(response);
-      filterData(response);
-    }
-    setLoading(false);
-  }
-
-  function filterData(list, formValues) {
-    let result = [...list];
-    if (isNull(formValues)) {
-      setCurrentDataList(result);
-      return;
-    }
-    const { taskId, loadType } = formValues;
-    if (!isStrictNull(taskId)) {
-      result = result.filter((item) => {
-        return item.taskId === taskId;
-      });
-    }
-    if (!isStrictNull(loadType)) {
-      result = result.filter((item) => loadType === item.loadType);
-    }
-
-    setCurrentDataList(result);
-  }
-
   return (
     <TablePageWrapper>
-      <div>
-        <SearchTargetLock
-          search={filterData}
-          data={dataSourceList}
-          verhicleHide={true}
-          loadType={true}
-        />
-        <Row>
-          <Col flex='auto' className={commonStyles.tableToolLeft}>
-            <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteTargetLock}>
-              <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
-            </Button>
-            <Button onClick={freshData}>
-              <ReloadOutlined /> <FormattedMessage id='app.button.refresh' />
-            </Button>
-          </Col>
-        </Row>
-      </div>
+      <LoadStorageLockSearch onSearch={freshData} loadTypes={Object.values(loadTypes)} />
       <TableWithPages
-        bordered
-        scroll={{ x: 'max-content' }}
         loading={loading}
         columns={columns}
-        dataSource={currentDataList}
+        dataSource={datasource}
         rowKey={(record, index) => index}
-        rowSelection={{
-          selectedRowKeys,
-          onChange: onSelectChange,
-        }}
       />
     </TablePageWrapper>
   );

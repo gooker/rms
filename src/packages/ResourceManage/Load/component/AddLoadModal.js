@@ -53,7 +53,7 @@ function AddLoadModal(props) {
       <Form {...formItemLayout} form={formRef}>
         <Form.Item hidden name={'id'} initialValue={updateRecord?.id} />
         <Form.Item
-          label={'ID'}
+          label={formatMessage({id:'resource.load.code'})}
           name="loadId"
           rules={[{ required: true }, { validator: validateDuplicate }]}
           initialValue={updateRecord?.loadId}
@@ -89,8 +89,9 @@ function AddLoadModal(props) {
         </Form.Item>
 
         <Form.Item
-          label={formatMessage({ id: 'app.map.cell' })}
+          label={formatMessage({ id: 'app.map.cellCode' })}
           name="cellId"
+          rules={[{ required: true }]}
           initialValue={updateRecord?.cellId}
         >
           <Input allowClear />

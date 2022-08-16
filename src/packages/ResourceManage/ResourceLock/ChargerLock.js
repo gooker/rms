@@ -1,37 +1,35 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Col, Row } from 'antd';
-import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
+import { message, Typography } from 'antd';
+import { dealResponse, fastConvertToUserTimezone, formatMessage, isStrictNull } from '@/utils/util';
+import { fetchChargerLockList, fetchUnlockCharger } from '@/services/commonService';
+import ChargerLockSearch from './components/ChargerLockSearch';
 import FormattedMessage from '@/components/FormattedMessage';
-import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
-import { fetchChargerLockList } from '@/services/commonService';
-import RmsConfirm from '@/components/RmsConfirm';
-import commonStyles from '@/common.module.less';
-import TableWithPages from '@/components/TableWithPages';
 import TablePageWrapper from '@/components/TablePageWrapper';
+import TableWithPages from '@/components/TableWithPages';
+import RmsConfirm from '@/components/RmsConfirm';
 
 const ChargerLock = () => {
   const [loading, setLoading] = useState(false);
-  const [dataSourceList, setDataSourceList] = useState([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [datasource, setDatasource] = useState([]);
 
   const columns = [
     {
-      title: <FormattedMessage id='charger.code' />,
-      dataIndex: 'chargerCode',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id='charger.id' />,
+      title: <FormattedMessage id="charger.id" />,
       dataIndex: 'chargerId',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.vehicle' />,
+      title: <FormattedMessage id="charger.code" />,
+      dataIndex: 'chargerCode',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id="vehicle.code" />,
       dataIndex: 'vehicleId',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.vehicleType' />,
+      title: <FormattedMessage id="app.vehicleType" />,
       dataIndex: 'vehicleType',
       align: 'center',
     },
@@ -39,8 +37,20 @@ const ChargerLock = () => {
       title: formatMessage({ id: 'monitor.sourceLock.lockTime' }),
       dataIndex: 'lockedTimestamp',
       align: 'center',
-      render: (lockedTimestamp) =>
-        convertToUserTimezone(lockedTimestamp).format('YYYY-MM-DD HH:mm:ss'),
+      render: fastConvertToUserTimezone,
+    },
+    {
+      title: formatMessage('app.common.operation'),
+      align: 'center',
+      render: (text, record) => (
+        <Typography.Link
+          onClick={() => {
+            unlockCharger(record);
+          }}
+        >
+          <FormattedMessage id={'app.button.delete'} />
+        </Typography.Link>
+      ),
     },
   ];
 
@@ -48,56 +58,50 @@ const ChargerLock = () => {
     freshData();
   }, []);
 
-  async function freshData() {
+  async function freshData(formValue = {}) {
     setLoading(true);
     const response = await fetchChargerLockList();
     if (!dealResponse(response)) {
-      setDataSourceList(response);
+      filterData(response, formValue);
     }
     setLoading(false);
   }
 
-  function onSelectChange(selectedKeys, selectedRow) {
-    setSelectedRowKeys(selectedKeys);
+  function filterData(list, formValues) {
+    let dataSource = [...list];
+    const { chargerCode, vehicleCode } = formValues;
+    if (!isStrictNull(chargerCode)) {
+      dataSource = dataSource.filter((item) => item.chargerCode === chargerCode);
+    }
+    if (!isStrictNull(vehicleCode)) {
+      dataSource = dataSource.filter((item) => item.vehicleId === vehicleCode);
+    }
+    setDatasource(dataSource);
   }
 
-  async function unlockCharger() {
+  function unlockCharger(record) {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
-        // const response = await batchDeleteTaskTargetLock(selectedRow);
-        // if (!dealResponse(response)) {
-        //   message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-        //   freshData();
-        // } else {
-        //   message.success(formatMessage({ id: 'app.tip.operateFailed' }));
-        // }
+        const response = await fetchUnlockCharger(record);
+        if (!dealResponse(response, true)) {
+          const { chargerCode } = record;
+          const _datasource = datasource.filter((item) => item.chargerCode !== chargerCode);
+          setDatasource(_datasource);
+        }
       },
     });
   }
 
   return (
     <TablePageWrapper>
-      <Row>
-        <Col flex='auto' className={commonStyles.tableToolLeft}>
-          <Button danger disabled={selectedRowKeys.length === 0} onClick={unlockCharger}>
-            <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
-          </Button>
-          <Button onClick={freshData}>
-            <ReloadOutlined /> <FormattedMessage id='app.button.refresh' />
-          </Button>
-        </Col>
-      </Row>
+      <ChargerLockSearch onSearch={freshData} />
       <TableWithPages
         bordered
         loading={loading}
         columns={columns}
-        dataSource={dataSourceList}
+        dataSource={datasource}
         rowKey={({ chargerCode }) => chargerCode}
-        rowSelection={{
-          selectedRowKeys,
-          onChange: onSelectChange,
-        }}
       />
     </TablePageWrapper>
   );

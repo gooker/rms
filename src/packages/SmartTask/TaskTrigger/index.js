@@ -3,7 +3,12 @@ import { connect } from '@/utils/RmsDva';
 import { Button, Card, Checkbox, Col, Dropdown, Empty, Menu, Row, Spin } from 'antd';
 import TaskTriggerModal from './TaskTriggerModal';
 import { find } from 'lodash';
-import { deleteTaskTrigger, getAllTaskTriggers, saveTaskTrigger, switchTriggerState } from '@/services/commonService';
+import {
+  deleteTaskTrigger,
+  getAllTaskTriggers,
+  saveTaskTrigger,
+  switchTriggerState,
+} from '@/services/commonService';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -322,25 +327,25 @@ class TaskTrigger extends Component {
         <Row>
           <Col span={12}>
             <DescriptionItem
-              title={<FormattedMessage id='app.common.status' />}
+              title={<FormattedMessage id="app.common.status" />}
               content={triggerStatus(record.status)}
             />
           </Col>
           <Col span={12}>
             <DescriptionItem
-              title={<FormattedMessage id='app.common.description' />}
+              title={<FormattedMessage id="app.common.description" />}
               content={record.describe}
             />
           </Col>
           <Col span={12}>
             <DescriptionItem
-              title={<FormattedMessage id='taskTrigger.triggerTasks' />}
+              title={<FormattedMessage id="taskTrigger.triggerTasks" />}
               content={this.renderTriggerTasks(record.codes)}
             />
           </Col>
           <Col span={12}>
             <DescriptionItem
-              title={<FormattedMessage id='taskTrigger.variable' />}
+              title={<FormattedMessage id="taskTrigger.variable" />}
               content={
                 record.variable === 'fixed'
                   ? formatMessage({ id: 'taskTrigger.fixedVariable' })
@@ -350,7 +355,7 @@ class TaskTrigger extends Component {
           </Col>
           <Col span={12}>
             <DescriptionItem
-              title={<FormattedMessage id='taskTrigger.totalTimes' />}
+              title={<FormattedMessage id="taskTrigger.totalTimes" />}
               content={record.totalCount}
             />
           </Col>
@@ -362,26 +367,26 @@ class TaskTrigger extends Component {
           </Col>
           <Col span={12}>
             <DescriptionItem
-              title={<FormattedMessage id='taskTrigger.dispatchedTimes' />}
+              title={<FormattedMessage id="taskTrigger.dispatchedTimes" />}
               content={record.finishedCount}
             />
           </Col>
           <Col span={12}>
             <DescriptionItem
-              title={<FormattedMessage id='app.common.operator' />}
+              title={<FormattedMessage id="app.common.operator" />}
               content={record.operator}
             />
           </Col>
           <Col span={24}>
             <DescriptionItem
-              title={<FormattedMessage id='app.common.operationTime' />}
+              title={<FormattedMessage id="app.common.operationTime" />}
               content={convertToUserTimezone(record.operateTime).format('YYYY-MM-DD HH:mm:ss')}
             />
           </Col>
           <Col span={24}>
             <DescriptionItem
-              title={<FormattedMessage id='app.common.endTime' />}
-              content={convertToUserTimezone(record.endTime).format('YYYY-MM-DD HH:mm:ss')}
+              title={<FormattedMessage id="app.common.endTime" />}
+              content={convertToUserTimezone(record.finishedTime).format('YYYY-MM-DD HH:mm:ss')}
             />
           </Col>
         </Row>
