@@ -11,8 +11,9 @@ export default {
   'taskTrigger.randomVariable': '随机',
   'taskTrigger.fixedVariable': '固定',
   'taskTrigger.time.tip': '请输入时间间隔(s)',
-  'taskTrigger.totaTimes': '总下发次数',
-  'taskTrigger.totaTimes.required': '总下发次数或结束时间必填',
+  'taskTrigger.totalTimes': '总下发次数',
+  'taskTrigger.totalTimes.required': '总下发次数或结束时间必填',
+  'taskTrigger.dispatchedTimes': '已下发次数',
 
   // **********  均衡限流器 ********** //
   'taskLimit.currentLimiting': '限流',
@@ -35,6 +36,7 @@ export default {
   'customTask.carryLoad.fetch': '取货',
   'customTask.carryLoad.put': '送货',
   'customTask.carryLoad.check': '检测货物',
+  'customTask.runToSafetyArea': '去安全区',
 
   // 表单
   'customTasks.example.field': '字段',
@@ -126,7 +128,8 @@ export default {
   'customTask.lock.LOCK': '锁定时机',
   'customTask.lock.LOCK.NO': '不锁',
   'customTask.lock.UNLOCK': '解锁时机',
-  'customTask.lock.UNLOCK.NO': '不解锁',
+  'customTask.lock.switchToVehicle': '切换为小车', // 目标点->不解锁改为切换为小车
+  'customTask.lock.switchToLoad': '切换为载具', // 储位->不解锁改为切换为载具
   'customTask.lock.BeginTaskStart': '任务开始前',
   'customTask.lock.BeginActionStart': '路径动作开始前',
   'customTask.lock.AfterTaskEnd': '任务结束',

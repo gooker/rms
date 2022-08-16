@@ -15,6 +15,7 @@ export default {
   'app.chargerType.version3': '第三代',
 
   // 充电桩管理
+  'charger.code': '充电桩编码',
   'charger.id': '充电桩ID',
   'charger.map.code': '地图充电桩code',
   'chargeManager.chargeCurrent': '当前电流',

@@ -4,7 +4,7 @@ import * as XLSX from 'xlsx';
 import { DashLine } from 'pixi-dashed-line';
 import { cloneDeep, find, groupBy, orderBy, pickBy, sortBy } from 'lodash';
 import { CoordinateType, LineType, NavigationType } from '@/config/config';
-import { MapSelectableSpriteType, VehicleState, zIndex } from '@/config/consts';
+import { MapSelectableSpriteType, VehicleBackendState, VehicleState, zIndex } from '@/config/consts';
 import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
 import { CellEntity, LogicArea } from '@/entities';
 import { convertLandAngle2Pixi } from '@/utils/mapTransformer';
@@ -859,31 +859,31 @@ export function switchVehicleState(key, carState) {
   switch (carState) {
     case VehicleState.working:
       state.push(`${key}_vehicle_green`);
-      state.push('on_task');
+      state.push(VehicleBackendState.working);
       break;
     case VehicleState.offline:
       state.push(`${key}_vehicle_grey`);
-      state.push('offline');
+      state.push(VehicleBackendState.offline);
       break;
     case VehicleState.connecting:
       state.push(`${key}_vehicle_grey`);
-      state.push('offline');
+      state.push(VehicleBackendState.offline);
       break;
     case VehicleState.waiting:
       state.push(`${key}_vehicle_purple`);
-      state.push('waiting');
+      state.push(VehicleBackendState.waiting);
       break;
     case VehicleState.standBy:
       state.push(`${key}_vehicle`);
-      state.push('stand_by');
+      state.push(VehicleBackendState.standBy);
       break;
     case VehicleState.charging:
       state.push(`${key}_vehicle_yellow`);
-      state.push('charging');
+      state.push(VehicleBackendState.charging);
       break;
     case VehicleState.error:
       state.push(`${key}_vehicle_red`);
-      state.push('error');
+      state.push(VehicleBackendState.error);
       break;
     default:
       break;

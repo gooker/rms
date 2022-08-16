@@ -8,6 +8,7 @@ import {
   getFormLayout,
   getRandomString,
   isNull,
+  renderLabel,
 } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { convertQuickTaskVarToRequestStruct, formatVariableFormValues, mergeQuickTaskVar } from '../quickTaskUtil';
@@ -108,7 +109,7 @@ const ExecuteQuickTaskModal = (props) => {
         const stepIndex = codes.indexOf(nodeCode);
         const taskNode = customActions[nodeCode];
         if (taskNode && taskNode.name) {
-          return taskNode.name;
+          return renderLabel(taskNode.name);
         } else {
           const [nodeType] = nodeCode.split('_');
           return (

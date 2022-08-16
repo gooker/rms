@@ -9,6 +9,8 @@ import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
 import { GroupManager, GroupResourceMemberId } from '@/components/ResourceGroup';
 import commonStyles from '@/common.module.less';
+import { VehicleState } from '@/config/consts';
+import { groupBy, valuesIn } from 'lodash';
 
 const Colors = Dictionary().color;
 
@@ -27,10 +29,9 @@ const VehicleListTools = (props) => {
   }
 
   function renderVehicleStateFilter() {
-    const vehicleStates = Dictionary('vehicleStatus');
-    return Object.keys(vehicleStates).map((item) => (
+    return Object.values(VehicleState).map((item) => (
       <Select.Option key={item} value={item}>
-        <FormattedMessage id={vehicleStates[item]} />
+        {formatMessage(`app.task.state.${item}`)}
       </Select.Option>
     ));
   }
@@ -43,18 +44,25 @@ const VehicleListTools = (props) => {
   }
 
   function cancelRegister() {
-    const params = selectedRows.map(({ vehicleId, vehicleType, adapterType }) => ({
-      vehicleId,
-      vehicleType,
-      vehicleAdapter: adapterType,
-    }));
     RmsConfirm({
-      content: formatMessage({ id: 'app.vehicle.moveOut.confirm' }),
+      content: formatMessage({ id: 'vehicle.unregister.confirm' }),
       onOk: async () => {
-        const response = await logOutVehicle(params);
-        if (!dealResponse(response, 1)) {
-          dispatch({ type: 'vehicleList/fetchInitialData' });
-        }
+        let group = selectedRows.map((item) => ({
+          groupKey: `${item.vehicleType}@@${item.adapterType}`,
+          ...item,
+        }));
+        group = groupBy(group, 'groupKey');
+        const requestParams = valuesIn(group).map((item) => ({
+          ids: item.map(({ vehicleId }) => vehicleId),
+          vehicleType: item[0].vehicleType,
+          vehicleAdapter: item[0].adapterType,
+        }));
+        logOutVehicle(requestParams).then((response) => {
+          if (!dealResponse(response)) {
+            cancelSelection();
+            dispatch({ type: 'vehicleList/fetchInitialData' });
+          }
+        });
       },
     });
   }

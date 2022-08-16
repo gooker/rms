@@ -225,7 +225,6 @@ export default class Cell extends PIXI.Container {
    */
   plusType(type) {
     if (this.data.types.has(type)) return;
-    if (this.data.types.has('store_cell')) return;
 
     let cellType = 'normal';
     if (type === 'store_cell') {

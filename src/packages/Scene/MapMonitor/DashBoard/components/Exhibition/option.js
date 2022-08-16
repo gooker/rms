@@ -1,6 +1,5 @@
 import { formatMessage, getDpr } from '@/utils/util';
-import Dictionary from '@/utils/Dictionary';
-import { VehicleStateColor } from '@/config/consts';
+import { VehicleState, VehicleStateColor } from '@/config/consts';
 
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 
@@ -20,14 +19,11 @@ const TrendLineColor = [
 ];
 
 export const getVehicleStatusMap = () => {
-  return {
-    Working: formatMessage({ id: Dictionary('vehicleStatus', 'Working') }),
-    StandBy: formatMessage({ id: Dictionary('vehicleStatus', 'StandBy') }),
-    Charging: formatMessage({ id: Dictionary('vehicleStatus', 'Charging') }),
-    Offline: formatMessage({ id: Dictionary('vehicleStatus', 'Offline') }),
-    Connecting: formatMessage({ id: Dictionary('vehicleStatus', 'Connecting') }),
-    Error: formatMessage({ id: Dictionary('vehicleStatus', 'Error') }),
-  };
+  const result = {};
+  Object.values(VehicleState).forEach((state) => {
+    result.state = formatMessage(`app.task.state.${state}`);
+  });
+  return result;
 };
 
 export const vehicleStateColor = {

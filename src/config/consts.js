@@ -2,7 +2,46 @@ import Dictionary from '@/utils/Dictionary';
 
 const Colors = Dictionary().color;
 
-// 地图相关
+/**-------------------------------- 车辆 --------------------------------*/
+// 车辆状态
+export const VehicleState = {
+  error: 'Error', // error
+  standBy: 'StandBy', // stand_by
+  charging: 'Charging', // charging
+  working: 'Working', // on_task
+  offline: 'Offline', // offline
+  connecting: 'Connecting', // offline
+  waiting: 'Waiting', // offline
+};
+
+// 车辆在后台记录的状态字符
+export const VehicleBackendState = {
+  error: 'error',
+  standBy: 'stand_by',
+  charging: 'charging',
+  working: 'on_task',
+  offline: 'offline',
+  waiting: 'offline',
+  connecting: 'offline',
+};
+
+/**-------------------------------- 任务 --------------------------------*/
+// 任务状态
+export const TaskStatus = ['New', 'Executing', 'Finished', 'Cancelled', 'Error', 'Wait'];
+
+/**-------------------------------- 充电桩 --------------------------------*/
+// 充电桩状态
+export const ChargerStatus = [
+  'ERROR',
+  'OFFLINE',
+  'ASSIGNED',
+  'CHARGING',
+  'AVAILABLE',
+  'CONNECTED',
+  'CONNECTING',
+];
+
+/**-------------------------------- 地图 --------------------------------*/
 export const GlobalAlpha = 0.6;
 export const MapScaleRatio = 1.08;
 export const MonitorAdaptStorageKey = 'MONITOR_CELL_ADAPT_THRESHOLD';
@@ -10,6 +49,7 @@ export const MonitorMapSizeKey = 'MONITOR_MAP_SIZE';
 export const EditorAdaptStorageKey = 'EDITOR_CELL_ADAPT_THRESH6LD';
 export const EditorMapSizeKey = 'EDITOR_MAP_SIZE';
 
+// 地图点选操作类型
 export const SelectionType = {
   SINGLE: 'SINGLE',
   CTRL: 'CTRL',
@@ -26,17 +66,60 @@ export const ElementType = {
   toteRack: 'TOTE_RACK',
 };
 
-// 小车状态
-export const VehicleState = {
-  error: 'Error', // error
-  standBy: 'StandBy', // stand_by
-  charging: 'Charging', // charging
-  working: 'Working', // on_task
-  offline: 'Offline', // offline
-  connecting: 'Connecting', // offline
-  waiting: 'Waiting', // offline
+/**
+ * 地图编辑可选择元素类型枚举
+ * 点位、线条、区域标记、Label、充电桩、工作站、通用站点、电梯、投递点、交汇点
+ */
+export const MapSelectableSpriteType = {
+  CELL: 'cell',
+  ZONE: 'zone',
+  ROUTE: 'route',
+  LABEL: 'label',
+  CHARGER: 'charger',
+  STATION: 'station',
+  ELEVATOR: 'elevator',
+  DELIVERY: 'delivery',
+  WORKSTATION: 'workStation',
+  INTERSECTION: 'intersection',
+  EMERGENCYSTOP: 'emergencyStop',
 };
 
+// 监控地图可选的元素类型
+export const MonitorSelectableSpriteType = {
+  Vehicle: 'Vehicle',
+  LatentPod: 'LatentPod',
+  ToteRack: 'ToteRack',
+  Delivery: 'delivery',
+  Station: 'station',
+  WorkStation: 'workStation',
+  Charger: 'charger',
+};
+
+// 急停区类型枚举
+export const EmergencyStopMode = [
+  { label: 'editor.emergency.VehiclePathFinished', value: 'VehiclePathFinished' },
+  { label: 'editor.emergency.NearestQRCode', value: 'NearestQRCode' },
+  { label: 'editor.emergency.ImmediateStop', value: 'ImmediateStop' },
+  { label: 'editor.emergency.LockPath', value: 'LockPath' },
+];
+
+/**
+ *  点位热度相关
+ * */
+// 点位热度圆半径
+export const HeatCircleRadius = 400;
+export const CellHeatType = {
+  cost_type: 'COST_HEAT',
+};
+
+// 地图区域标记类型
+export const ZoneMarkerType = {
+  RECT: 'RECT',
+  CIRCLE: 'CIRCLE',
+  IMG: 'IMG',
+};
+
+/**-------------------------------- 颜色 --------------------------------*/
 // 小车状态颜色
 export const VehicleStateColor = {
   Offline: Colors.gray,
@@ -50,14 +133,14 @@ export const VehicleStateColor = {
   Waiting: Colors.purple,
 };
 
-// 任务状态(Bage组件)
-export const TaskStateBageType = {
+// 任务状态颜色
+export const TaskStatusColor = {
   New: 'warning',
   Wait: 'warning',
   Executing: 'processing',
   Finished: 'success',
   Error: 'error',
-  Cancel: 'default',
+  Cancelled: 'default',
 };
 
 // 充电桩颜色
@@ -65,6 +148,44 @@ export const ChargerStateColor = {
   AVAILABLE: 0x009bda, // 可用
   ASSIGNED: 0x009f42, // 已分配
   CONNECTING: 0x5f208f, // 连接中
+};
+
+export const TaskPathColor = {
+  passed: '0x808080',
+  locked: '0x34bf49',
+  future: '0xfbb034',
+};
+
+export const CellTypeColor = {
+  blank: '0xffffff',
+  normal: '0xffdd00',
+  storeType: '0x49a942',
+  blockType: '0x6d6e70',
+};
+
+export const GeoLockColor = {
+  PATH: '0x00FFFF',
+  ROTATION: '0xFFFF00',
+  SPECIAL: '0xFF0000',
+  WillLocked: '0xF6830F',
+};
+
+// 急停区状态颜色
+export const EStopStateColor = {
+  inactive: {
+    color: 0x999999,
+    fillColor: 0x666666,
+  },
+  active: {
+    safe: {
+      color: 0xf10d0d,
+      fillColor: 0xf56161,
+    },
+    unSafe: {
+      color: 0xffe600,
+      fillColor: 0xdec674,
+    },
+  },
 };
 
 // 工作站状态颜色
@@ -81,7 +202,7 @@ export const CostColor = {
   1000: '0xe64a19', // 红色
 };
 
-// Size
+/**-------------------------------- 尺寸 --------------------------------*/
 export const CellSize = {
   width: 60,
   height: 60,
@@ -138,44 +259,6 @@ export const ElevatorSize = {
   height: 1300,
 };
 
-export const TaskPathColor = {
-  passed: '0x808080',
-  locked: '0x34bf49',
-  future: '0xfbb034',
-};
-
-export const CellTypeColor = {
-  storeType: '0x49a942',
-  blockType: '0x6d6e70',
-  normal: '0xffdd00',
-  blank: '0xffffff',
-};
-
-export const GeoLockColor = {
-  PATH: '0x00FFFF',
-  ROTATION: '0xFFFF00',
-  SPECIAL: '0xFF0000',
-  WillLocked: '0xF6830F',
-};
-
-// 急停区状态颜色
-export const EStopStateColor = {
-  inactive: {
-    color: 0x999999,
-    fillColor: 0x666666,
-  },
-  active: {
-    safe: {
-      color: 0xf10d0d,
-      fillColor: 0xf56161,
-    },
-    unSafe: {
-      color: 0xffe600,
-      fillColor: 0xdec674,
-    },
-  },
-};
-
 // 地图元素 zIndex
 export const zIndex = {
   zoneMarker: 1,
@@ -192,6 +275,7 @@ export const zIndex = {
   sourceLock: 12,
 };
 
+/**-------------------------------- 其他 --------------------------------*/
 // 日志下载文件类型
 export const LogFileTypes = [
   'syslog.txt',
@@ -199,59 +283,6 @@ export const LogFileTypes = [
   'syslog2.old',
   'syslog3.old',
   'config.txt',
-];
-
-/**
- *  点位热度相关
- * */
-// 点位热度圆半径
-export const HeatCircleRadius = 400;
-export const CellHeatType = {
-  cost_type: 'COST_HEAT',
-};
-
-// 地图区域标记类型
-export const ZoneMarkerType = {
-  RECT: 'RECT',
-  CIRCLE: 'CIRCLE',
-  IMG: 'IMG',
-};
-
-/**
- * 地图编辑可选择元素类型枚举
- * 点位、线条、区域标记、Label、充电桩、工作站、通用站点、电梯、投递点、交汇点
- */
-export const MapSelectableSpriteType = {
-  CELL: 'cell',
-  ZONE: 'zone',
-  ROUTE: 'route',
-  LABEL: 'label',
-  CHARGER: 'charger',
-  STATION: 'station',
-  ELEVATOR: 'elevator',
-  DELIVERY: 'delivery',
-  WORKSTATION: 'workStation',
-  INTERSECTION: 'intersection',
-  EMERGENCYSTOP: 'emergencyStop',
-};
-
-// 监控地图可选的元素类型
-export const MonitorSelectableSpriteType = {
-  Vehicle: 'Vehicle',
-  LatentPod: 'LatentPod',
-  ToteRack: 'ToteRack',
-  Delivery: 'delivery',
-  Station: 'station',
-  WorkStation: 'workStation',
-  Charger: 'charger',
-};
-
-// 急停区类型枚举
-export const EmergencyStopMode = [
-  { label: 'editor.emergency.VehiclePathFinished', value: 'VehiclePathFinished' },
-  { label: 'editor.emergency.NearestQRCode', value: 'NearestQRCode' },
-  { label: 'editor.emergency.ImmediateStop', value: 'ImmediateStop' },
-  { label: 'editor.emergency.LockPath', value: 'LockPath' },
 ];
 
 // 纸张尺寸

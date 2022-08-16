@@ -7,7 +7,6 @@ import {
   getCoordinator,
   getDistance,
   getKeyByCoordinateType,
-  getTextureFromResources,
 } from '@/utils/mapUtil';
 import { BitText, Charger, Dump, DumpBasket, Elevator, Intersection, Station } from '@/entities';
 import { isNull } from '@/utils/util';
@@ -154,7 +153,7 @@ export default class BaseMap extends React.PureComponent {
     cells.forEach((cellId) => {
       const cellEntity = this.idCellMap.get(cellId);
       if (cellEntity) {
-        opt === 'add' && cellEntity.plusType(type, getTextureFromResources(type));
+        opt === 'add' && cellEntity.plusType(type);
         opt === 'remove' && cellEntity.removeType(type);
       }
     });
@@ -163,27 +162,14 @@ export default class BaseMap extends React.PureComponent {
   // 渲染休息点
   renderRestCells = (rest, opt = 'add') => {
     if (Array.isArray(rest?.cellIds)) {
-      rest.cellIds.forEach((cell) => {
-        const cellEntity = this.idCellMap.get(cell);
-        if (cellEntity) {
-          //
-        }
-      });
+      this.renderCellsType(rest?.cellIds, 'rest_cell', opt);
     }
   };
 
   // 渲染不可逗留点
   renderNonStopCells = (cells, opt = 'add') => {
-    const type = 'non_stop';
     const cellIds = cells.map((item) => item.nonStopCell);
-
-    cellIds.forEach((cellId) => {
-      const cellEntity = this.idCellMap.get(cellId);
-      if (cellEntity) {
-        opt === 'add' && cellEntity.plusType(type, getTextureFromResources(type));
-        opt === 'remove' && cellEntity.removeType(type);
-      }
-    });
+    this.renderCellsType(cellIds, 'non_stop', opt);
   };
 
   // ************************ 线条相关 **********************

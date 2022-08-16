@@ -58,39 +58,47 @@ const HelpDocViewerModal = (props) => {
       fileName = `${fileName}_${langShortName}`;
     }
     fileName = `${fileName}.html`;
-
-    // TODO: 帮助文档地址需要后续提供
-    const url = `http://localhost:5000/static/${fileName}`;
-    console.log('当前打开文档: ', url);
+    const origin = window.isProductionEnv ? window.location.origin : window.nameSpacesInfo.platform;
+    const url = `${origin}/help_doc/${fileName}?timestamp=${new Date().getTime()}`;
     setIframeSrc(url);
   }
 
   return (
-    <Modal
-      title={formatMessage({ id: 'app.helpDoc' })}
-      visible={visible}
-      onCancel={onCancel}
-      width={'100vw'}
-      style={{ top: 30, maxWidth: 1400, padding: 0 }}
-      bodyStyle={{ height: '80vh', overflow: 'hidden', padding: 0 }}
-      footer={null}
-    >
-      <div className={style.helpDocContainer}>
-        <div className={styles.menu} style={{ paddingTop: 8 }}>
-          <HelpDocPortal />
-          <div style={{ width: menuCollapsed ? 50 : 200 }}>
-            <HelpDocMenu currentPage={currentPage} />
+    <>
+      <Modal
+        destroyOnClose
+        title={formatMessage({ id: 'app.helpDoc' })}
+        visible={visible}
+        onCancel={onCancel}
+        width={'100vw'}
+        style={{ top: 30, maxWidth: 1400, padding: 0 }}
+        bodyStyle={{ height: '80vh', overflow: 'hidden', padding: 0 }}
+        footer={null}
+      >
+        <div className={style.helpDocContainer}>
+          <div className={styles.menu} style={{ paddingTop: 8 }}>
+            <HelpDocPortal />
+            <div style={{ width: menuCollapsed ? 50 : 200 }}>
+              <HelpDocMenu currentPage={currentPage} />
+            </div>
+          </div>
+          <div className={style.helpViewer}>
+            {currentPage === '/' ? (
+              '使用文档'
+            ) : (
+              <iframe
+                seamless
+                title={'help_doc'}
+                src={iframeSrc}
+                width={'100%'}
+                height={'100%'}
+                frameBorder={0}
+              />
+            )}
           </div>
         </div>
-        <div className={style.helpViewer}>
-          {currentPage === '/' ? (
-            '使用文档'
-          ) : (
-            <iframe seamless src={iframeSrc} width={'100%'} height={'100%'} frameBorder={0} />
-          )}
-        </div>
-      </div>
-    </Modal>
+      </Modal>
+    </>
   );
 };
 export default connect(({ menu, global, help }) => ({

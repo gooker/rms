@@ -3,7 +3,14 @@ import { Button, Card, Checkbox, Col, Divider, Form, InputNumber, Row, Select } 
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { isPlainObject } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { convertMapToArrayMap, formatMessage, getFormLayout, getRandomString, isNull } from '@/utils/util';
+import {
+  convertMapToArrayMap,
+  formatMessage,
+  getFormLayout,
+  getRandomString,
+  isNull,
+  renderLabel,
+} from '@/utils/util';
 import FormModal from '@/components/CommonModal';
 import FormattedMessage from '@/components/FormattedMessage';
 import ResourceLimit from '@/packages/SmartTask/CustomTask/components/ResourceLimit';
@@ -45,7 +52,7 @@ const VariableModificationModal = (props) => {
         const stepIndex = codes.indexOf(nodeType);
         const taskNode = customActions[nodeType];
         if (taskNode && taskNode.name) {
-          return taskNode.name;
+          return renderLabel(taskNode.name);
         } else {
           const [taskNodeType] = nodeType.split('_');
           return (

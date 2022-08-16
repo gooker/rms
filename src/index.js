@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { message } from 'antd';
 import { LINE_SCALE_MODE, settings } from '@pixi/graphics-smooth';
 import createRcsDva from '@/utils/RmsDva';
-import App from '@/pages/App';
+import App from '@/App';
 import models from '@/models';
 import './global.less';
 

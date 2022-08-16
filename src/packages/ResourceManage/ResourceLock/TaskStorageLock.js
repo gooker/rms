@@ -1,8 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
-import { connect } from '@/utils/RmsDva';
-import { Button, Col, message, Row, Tooltip } from 'antd';
+import { Button, Col, Row, Tooltip } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import { fetchBatchDeleteTargetCellLock, fetchTargetCellLockList } from '@/services/commonService';
+import { batchDeleteTaskStorageLock, fetchTaskStorageLockList } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
@@ -11,30 +10,29 @@ import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util'
 import RmsConfirm from '@/components/RmsConfirm';
 import SearchTargetLock from './components/SearchTargetLock';
 
-const TargetLock = (props) => {
+const TaskStorageLock = (props) => {
   const [loading, setLoading] = useState(false);
-  const [targetLockList, setTargetLockList] = useState([]);
-  const [currentTargetLockList, setCurrentTargetLockList] = useState([]);
+  const [dataSourceList, setDataSourceList] = useState([]);
+  const [currentDataList, setCurrentDataList] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRow, setSelectedRow] = useState([]);
 
   const columns = [
     {
-      title: <FormattedMessage id="app.map.cell" />,
+      title: <FormattedMessage id='app.map.cell' />,
       dataIndex: 'cellId',
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.vehicle" />,
-      dataIndex: 'vehicleId',
+      title: <FormattedMessage id='resource.load.id' />,
+      dataIndex: 'loadId',
       align: 'center',
     },
     {
       title: <FormattedMessage id="app.common.type" />,
-      dataIndex: 'vehicleType',
+      dataIndex: 'loadType',
       align: 'center',
     },
-
     {
       title: <FormattedMessage id="app.task.id" />,
       dataIndex: 'taskId',
@@ -46,7 +44,7 @@ const TargetLock = (props) => {
               <span
                 className={commonStyles.textLinks}
                 onClick={() => {
-                  checkTaskDetail(text, record.vehicleType);
+                  checkTaskDetail(record);
                 }}
               >
                 {text ? '*' + text.substr(text.length - 6, 6) : null}
@@ -59,50 +57,17 @@ const TargetLock = (props) => {
   ];
 
   useEffect(() => {
-    freshData();
+    async function init() {
+      await freshData();
+    }
+    init();
   }, []);
 
-  async function freshData() {
-    setLoading(true);
-    const response = await fetchTargetCellLockList();
-    if (!dealResponse(response)) {
-      setTargetLockList(response);
-      filterData(response);
-    }
-    setLoading(false);
-  }
-
-  function filterData(list, formValues) {
-    let result = [...list];
-    if (isNull(formValues)) {
-      setCurrentTargetLockList(result);
-      return;
-    }
-    const { vehicleId, vehicleType, taskId } = formValues;
-    if (!isStrictNull(vehicleId)) {
-      result = result.filter((item) => {
-        return item.vehicleId === vehicleId;
-      });
-    }
-    if (!isStrictNull(vehicleType)) {
-      const currentVehicleType = [];
-      vehicleType?.map((value) => {
-        currentVehicleType.push(value.split('@')[1]);
-      });
-
-      result = result.filter((item) => currentVehicleType.includes(item.vehicleType));
-    }
-    if (!isStrictNull(taskId)) {
-      result = result.filter((item) => item.taskId === taskId);
-    }
-    setCurrentTargetLockList(result);
-  }
-
-  function checkTaskDetail(taskId, vehicleType) {
+  function checkTaskDetail({ taskId, loadType }) {
     const { dispatch } = props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, vehicleType },
+      payload: { taskId, loadType },
     });
   }
 
@@ -115,25 +80,55 @@ const TargetLock = (props) => {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
-        const response = await fetchBatchDeleteTargetCellLock(selectedRow);
-        if (!dealResponse(response)) {
-          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+        const response = await batchDeleteTaskStorageLock(selectedRow);
+        if (!dealResponse(response, true)) {
           freshData();
-        } else {
-          message.success(formatMessage({ id: 'app.tip.operateFailed' }));
         }
       },
     });
+  }
+  async function freshData() {
+    setLoading(true);
+    const response = await fetchTaskStorageLockList();
+    if (!dealResponse(response)) {
+      setDataSourceList(response);
+      filterData(response);
+    }
+    setLoading(false);
+  }
+
+  function filterData(list, formValues) {
+    let result = [...list];
+    if (isNull(formValues)) {
+      setCurrentDataList(result);
+      return;
+    }
+    const { taskId, loadType } = formValues;
+    if (!isStrictNull(taskId)) {
+      result = result.filter((item) => {
+        return item.taskId === taskId;
+      });
+    }
+    if (!isStrictNull(loadType)) {
+      result = result.filter((item) => loadType === item.loadType);
+    }
+
+    setCurrentDataList(result);
   }
 
   return (
     <TablePageWrapper>
       <div>
-        <SearchTargetLock search={filterData} data={targetLockList} />
+        <SearchTargetLock
+          search={filterData}
+          data={dataSourceList}
+          verhicleHide={true}
+          loadType={true}
+        />
         <Row>
-          <Col flex='auto' className={commonStyles.tableToolLeft}>
+          <Col flex="auto" className={commonStyles.tableToolLeft}>
             <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteTargetLock}>
-              <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
+              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
             <Button onClick={freshData}>
               <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
@@ -146,8 +141,8 @@ const TargetLock = (props) => {
         scroll={{ x: 'max-content' }}
         loading={loading}
         columns={columns}
-        dataSource={currentTargetLockList}
-        rowKey={(record) => record.vehicleUniqueId}
+        dataSource={currentDataList}
+        rowKey={(record, index) => index}
         rowSelection={{
           selectedRowKeys,
           onChange: onSelectChange,
@@ -156,5 +151,4 @@ const TargetLock = (props) => {
     </TablePageWrapper>
   );
 };
-
-export default connect(() => ({}))(memo(TargetLock));
+export default memo(TaskStorageLock);

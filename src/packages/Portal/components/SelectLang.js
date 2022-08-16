@@ -6,7 +6,7 @@ import styles from './Header.module.less';
 
 const EditModeMessageKey = 'Edit_Mode_Tip';
 const SelectLang = (props) => {
-  const { dispatch, editI18NMode, onChange, systemLanguage } = props;
+  const { dispatch, editI18NMode, systemLanguage } = props;
 
   const selectedLang = window.localStorage.getItem('currentLocale');
   const langMenu = (
@@ -34,10 +34,9 @@ const SelectLang = (props) => {
       } else {
         message.destroy(EditModeMessageKey);
       }
-
       dispatch({ type: 'global/updateEditI18NMode', payload: !editI18NMode });
     } else {
-      onChange(key);
+      dispatch({ type: 'global/updateGlobalLocale', payload: key });
     }
   }
 

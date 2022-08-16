@@ -1,14 +1,9 @@
 import React from 'react';
-import { Badge, Popover, Switch } from 'antd';
-import { BellOutlined, FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
-import { withRouter } from 'react-router-dom';
+import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 import screenfull from 'screenfull';
 import { connect } from '@/utils/RmsDva';
-import { AppCode } from '@/config/config';
-import { dealResponse, isNull, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { getHAInfo } from '@/services/XIHEService';
-import { IconFont } from '@/components/IconFont';
-import FormattedMessage from '@/components/FormattedMessage';
 import SelectEnvironment from './SelectEnvironment';
 import UserCenter from './UserCenter';
 import SelectSection from './SelectSection';
@@ -16,11 +11,11 @@ import SelectLang from './SelectLang';
 import HeaderTimezone from './HeaderTimezone';
 import HeaderHelpDoc from './HeaderHelpDoc';
 import styles from './Header.module.less';
+import HeaderAlertCenter from '@/packages/Portal/components/HeaderAlertCenter';
+import RmsConfirm from '@/components/RmsConfirm';
 
-@withRouter
 @connect(({ global, user }) => ({
   logo: global.logo,
-  alertCount: global.alertCount,
   sysAuthInfo: global.sysAuthInfo,
   globalLocale: global.globalLocale,
   isFullscreen: global.isFullscreen,
@@ -29,15 +24,11 @@ import styles from './Header.module.less';
 }))
 class Header extends React.Component {
   state = {
-    showErrorNotification: false,
     isHA: false, // 是否是高可用模式
   };
 
   componentDidMount() {
     // this.getHAInformation();
-    const sessionValue = window.sessionStorage.getItem('showErrorNotification');
-    const showErrorNotification = sessionValue === null ? true : JSON.parse(sessionValue);
-    this.setState({ showErrorNotification });
   }
 
   getHAInformation = () => {
@@ -62,48 +53,30 @@ class Header extends React.Component {
     screenfull.toggle();
   };
 
-  changeSection = (record) => {
-    const { key } = record;
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'user/fetchUpdateUserCurrentSection',
-      payload: key, // key就是sectionId,
-    }).then((result) => {
-      if (result) {
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
-      }
-    });
-  };
-
-  switchShowErrorNotification = (checked) => {
-    window.sessionStorage.setItem('showErrorNotification', checked);
-    this.setState({ showErrorNotification: checked });
-  };
-
-  goToQuestionCenter = async () => {
-    const { history } = this.props;
-    history.push(`/${AppCode.DevOps}/alertCenter`);
-  };
-
-  changeLocale = async ({ key }) => {
-    const { dispatch } = this.props;
-    await dispatch({ type: 'global/updateGlobalLocale', payload: key });
-  };
-
   renderVersion = () => {
     const { version } = this.props;
     const versionText = version?.PlatForm?.version;
     if (!isStrictNull(versionText)) {
-      return `v1.0.0`;
+      return `v${versionText}`;
     }
     return null;
   };
 
+  exitDevMode = () => {
+    RmsConfirm({
+      content: formatMessage('app.global.exitDevModeConfirm'),
+      onOk: () => {
+        window.localStorage.removeItem('dev');
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      },
+    });
+  };
+
   render() {
-    const { logo, currentUser, isHA, sysAuthInfo } = this.props;
-    const { showErrorNotification, alertCount, isFullscreen } = this.state;
+    const { isHA } = this.state;
+    const { logo, currentUser, isFullscreen, sysAuthInfo } = this.props;
     if (isNull(currentUser)) return null;
 
     const isAdmin = currentUser.username === 'admin';
@@ -114,7 +87,9 @@ class Header extends React.Component {
         </div>
         <div className={styles.middleContent}>
           {window.localStorage.getItem('dev') === 'true' && (
-            <div className={styles.devFlag}>DEV</div>
+            <div className={styles.devFlag} onClick={this.exitDevMode}>
+              DEV
+            </div>
           )}
           {/*{isHA && <HA />}*/}
           {/*{sysAuthInfo <= 30 && <ExpiredTip days={sysAuthInfo} />}*/}
@@ -134,7 +109,7 @@ class Header extends React.Component {
           <UserCenter />
 
           {/* Section切换 */}
-          {!isAdmin && <SelectSection onMenuClick={this.changeSection} />}
+          {!isAdmin && <SelectSection />}
 
           {/* 全屏切换 */}
           <span className={styles.action} onClick={this.switchFullScreen}>
@@ -146,26 +121,10 @@ class Header extends React.Component {
           </span>
 
           {/* 问题中心 */}
-          <Popover
-            trigger="hover"
-            content={
-              <Switch
-                checkedChildren={<FormattedMessage id="app.common.on" />}
-                unCheckedChildren={<FormattedMessage id="app.common.off" />}
-                checked={showErrorNotification}
-                onChange={this.switchShowErrorNotification}
-              />
-            }
-          >
-            <span className={styles.action} onClick={this.goToQuestionCenter}>
-              <Badge size="small" showZero={false} count={alertCount} overflowCount={99}>
-                {showErrorNotification ? <BellOutlined /> : <IconFont type="icon-bellOff" />}
-              </Badge>
-            </span>
-          </Popover>
+          <HeaderAlertCenter />
 
           {/* 切换语言 */}
-          <SelectLang onChange={this.changeLocale} />
+          <SelectLang />
         </div>
       </div>
     );

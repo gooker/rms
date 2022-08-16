@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Badge, Button, Divider, Table, Tooltip } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { TaskStateBageType } from '@/config/consts';
+import { TaskStatusColor } from '@/config/consts';
 import { fetchTaskRecord } from '@/services/taskService';
 import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull, renderLabel } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -74,7 +74,7 @@ class TaskHistory extends Component {
         if (text != null) {
           return (
             <Badge
-              status={TaskStateBageType[text]}
+              status={TaskStatusColor[text]}
               text={formatMessage({ id: `app.task.state.${text}` })}
             />
           );

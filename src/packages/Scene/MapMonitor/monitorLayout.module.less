@@ -112,26 +112,19 @@
 
 .rightSideContentDetail {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  width: 100%;
+  height: 60px;
 
-  & > div:first-child {
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: center;
-    width: 50px;
-    color: #fff;
-
-    span {
-      .flexCenter();
-    }
+  & > img {
+    width: 25px;
+    height: 25px;
   }
 
-  & > div:nth-child(2) {
+  & > div {
     color: #fff;
-    font-weight: 500;
-    font-size: 18px;
-    .flexVerticalCenter();
+    font-size: 20px;
   }
 }
 
@@ -142,43 +135,45 @@
 }
 
 .rightSideVehicleContentOperationItem {
-  .flexCenter();
-
   width: 65px;
-  height: 60px;
-  padding-top: 4px;
-  background: #0870a0;
-  border-radius: 5px;
+  height: 65px;
   cursor: pointer;
 
-  & > img {
-    width: 23px;
-    height: auto;
-    text-align: center;
+  & > div:nth-child(1) {
+    .flexCenter();
+    height: 40px;
+    background: linear-gradient(180deg, #0973a4 0%, rgba(94, 94, 94, 0.9) 100%);
+    border-radius: 5px;
+
+    & > img {
+      width: 28px;
+      height: auto;
+    }
   }
 
-  & > div {
-    flex: 1 1;
-    color: #fff;
-    font-size: 16px;
+  & > div:nth-child(2) {
     .flexCenter();
+    height: 25px;
+    color: #c8c8c8;
+    font-size: 14px;
   }
 }
 
+.rightSideVehicleContentOperationItem:hover {
+  box-shadow: 0 1px 2px -2px #00000029, 0 3px 6px #0000001f, 0 5px 12px 4px #00000017;
+}
+
 .rightSideVehicleContentOperationItem2 {
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-between;
   width: 65px;
   height: 65px;
+  cursor: pointer;
 
   & > div:nth-child(1) {
-    .flexRowCenter();
+    .flexCenter();
+    height: 40px;
 
-    flex: 1;
     border: 1px solid #aeaeae;
     border-radius: 5px;
-    cursor: pointer;
 
     img {
       width: 23px;
@@ -187,10 +182,14 @@
   }
 
   & > div:nth-child(2) {
-    .flexRowCenter();
-
+    .flexCenter();
+    height: 25px;
     color: #fff;
   }
+}
+
+.rightSideVehicleContentOperationItem2:hover {
+  box-shadow: 0 1px 2px -2px #00000029, 0 3px 6px #0000001f, 0 5px 12px 4px #00000017;
 }
 
 // 弹窗

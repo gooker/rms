@@ -139,7 +139,7 @@ const TaskTriggerModal = (props) => {
     form.validateFields().then(async (values) => {
       // 总下发次数 结束时间 要填一个
       if (isNull(values.endTime) && isNull(values.totalCount)) {
-        message.error(formatMessage({ id: 'taskTrigger.totaTimes.required' }));
+        message.error(formatMessage({ id: 'taskTrigger.totalTimes.required' }));
         return;
       }
       values.endTime = values?.endTime?.format('YYYY-MM-DD HH:mm:ss');
@@ -275,8 +275,8 @@ const TaskTriggerModal = (props) => {
         </FormItem>
         {/* 总下发次数 */}
         <FormItem
-          name="totalCount"
-          label={formatMessage({ id: 'taskTrigger.totaTimes' })}
+          name='totalCount'
+          label={formatMessage({ id: 'taskTrigger.totalTimes' })}
           rules={[
             {
               pattern: /^[0-9]*$/,
@@ -311,7 +311,7 @@ const TaskTriggerModal = (props) => {
     </Modal>
   );
 };
-export default connect(({ taskTriger, quickTask }) => ({
+export default connect(({ taskTrigger, quickTask }) => ({
   sharedTasks: quickTask.sharedTasks,
-  customTaskList: taskTriger.customTaskList,
+  customTaskList: taskTrigger.customTaskList,
 }))(memo(TaskTriggerModal));

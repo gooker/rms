@@ -3,18 +3,18 @@ import { Badge, Button, Divider, message, Row, Tooltip } from 'antd';
 import { DeleteOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
-import { TaskStateBageType, VehicleStateColor } from '@/config/consts';
+import { TaskStatusColor, VehicleStateColor } from '@/config/consts';
 import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull, renderLabel } from '@/utils/util';
 import { fetchExecutingTasks, fetchPipeLineTasks } from '@/services/taskService';
-import { deleteTaskQueueItems, fetchUpdateTaskPriority } from '@/services/commonService';
+import { deleteTaskQueueItems, fetchUpdateTaskPriority, fetchVehicleStatusStatistics } from '@/services/commonService';
 import RmsConfirm from '@/components/RmsConfirm';
 import TableWithPages from '@/components/TableWithPages';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import FormattedMessage from '@/components/FormattedMessage';
 import UpdateTaskPriority from './components/UpdateTaskPriority';
-import taskQueueStyles from '@/packages/SmartTask/task.module.less';
+import StandardTaskPoolSearch from './components/StandardTaskPoolSearch';
+import taskQueueStyles from './task.module.less';
 import commonStyles from '@/common.module.less';
-import StandardTaskPoolSearch from '@/packages/SmartTask/components/StandardTaskPoolSearch';
 
 const { red, green } = Dictionary('color');
 
@@ -98,7 +98,7 @@ class StandardTaskPool extends React.Component {
         if (!isStrictNull(text)) {
           return (
             <Badge
-              status={TaskStateBageType[text]}
+              status={TaskStatusColor[text]}
               text={formatMessage({ id: `app.task.state.${text}` })}
             />
           );
@@ -187,30 +187,6 @@ class StandardTaskPool extends React.Component {
     this.filterTableList();
   }
 
-  getCombinedDatasource = async () => {
-    const [waiting, executing] = await Promise.all([
-      fetchPipeLineTasks(),
-      fetchExecutingTasks(),
-      // fetchVehicleOverallStatus(),
-    ]);
-    let dataSource = [];
-    if (!dealResponse(waiting)) {
-      const data = waiting.map((item) => ({
-        ...item,
-        appointedVehicleId: item.currentVehicleId,
-      }));
-      dataSource = dataSource.concat(data);
-    }
-    if (!dealResponse(executing)) {
-      const data = executing.map((item) => ({
-        ...item,
-        appointedVehicleId: item.currentVehicleId,
-      }));
-      dataSource = dataSource.concat(data);
-    }
-    return dataSource;
-  };
-
   filterTableList = async (filterValue = {}) => {
     this.setState({ loading: true });
     let dataSource = await this.getCombinedDatasource();
@@ -231,6 +207,30 @@ class StandardTaskPool extends React.Component {
       dataSource = dataSource.filter((item) => item.taskStatus === taskStatus);
     }
     this.setState({ dataSource, loading: false });
+  };
+
+  getCombinedDatasource = async () => {
+    const [waiting, executing, vehicleStatus] = await Promise.all([
+      fetchPipeLineTasks(),
+      fetchExecutingTasks(),
+      fetchVehicleStatusStatistics(),
+    ]);
+    let dataSource = [];
+    if (!dealResponse(waiting)) {
+      const data = waiting.map((item) => ({
+        ...item,
+        appointedVehicleId: item.currentVehicleId,
+      }));
+      dataSource = dataSource.concat(data);
+    }
+    if (!dealResponse(executing)) {
+      const data = executing.map((item) => ({
+        ...item,
+        appointedVehicleId: item.currentVehicleId,
+      }));
+      dataSource = dataSource.concat(data);
+    }
+    return dataSource;
   };
 
   deleteQueueTasks = () => {

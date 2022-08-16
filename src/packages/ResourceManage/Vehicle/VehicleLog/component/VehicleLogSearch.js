@@ -1,7 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
 import { DownloadOutlined, RedoOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
-import Dictionary from '@/utils/Dictionary';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -9,6 +8,7 @@ import VehicleLogDownload from './VehicleLogDownload';
 import commonStyles from '@/common.module.less';
 import { fetchVehicleLogs } from '@/services/resourceService';
 import { VehicleUpgradeState } from '../../upgradeConst';
+import { VehicleState } from '@/config/consts';
 
 const VehicleLogSearch = (props) => {
   const { onSearch, allData, allAdaptors, refreshData, selectedRows, type } = props;
@@ -38,10 +38,9 @@ const VehicleLogSearch = (props) => {
   }
 
   function renderVehicleStateFilter() {
-    const vehicleStates = Dictionary('vehicleStatus');
-    return Object.keys(vehicleStates).map((item) => (
+    return Object.values(VehicleState).map((item) => (
       <Select.Option key={item} value={item}>
-        <FormattedMessage id={vehicleStates[item]} />
+        {formatMessage(`app.task.state.${item}`)}
       </Select.Option>
     ));
   }

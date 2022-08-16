@@ -200,7 +200,7 @@ export function renderBattery(battery) {
 export function renderVehicleState(state) {
   if (!isStrictNull(state)) {
     return (
-      <Tag color={VehicleStateColor[state]}>
+      <Tag color={VehicleStateColor[state]} style={{ margin: 0 }}>
         <FormattedMessage id={`vehicleState.${state}`} />
       </Tag>
     );
@@ -284,10 +284,9 @@ export function getDirectionLocale(angle) {
  */
 export function getVehicleStatusTag(vehicleStatus) {
   if (vehicleStatus != null) {
-    const vehicleStateMap = Dictionary().vehicleStatus;
     return (
       <Tag color={VehicleStateColor[vehicleStatus]}>
-        {formatMessage({ id: vehicleStateMap[vehicleStatus] })}
+        {formatMessage(`vehicleState.${vehicleStatus}`)}
       </Tag>
     );
   } else {
@@ -880,6 +879,7 @@ export function LatentSizeUpdaterValidator(_, value) {
  * @param languageList {Array}
  */
 export function sortLanguages(languageList) {
+  if (!Array.isArray(languageList) || languageList.length === 0) return [];
   const zhCN = find(languageList, { code: 'zh-CN' });
   const enUS = find(languageList, { code: 'en-US' });
   const result = languageList.filter((item) => !['zh-CN', 'en-US'].includes(item.code));
@@ -959,8 +959,8 @@ export function transformVehicleList(allVehicles) {
     return {
       ...rest,
       ...vehicle,
-      currentCellId: vehicleInfo.currentCellId,
-      currentDirection: vehicleInfo.direction,
+      currentCellId: vehicleInfo?.currentCellId,
+      currentDirection: vehicleInfo?.direction,
       vehicleStatus: vehicleWorkStatusDTO?.vehicleStatus,
     };
   });

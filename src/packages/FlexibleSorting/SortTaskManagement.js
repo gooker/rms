@@ -1,13 +1,7 @@
 import React, { memo } from 'react';
-import TaskLibraryComponent from '@/pages/TaskLibrary/TaskLibraryComponent';
-import { VehicleType } from '@/config/config';
 
-const SortTaskManagement = () => {
-  return (
-    <TaskLibraryComponent
-      vehicleType={VehicleType.Sorter} // 标记当前页面的车型
-      cancel={true} // 标记该页面是否允许执行取消操作
-    />
-  );
+const SortTaskManagement = (props) => {
+  const {} = props;
+  return <div>SortTaskManagement</div>;
 };
 export default memo(SortTaskManagement);

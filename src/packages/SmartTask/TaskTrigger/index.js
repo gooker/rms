@@ -1,15 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, Card, Checkbox, Col, Dropdown, Empty, Menu, Row, Spin, Tag } from 'antd';
+import { Button, Card, Checkbox, Col, Dropdown, Empty, Menu, Row, Spin } from 'antd';
 import TaskTriggerModal from './TaskTriggerModal';
 import { find } from 'lodash';
-import {
-  deleteTaskTrigger,
-  getAllTaskTriggers,
-  saveTaskTrigger,
-  switchTriggerState,
-} from '@/services/commonService';
-import { dealResponse, formatMessage, isNull } from '@/utils/util';
+import { deleteTaskTrigger, getAllTaskTriggers, saveTaskTrigger, switchTriggerState } from '@/services/commonService';
+import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
 import TriggerSearchComponent from './TriggerSearchComponent';
@@ -28,9 +23,10 @@ const DescriptionItem = ({ title, content }) => (
     </Row>
   </div>
 );
-@connect(({ taskTriger, quickTask }) => ({
-  customTaskList: taskTriger.customTaskList,
-  sharedTasks: quickTask.sharedTasks,
+
+@connect(({ taskTrigger }) => ({
+  customTaskList: taskTrigger.customTaskList,
+  sharedTasks: taskTrigger.quickTaskList,
 }))
 class TaskTrigger extends Component {
   state = {
@@ -45,19 +41,20 @@ class TaskTrigger extends Component {
 
   async componentDidMount() {
     const { dispatch } = this.props;
-    await dispatch({ type: 'taskTriger/fetchActiveMap' });
-    dispatch({ type: 'taskTriger/fetchModelTypes' });
-    dispatch({ type: 'quickTask/initQuickTaskPage' });
     this.initData();
+    await dispatch({ type: 'taskTrigger/fetchActiveMap' });
+    dispatch({ type: 'taskTrigger/fetchModelTypes' });
   }
 
   initData = async (type) => {
     const { dispatch } = this.props;
     this.setState({ loading: true });
-    await dispatch({ type: 'taskTriger/fetchCustomTaskList' });
-    let params = {};
+    dispatch({ type: 'taskTrigger/fetchCustomTaskList' });
+    dispatch({ type: 'taskTrigger/fetchQuickTaskList' });
+
+    const params = {};
     if (type) {
-      params = { status: type };
+      params.status = type;
     }
     const taskTriggerList = await getAllTaskTriggers(params);
     if (!dealResponse(taskTriggerList)) {
@@ -196,24 +193,19 @@ class TaskTrigger extends Component {
     }
   };
 
-  renderTrigerTasks = (taskCodes) => {
+  renderTriggerTasks = (taskCodes) => {
     const { customTaskList, sharedTasks } = this.props;
     let currentAllTask = [];
     customTaskList?.map(({ id, name }) => {
       currentAllTask.push({ id, name });
     });
-
     sharedTasks?.map(({ id, name }) => {
       currentAllTask.push({ id, name });
     });
-    const paramIds = taskCodes?.map((idcode) => idcode.split('-')[0]);
+    const paramIds = taskCodes?.map((idCode) => idCode.split('-')[0]);
     return paramIds.map((id) => {
       const customTask = find(currentAllTask, { id });
-      return (
-        <Tag key={id} color="blue">
-          {customTask?.name}
-        </Tag>
-      );
+      return customTask?.name;
     });
   };
 
@@ -239,7 +231,7 @@ class TaskTrigger extends Component {
     const { pasteFlag, updateTrigger } = this.state;
     let title = null;
     if (pasteFlag) {
-      title = formatMessage({ id: 'app.button.past' });
+      title = formatMessage({ id: 'app.button.copy' });
     } else {
       if (isNull(updateTrigger)) {
         title = formatMessage({ id: 'app.button.add' });
@@ -328,27 +320,27 @@ class TaskTrigger extends Component {
         }
       >
         <Row>
-          <Col span={24}>
+          <Col span={12}>
             <DescriptionItem
-              title={<FormattedMessage id="app.common.status" />}
+              title={<FormattedMessage id='app.common.status' />}
               content={triggerStatus(record.status)}
             />
           </Col>
-          <Col span={24}>
+          <Col span={12}>
             <DescriptionItem
-              title={<FormattedMessage id="app.common.description" />}
-              content={<span>{record.describe}</span>}
+              title={<FormattedMessage id='app.common.description' />}
+              content={record.describe}
             />
           </Col>
-          <Col span={24}>
+          <Col span={12}>
             <DescriptionItem
-              title={<FormattedMessage id="taskTrigger.triggerTasks" />}
-              content={this.renderTrigerTasks(record.codes)}
+              title={<FormattedMessage id='taskTrigger.triggerTasks' />}
+              content={this.renderTriggerTasks(record.codes)}
             />
           </Col>
-          <Col span={24}>
+          <Col span={12}>
             <DescriptionItem
-              title={<FormattedMessage id="taskTrigger.variable" />}
+              title={<FormattedMessage id='taskTrigger.variable' />}
               content={
                 record.variable === 'fixed'
                   ? formatMessage({ id: 'taskTrigger.fixedVariable' })
@@ -356,22 +348,40 @@ class TaskTrigger extends Component {
               }
             />
           </Col>
-          <Col span={24}>
+          <Col span={12}>
+            <DescriptionItem
+              title={<FormattedMessage id='taskTrigger.totalTimes' />}
+              content={record.totalCount}
+            />
+          </Col>
+          <Col span={12}>
             <DescriptionItem
               title={`${formatMessage({ id: 'app.trigger.timeInterval' })}(s)`}
-              content={<span>{record.timeInterval}</span>}
+              content={record.timeInterval}
+            />
+          </Col>
+          <Col span={12}>
+            <DescriptionItem
+              title={<FormattedMessage id='taskTrigger.dispatchedTimes' />}
+              content={record.finishedCount}
+            />
+          </Col>
+          <Col span={12}>
+            <DescriptionItem
+              title={<FormattedMessage id='app.common.operator' />}
+              content={record.operator}
             />
           </Col>
           <Col span={24}>
             <DescriptionItem
-              title={<FormattedMessage id="taskTrigger.totaTimes" />}
-              content={<span>{record.totalCount}</span>}
+              title={<FormattedMessage id='app.common.operationTime' />}
+              content={convertToUserTimezone(record.operateTime).format('YYYY-MM-DD HH:mm:ss')}
             />
           </Col>
           <Col span={24}>
             <DescriptionItem
-              title={<FormattedMessage id="app.common.endTime" />}
-              content={<span>{record.endTime}</span>}
+              title={<FormattedMessage id='app.common.endTime' />}
+              content={convertToUserTimezone(record.endTime).format('YYYY-MM-DD HH:mm:ss')}
             />
           </Col>
         </Row>

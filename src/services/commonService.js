@@ -16,10 +16,9 @@ export async function fetchGetProblemDetail(problemId) {
 
 // ************************************** 地图  ************************************** //
 export async function activeMap(mapId) {
-  const sectionId = window.localStorage.getItem('sectionId');
   return request(`/${NameSpace.Platform}/map/active`, {
     method: 'POST',
-    data: { id: mapId, sectionId },
+    data: { id: mapId },
   });
 }
 
@@ -31,6 +30,14 @@ export async function fetchActiveMap() {
 }
 
 // ************************************** 小车相关  ************************************** //
+// 获取小车状态统计
+export async function fetchVehicleStatusStatistics() {
+  return request(`/${NameSpace.Platform}/vehicle/getVehicleStatusStatistics`, {
+    method: 'GET',
+  });
+}
+
+// 获取所有车辆
 export async function fetchAllVehicleList() {
   return request(`/${NameSpace.Platform}/vehicle/getAllVehicles`, {
     method: 'GET',
@@ -44,76 +51,12 @@ export async function fetchVehicleInfo(vehicleId, vehicleType) {
   });
 }
 
-// 请求小车的硬件状态
-export async function fetchVehicleHardwareInfo(vehicleType, params) {
-  return request(
-    `/${NameSpace[vehicleType]}/vehicle/vehicleHardware/${params.sectionId}/${params.vehicleId}`,
-    {
-      method: `GET`,
-    },
-  );
-}
-
-// 获取当前小车实时运行信息
-export async function fetchVehicleRunningInfo(params) {
-  return request(`/${NameSpace.Platform}/problemHandling/getVehicleErrorMessage`, {
-    method: 'GET',
-    data: params,
-  });
-}
-
-// ************************************** 执行队列  ************************************** //
-// 获取执行队列数据
-export async function fetchExecutingTaskList(vehicleType, params) {
-  return request(
-    `/${NameSpace[vehicleType]}/redis/getExecutingTaskList/${window.localStorage.getItem(
-      'sectionId',
-    )}`,
-    {
-      method: `GET`,
-    },
-  );
-}
-
-// 删除执行队列任务
-export async function deleteExecutionQTasks(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/redis/batchDeleteExecutingTask`, {
-    method: `POST`,
-    data: params,
-  });
-}
-
-// ************************************** 等待队列  ************************************** //
-// 获取等待队列任务
-export async function fetchTaskQueueList(vehicleType) {
-  return request(
-    `/${NameSpace[vehicleType]}/redis/getPipeLineTaskList/${window.localStorage.getItem(
-      'sectionId',
-    )}`,
-    {
-      method: `GET`,
-    },
-  );
-}
-
 // 删除等待队列任务
 export async function deleteTaskQueueItems(vehicleType, params) {
   return request(`/${NameSpace[vehicleType]}/redis/batchDeletePipeLineTask`, {
     method: `POST`,
     data: params,
   });
-}
-
-// 获取当前区域小车状态总体数据
-export async function fetchVehicleOverallStatus(vehicleType) {
-  return request(
-    `/${
-      NameSpace[vehicleType]
-    }/vehicle/getStandByAndAvailableVehicleNumber/${window.localStorage.getItem('sectionId')}`,
-    {
-      method: `GET`,
-    },
-  );
 }
 
 // 修改任务优先级
@@ -125,35 +68,11 @@ export async function fetchUpdateTaskPriority(vehicleType, params) {
 }
 
 // ************************************** 任务查询 ************************************** //
-// 查询当前区域小车任务列表
-export async function fetchVehicleTaskList(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/api/vehicleTask`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-// 小车-任务日志
-export async function getVehicleTaskLog(param) {
-  return request(`/${NameSpace.Platform}/alertCenter/getVehicleTaskLog`, {
-    method: 'GET',
-    data: param,
-  });
-}
-
 // 小车详情-告警信息
 export async function getAlertCentersByTaskIdOrVehicleId(param) {
   return request(`/${NameSpace.Platform}/alertCenter/getAlertCentersByTaskIdOrVehicleId`, {
     method: 'GET',
     data: param,
-  });
-}
-
-// 请求取消任务
-export async function fetchBatchCancelTask(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/vehicle-task/batchCancelTask`, {
-    method: 'POST',
-    data: params,
   });
 }
 
@@ -195,130 +114,6 @@ export async function fetchSystemParamFormData(vehicleType, params) {
     method: 'GET',
     data: params,
   });
-}
-
-//// 更新系统参数
-export async function updateSystemParams(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/formTemplate/updateFormTemplateValue`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-// 获取打分算法模版
-export async function fetchLatentToteParamFormData(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/paramTemplate/getParamTemplate`, {
-    method: 'GET',
-    data: params,
-  });
-}
-
-// 更新打分算法
-export async function updateLatentToteSystemParams(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/paramTemplate/updateParamTemplateValue`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-/******料箱池任务 start*********/
-//红外料箱任务池任务查询
-export async function fetchPoolTasks(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/pool/queryTotePoolTaskInfo`, {
-    method: 'GET',
-    data: params,
-  });
-}
-//任务取消
-export async function cancelTotePoolTask(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/pool/cancelTotePoolTasks`, {
-    method: 'POST',
-    data: params,
-  });
-}
-/******料箱池任务 end*********/
-
-/**tote vehicle列表***/
-/***批量升级***/
-export async function fetchVehicleFileStatusList(vehicleType) {
-  return request(`/${NameSpace[vehicleType]}/vehicle/getVehicleFileStatusList`, {
-    method: 'GET',
-  });
-}
-export async function fetchUpdateFileTask(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/file/updateFileTask`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-// 请求切换小车手动模式
-export async function fetchManualMode(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/vehicle/action/manualMode`, {
-    method: 'GET',
-    data: params,
-  });
-}
-
-/**** 日志下载 ****/
-// 下载小车上的日志文件到云端SFTP
-export async function startCreatingLog(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/file/downLoadLogToSFTP`, {
-    method: `GET`,
-    data: {
-      sectionId: window.localStorage.getItem('sectionId'),
-      ...params,
-    },
-  });
-}
-
-// SFTP上查询下载日志文件
-export async function fetchVehicleLog(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/file/selectFileTaskList`, {
-    method: 'GET',
-    data: { sectionId: window.localStorage.getItem('sectionId'), ...params },
-  });
-}
-
-// 强制重置
-export async function forceResetLogGeneration(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/file/updateFileTask`, {
-    method: `POST`,
-    data: params,
-  });
-}
-
-// 下载日志
-export async function downloadLogFromSFTP(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/file/downloadFileFromSFTP`, {
-    method: `GET`,
-    data: { sectionId: window.localStorage.getItem('sectionId'), ...params },
-  });
-}
-
-/**** 故障信息 ****/
-// 提交故障定义
-export async function submitFaultDefinition(vehicleType, params) {
-  return request(
-    `/${NameSpace[vehicleType]}/api/addErrorDefinition/${window.localStorage.getItem('sectionId')}`,
-    {
-      method: `POST`,
-      data: params,
-    },
-  );
-}
-
-// 删除故障定义
-export async function deleteFaultDefinition(vehicleType, params) {
-  return request(
-    `/${NameSpace[vehicleType]}/api/batchDeleteErrorDefinition/${window.localStorage.getItem(
-      'sectionId',
-    )}`,
-    {
-      method: `POST`,
-      data: params,
-    },
-  );
 }
 
 // 资源分组-分组管理
@@ -537,28 +332,30 @@ export async function deleteWebHooks(param) {
   });
 }
 
-// 获取目标点锁
-export async function fetchTargetCellLockList() {
+/************************** 资源锁 *****************************/
+// 获取任务目标点锁
+export async function fetchTaskTargetLockList() {
   return request(`/${NameSpace.Platform}/resource/lock/getTargetCellLockList`, {
     method: 'GET',
   });
 }
 
-// 批量删除目标点锁
-export async function fetchBatchDeleteTargetCellLock(params) {
+// 批量删除任务目标点锁
+export async function batchDeleteTaskTargetLock(params) {
   return request(`/${NameSpace.Platform}/resource/lock/batchDeleteTargetCellLock`, {
     method: 'POST',
     data: params,
   });
 }
 
-// 获取车辆锁
+// 获取车辆任务锁
 export async function fetchVehicleTaskLockList() {
   return request(`/${NameSpace.Platform}/resource/lock/getVehicleTaskLockList`, {
     method: `GET`,
   });
 }
-//车辆锁删除
+
+// 删除车辆任务锁
 export async function batchDeleteVehicleTaskLock(params) {
   return request(`/${NameSpace.Platform}/resource/lock/batchDeleteVehicleTaskLock`, {
     method: 'POST',
@@ -566,15 +363,15 @@ export async function batchDeleteVehicleTaskLock(params) {
   });
 }
 
-// 获取存储点锁
-export async function fetchStorageLockList() {
+// 获取任务储位点锁
+export async function fetchTaskStorageLockList() {
   return request(`/${NameSpace.Platform}/resource/lock/getStoreCellLockList`, {
     method: 'GET',
   });
 }
 
-// 批量删除存储点锁
-export async function batchDeleteStorageLock(params) {
+// 批量删除任务储位点锁
+export async function batchDeleteTaskStorageLock(params) {
   return request(`/${NameSpace.Platform}/resource/lock/batchDeleteStoreCellLock`, {
     method: 'POST',
     data: params,
@@ -587,11 +384,41 @@ export async function fetchLoadTaskLockList() {
     method: 'GET',
   });
 }
+
 // 批量删除pod任务锁
-export async function batchDeletePodTaskLock(params) {
+export async function batchDeleteLoadTaskLock(params) {
   return request(`/${NameSpace.Platform}/resource/lock/batchDeleteLoadTaskLock`, {
     method: 'POST',
     data: params,
+  });
+}
+
+// 获取section的小车目标点锁
+export async function fetchVehicleTargetLockList() {
+  return request(`/${NameSpace.Platform}/resource/lock/getVehicleTargetCellLockList`, {
+    method: 'GET',
+  });
+}
+
+// 获取载具存储点锁
+export async function fetchLoadStorageLockList() {
+  return request(`/${NameSpace.Platform}/resource/lock/getLoadStoreCellLockList`, {
+    method: 'GET',
+  });
+}
+
+// 获取充电桩锁
+export async function fetchChargerLockList(param) {
+  return request(`/${NameSpace.Platform}/resource/lock/getChargerLockedCell`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 充电桩解锁
+export async function unlockCharger() {
+  return request(`/${NameSpace.Platform}/resource/lock/unlockCharger`, {
+    method: 'GET',
   });
 }
 

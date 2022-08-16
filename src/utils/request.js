@@ -6,7 +6,7 @@ import { formatMessage, getDomainNameByUrl, isNull, isStandardApiResponse, isStr
 axios.interceptors.request.use((config) => {
   config.headers.Authorization = `Bearer ${window.sessionStorage.getItem('token')}`;
   config.headers['Content-Type'] = 'application/json; charset=utf-8';
-  // config.headers.appId = window.appId;
+  config.headers.appId = window.appId;
   const sectionId = window.localStorage.getItem('sectionId');
   if (config.attachSection && isStrictNull(config.headers.sectionId) && !isStrictNull(sectionId)) {
     config.headers.sectionId = sectionId;

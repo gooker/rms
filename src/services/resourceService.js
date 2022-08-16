@@ -574,6 +574,14 @@ export async function updateVehicleMaintain(param) {
   });
 }
 
+// 切换小车手动模式
+export async function updateVehicleManualMode(params) {
+  return request(`/${NameSpace.Platform}/vehicle/manualMode`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
 // 查询固件升级历史任务
 export async function fetchVehicleUpgradeList(param) {
   return request(`/${NameSpace.Platform}/vehicle/file/getUpgradeList`, {
