@@ -33,33 +33,33 @@ const SearchLoadComponent = (props) => {
     <Form form={formRef}>
       <Row gutter={24}>
         <Col span={4}>
-          <Form.Item label={<FormattedMessage id='resource.load.id' />} name={'loadId'}>
+          <Form.Item label={<FormattedMessage id="resource.load.id" />} name={'loadId'}>
             <Input allowClear />
           </Form.Item>
         </Col>
         <Col span={5}>
           <Form.Item
-            label={<FormattedMessage id='resource.load.specification' />}
-            name='loadSpecificationCode'
+            label={<FormattedMessage id="resource.load.specification" />}
+            name="loadSpecificationCode"
           >
             <Select allowClear style={{ width: '100%' }}>
               {allLoadSpec?.map((item) => (
                 <Select.Option key={item?.id} value={item?.code}>
-                  {`${item.name}: ${item.length}*${item.width}*${item.height}`}
+                  {item.name}
                 </Select.Option>
               ))}
             </Select>
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name={'createDate'} label={<FormattedMessage id='app.common.creationTime' />}>
+          <Form.Item name={'createDate'} label={<FormattedMessage id="app.common.creationTime" />}>
             <RangePicker showTime style={{ width: '100%' }} />
           </Form.Item>
         </Col>
         <Col>
           <Form.Item>
-            <Button type='primary' onClick={search}>
-              <SearchOutlined /> <FormattedMessage id='app.button.search' />
+            <Button type="primary" onClick={search}>
+              <SearchOutlined /> <FormattedMessage id="app.button.search" />
             </Button>
             <Button
               style={{ marginLeft: 15 }}
@@ -68,7 +68,7 @@ const SearchLoadComponent = (props) => {
                 onSearch({}, page);
               }}
             >
-              <ReloadOutlined /> <FormattedMessage id='app.button.reset' />
+              <ReloadOutlined /> <FormattedMessage id="app.button.reset" />
             </Button>
           </Form.Item>
         </Col>
