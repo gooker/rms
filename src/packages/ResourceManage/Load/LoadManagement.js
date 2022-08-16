@@ -21,7 +21,7 @@ import { dealResponse, formatMessage, generateResourceGroups, isNull } from '@/u
 import AddLoadModal from './component/AddLoadModal';
 import SearchLoadComponent from './component/SearchLoadComponent';
 import commonStyles from '@/common.module.less';
-import SimulateLoadModal from './component/SimulateLoadModal';
+import VirtualLoadModal from './component/VirtualLoadModal';
 import { GroupManager, GroupResourceMemberId } from '@/components/ResourceGroup';
 
 const ContainerManage = () => {
@@ -30,7 +30,7 @@ const ContainerManage = () => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
 
-  const [simulateVisible, setSimulateVisible] = useState(false);
+  const [virtualVisible, setVirtualVisible] = useState(false);
 
   const [searchParam, setSearchParam] = useState(null);
   const [page, setPage] = useState({
@@ -117,7 +117,7 @@ const ContainerManage = () => {
 
   function onCancel() {
     setVisible(false);
-    setSimulateVisible(false);
+    setVirtualVisible(false);
     setUpdateRecord(null);
   }
 
@@ -208,10 +208,10 @@ const ContainerManage = () => {
 
             <Button
               onClick={() => {
-                setSimulateVisible(true);
+                setVirtualVisible(true);
               }}
             >
-              <DiffOutlined /> <FormattedMessage id="resource.load.simulation.generate" />
+              <DiffOutlined /> <FormattedMessage id="resource.load.virtual" />
             </Button>
 
             <GroupManager
@@ -267,9 +267,9 @@ const ContainerManage = () => {
         />
       )}
 
-      {/* 模拟生成 */}
-      <SimulateLoadModal
-        visible={simulateVisible}
+      {/* 虚拟载具 */}
+      <VirtualLoadModal
+        visible={virtualVisible}
         onCancel={onCancel}
         onOk={getData}
         updateRecord={updateRecord}

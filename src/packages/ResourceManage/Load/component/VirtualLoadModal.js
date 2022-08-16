@@ -9,7 +9,7 @@ import { find } from 'lodash';
 
 const { formItemLayout } = getFormLayout(5, 16);
 
-function SimulateLoadModal(props) {
+function VirtualLoadModal(props) {
   const { visible, onCancel, onOk, updateRecord, allLoadSpec } = props;
   const [formRef] = Form.useForm();
 
@@ -69,9 +69,15 @@ function SimulateLoadModal(props) {
       visible={visible}
       width={'500px'}
       title={
-        isNull(updateRecord)
+        <>
+        {
+         isNull(updateRecord)
           ? formatMessage({ id: 'app.button.add' })
           : formatMessage({ id: 'app.button.edit' })
+        }
+        {formatMessage({ id: 'resource.load.virtual' })}
+        </>
+       
       }
       onCancel={onCancel}
       onOk={onSave}
@@ -150,7 +156,7 @@ function SimulateLoadModal(props) {
           <Select allowClear style={{ width: '100%' }}>
             {allLoadSpec?.map((item) => (
               <Select.Option key={item?.id} value={item?.code}>
-                {`${item.length}*${item.width}*${item.height}`}
+                {item.name}
               </Select.Option>
             ))}
           </Select>
@@ -209,4 +215,4 @@ function SimulateLoadModal(props) {
   );
 }
 
-export default memo(SimulateLoadModal);
+export default memo(VirtualLoadModal);

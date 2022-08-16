@@ -4,13 +4,6 @@ import { isNull, formatMessage, getFormLayout, dealResponse, isStrictNull } from
 import { saveLoad } from '@/services/resourceService';
 import AngleSelector from '@/components/AngleSelector';
 
-const storageSpace = [
-  { name: '货位', code: '1' },
-  { name: '地面货位', code: '2' },
-  { name: '货架货位', code: '3' },
-  { name: '载具', code: '4' },
-];
-
 const { formItemLayout } = getFormLayout(5, 16);
 
 function AddLoadModal(props) {
@@ -68,14 +61,6 @@ function AddLoadModal(props) {
           <Input allowClear disabled={!isNull(updateRecord)} />
         </Form.Item>
 
-        {/* <Form.Item
-          label={formatMessage({ id: 'app.common.name' })}
-          name="name"
-          rules={[{ required: true }]}
-          initialValue={updateRecord?.name}
-        >
-          <Input allowClear />
-        </Form.Item> */}
         <Form.Item
           label={formatMessage({ id: 'app.common.angle' })}
           name="angle"
@@ -103,25 +88,11 @@ function AddLoadModal(props) {
           <Select allowClear style={{ width: '100%' }}>
             {allLoadSpec?.map((item) => (
               <Select.Option key={item?.id} value={item?.code}>
-                {`${item.name} (${item.length} * ${item.width} * ${item.height})`}
+                {item.name}
               </Select.Option>
             ))}
           </Select>
         </Form.Item>
-
-        {/* <Form.Item
-          label={'位置'}
-          name="cargoStorageSpace"
-          initialValue={updateRecord?.cargoStorageSpace}
-        >
-          <Select allowClear style={{ width: '100%' }}>
-            {storageSpace?.map(({ code, name }) => (
-              <Select.Option key={code} value={code}>
-                {name}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item> */}
 
         <Form.Item
           label={formatMessage({ id: 'app.map.cell' })}

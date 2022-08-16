@@ -24,7 +24,7 @@ export default {
   'resource.load.direction': '载具方向',
   'resource.load.specification': '载具规格',
   'resource.load.location': '位置',
-  'resource.load.simulation.generate': '模拟生成',
+  'resource.load.virtual': '虚拟载具',
   'resource.load.target.storage': '之后位置',
   'resource.load.source.storage': '之前位置',
   'resource.load.changeTime': '变更时间',
