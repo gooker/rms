@@ -6,7 +6,7 @@ import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { isNull } from 'lodash';
 
-const SearchTargetLock = (props) => {
+const TargetLockSearch = (props) => {
   const { search, verhicleHide, taskIdHide, data, loadType, allAdaptors } = props;
   const [form] = Form.useForm();
   const [allType, setAllType] = useState([]);
@@ -137,4 +137,4 @@ const SearchTargetLock = (props) => {
 
 export default connect(({ global }) => ({
   allAdaptors: global.allAdaptors,
-}))(memo(SearchTargetLock));
+}))(memo(TargetLockSearch));

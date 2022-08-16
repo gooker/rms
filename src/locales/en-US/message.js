@@ -32,4 +32,5 @@ export default {
   'app.message.dataFormatError': '数据格式错误',
   'app.message.angleRequired': '请选择角度',
   'app.message.onlyMQRMove': '该操作只针对牧星二维码, 请取消选择非牧星二维码的点位',
+  'app.message.deleteTaskSure': '是否确定要删除已选中的任务',
 };

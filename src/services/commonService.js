@@ -51,22 +51,6 @@ export async function fetchVehicleInfo(vehicleId, vehicleType) {
   });
 }
 
-// 删除等待队列任务
-export async function deleteTaskQueueItems(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/redis/batchDeletePipeLineTask`, {
-    method: `POST`,
-    data: params,
-  });
-}
-
-// 修改任务优先级
-export async function fetchUpdateTaskPriority(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/redis/batchUpdatePipeLineTaskPriority`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
 // ************************************** 任务查询 ************************************** //
 // 小车详情-告警信息
 export async function getAlertCentersByTaskIdOrVehicleId(param) {
@@ -416,9 +400,10 @@ export async function fetchChargerLockList(param) {
 }
 
 // 充电桩解锁
-export async function unlockCharger() {
+export async function fetchUnlockCharger(param) {
   return request(`/${NameSpace.Platform}/resource/lock/unlockCharger`, {
-    method: 'GET',
+    method: 'POST',
+    data: param,
   });
 }
 

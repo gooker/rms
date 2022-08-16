@@ -8,7 +8,7 @@ import TableWithPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
-import SearchTargetLock from './components/SearchTargetLock';
+import SearchTargetLock from './components/TargetLockSearch';
 
 const TaskStorageLock = (props) => {
   const [loading, setLoading] = useState(false);
