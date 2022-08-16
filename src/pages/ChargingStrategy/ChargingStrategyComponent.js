@@ -1,7 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Tabs, Modal, Button, Row, Input, message, InputNumber } from 'antd';
+import { Tabs, Modal, Button, Row, Input, message, InputNumber,Form } from 'antd';
 import ChargingStrategyForm from './ChargingStrategyForm';
-import IdleChargingStrategy from './IdleChargingStrategy';
 import {
   fetchChargingStrategyById,
   saveChargingStrategy,
@@ -27,7 +26,8 @@ const ChargingStrategyComponent = (props) => {
   const [isGlobal, setIsGlobal] = useState(null); //是否全局
 
   const [chargeStrategy, setChargeStrategy] = useState(null); // 当前策略详情 {code:'xx',name:'vvv',Normal:{},IdleHours:{}}
-  const [idleChargingStrategyVisible, setIdleChargingStrategyVisible] = useState(false); // 闲时策略配置弹窗
+
+  const [form] = Form.useForm();// 闲时策略使用
 
   useEffect(() => {
     if (visible && !isNull(editing)) {
@@ -133,9 +133,7 @@ const ChargingStrategyComponent = (props) => {
     setActiveKey(key);
   }
 
-  function cancelIdle() {
-    setIdleChargingStrategyVisible(false);
-  }
+
 
   return (
     <Modal
@@ -206,27 +204,10 @@ const ChargingStrategyComponent = (props) => {
               type="IdleHours"
               data={chargeStrategy?.strategyValue?.IdleHours ?? {}}
               onChangeStrategy={changeStrategy}
-              openIdle={setIdleChargingStrategyVisible}
+              form={form}
             />
           </TabPane>
         </Tabs>
-
-        {/* 闲时策略 */}
-        <Modal
-          width={800}
-          footer={null}
-          destroyOnClose
-          visible={idleChargingStrategyVisible}
-          title={formatMessage({ id: 'app.chargeStrategy.idleHoursRules' })}
-          onCancel={cancelIdle}
-        >
-          <IdleChargingStrategy
-            onCancel={cancelIdle}
-            onSave={setIdleHoursStrategyId}
-            idleHoursStrategyId={idleHoursStrategyId}
-            chargeStrategyId={strategyId}
-          />
-        </Modal>
       </div>
     </Modal>
   );

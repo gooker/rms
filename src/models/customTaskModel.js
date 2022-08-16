@@ -64,7 +64,7 @@ export default {
         return;
       }
       if (isNull(mapData)) {
-        message.error(formatMessage({ id: 'app.message.noActiveMap' }));
+        message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
         return;
       }
       try {

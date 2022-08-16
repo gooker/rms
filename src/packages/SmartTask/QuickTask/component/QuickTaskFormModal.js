@@ -1,10 +1,11 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Form, Input, Modal, Select, Switch } from 'antd';
+import { Form, Input, Modal, Select, Switch, Row, Col, Tooltip } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, isNull, renderLabel } from '@/utils/util';
 import { saveQuickTask } from '@/services/smartTaskService';
 import { find } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const { formItemLayout } = getFormLayout(4, 18);
 
@@ -112,13 +113,28 @@ const QuickTaskFormModal = (props) => {
             ))}
           </Select>
         </Form.Item>
-        <Form.Item
-          label={<FormattedMessage id="quickTask.operate.isConfirm" />}
-          name={'isNeedConfirm'}
-          valuePropName={'checked'}
-          initialValue={false}
-        >
-          <Switch />
+        <Form.Item label={<FormattedMessage id="quickTask.operate.isConfirm" />}>
+          <Row>
+            <Col>
+              <Form.Item
+                noStyle
+                name={'isNeedConfirm'}
+                valuePropName={'checked'}
+                initialValue={false}
+              >
+                {' '}
+                <Switch />
+              </Form.Item>
+            </Col>
+            <Col span={2} offset={1}>
+              <Tooltip
+                placement="bottom"
+                title={formatMessage({ id: 'quickTask.operate.isConfirm.message' })}
+              >
+                <QuestionCircleOutlined style={{ fontSize: 20 }} />
+              </Tooltip>
+            </Col>
+          </Row>
         </Form.Item>
       </Form>
     </Modal>

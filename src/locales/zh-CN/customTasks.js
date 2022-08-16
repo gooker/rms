@@ -175,6 +175,7 @@ export default {
   'quickTask.group.loss': '组丢失',
   'quickTask.customTask.associated': '关联自定义任务',
   'quickTask.operate.isConfirm': '确认操作',
+  'quickTask.operate.isConfirm.message': '确认操作（解锁）：当提交任务时候，是否需要人工再确认一次',
   'quickTask.share': '分享',
   'quickTask.share.message':
     '分享该快捷任务后, 其他用户会浏览到该记录并且可以进行复制操作, 是否确定分享?',

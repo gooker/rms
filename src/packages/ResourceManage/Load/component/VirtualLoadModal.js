@@ -70,14 +70,11 @@ function VirtualLoadModal(props) {
       width={'500px'}
       title={
         <>
-        {
-         isNull(updateRecord)
-          ? formatMessage({ id: 'app.button.add' })
-          : formatMessage({ id: 'app.button.edit' })
-        }
-        {formatMessage({ id: 'resource.load.virtual' })}
+          {isNull(updateRecord)
+            ? formatMessage({ id: 'app.button.add' })
+            : formatMessage({ id: 'app.button.edit' })}
+          {formatMessage({ id: 'resource.load.virtual' })}
         </>
-       
       }
       onCancel={onCancel}
       onOk={onSave}
@@ -168,16 +165,7 @@ function VirtualLoadModal(props) {
           rules={[{ required: true }]}
           initialValue={updateRecord?.angle}
         >
-          <AngleSelector
-            disabled
-            width={'100%'}
-            addonLabel={{
-              0: formatMessage({ id: 'app.direction.rightSide' }),
-              90: formatMessage({ id: 'app.direction.topSide' }),
-              180: formatMessage({ id: 'app.direction.leftSide' }),
-              270: formatMessage({ id: 'app.direction.bottomSide' }),
-            }}
-          />
+          <AngleSelector disabled width={'100%'} />
         </Form.Item>
 
         <Form.Item

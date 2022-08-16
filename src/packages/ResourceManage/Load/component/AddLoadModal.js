@@ -70,12 +70,6 @@ function AddLoadModal(props) {
           <AngleSelector
             disabled
             width={'100%'}
-            addonLabel={{
-              0: formatMessage({ id: 'app.direction.rightSide' }),
-              90: formatMessage({ id: 'app.direction.topSide' }),
-              180: formatMessage({ id: 'app.direction.leftSide' }),
-              270: formatMessage({ id: 'app.direction.bottomSide' }),
-            }}
           />
         </Form.Item>
 

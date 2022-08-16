@@ -39,7 +39,7 @@ const GroupManager = (props) => {
         setActiveMapId(activeMap.id);
         await refreshResourceGroup(activeMap.id);
       } else {
-        message.error(formatMessage({ id: 'app.message.noActiveMap' }));
+        message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
       }
     } else {
       message.error(formatMessage({ id: 'app.message.fetchMapFail' }));

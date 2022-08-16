@@ -13,9 +13,8 @@ const { RangePicker } = TimePicker;
 const Days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 
 const IdleChargingStrategy = (props) => {
-  const { onCancel, idleHoursStrategyId, chargeStrategyId, onSave } = props;
+  const { idleHoursStrategyId, chargeStrategyId, form, onSave } = props;
 
-  const [form] = Form.useForm();
   const [pastMinuts, setPastMinuts] = useState(null);
   const [percentage, setPercentage] = useState(null);
   const [useVehicleStandByPercent, setUseVehicleStandByPercent] = useState(false); // 第一条策略
@@ -71,7 +70,6 @@ const IdleChargingStrategy = (props) => {
       saveIdleHoursStrategy(requestBody).then((response) => {
         if (!dealResponse(response)) {
           message.success(formatMessage({ id: 'app.chargeStrategy.idle.save.success' }));
-          onCancel();
           onSave(response.id);
         }
       });
@@ -79,7 +77,7 @@ const IdleChargingStrategy = (props) => {
   }
 
   return (
-    <Card bordered={false}>
+    <Card bordered={true} title={formatMessage({ id: 'app.chargeStrategy.idleHoursRules' })}>
       <div className={styles.strategyRow}>
         <div className={styles.checkBox}>
           <Checkbox
@@ -168,14 +166,6 @@ const IdleChargingStrategy = (props) => {
             </Form.List>
           </Form>
         </div>
-      </div>
-      <div className={styles.buttons}>
-        <Button onClick={onCancel}>
-          <FormattedMessage id="app.button.cancel" />
-        </Button>
-        <Button type="primary" onClick={submit}>
-          <FormattedMessage id="app.button.submit" />
-        </Button>
       </div>
     </Card>
   );

@@ -1,14 +1,15 @@
 import React from 'react';
-import { Row, Col, Button, Input, Card, Tooltip } from 'antd';
+import { Row, Col, Input, Card, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import BatterStrategy from './BatterStrategy/BatterStrategy';
+import IdleChargingStrategy from './IdleChargingStrategy';
 import styles from './chargingStrategy.module.less';
 
 const PanelHeight = 300; // 表单行的高度
 const ChargingStrategyForm = (props) => {
-  const { type, data, onChangeStrategy, openIdle } = props;
+  const { type, data, onChangeStrategy, form } = props;
 
   function handleChanged(value, key) {
     let newData = { ...data };
@@ -22,23 +23,10 @@ const ChargingStrategyForm = (props) => {
       <div>
         {/* 标准 */}
         <div className={styles.content}>
+          {type === 'IdleHours' && <IdleChargingStrategy form={form} />}
+
           {/* 第一行 */}
-          <Card
-            title={formatMessage({ id: 'app.chargeStrategy.normalCharge' })}
-            bordered={false}
-            extra={
-              type === 'IdleHours' && (
-                <Button
-                  style={{ marginLeft: 15 }}
-                  onClick={() => {
-                    openIdle(true);
-                  }}
-                >
-                  <FormattedMessage id="app.chargeStrategy.idleHoursRules" />
-                </Button>
-              )
-            }
-          >
+          <Card title={formatMessage({ id: 'app.chargeStrategy.normalCharge' })} bordered={false}>
             <div style={{ height: PanelHeight, display: 'flex' }}>
               <div className={styles.panelCard} style={{ marginRight: 5 }}>
                 <Row gutter={30} style={{ width: '100%', height: '100%' }}>

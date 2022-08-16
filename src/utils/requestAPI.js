@@ -47,8 +47,11 @@ export default function requestAPI() {
       // ws: 'ws://192.168.0.17:8000/ws',
 
       // NT-17 外网
-      platform: 'http://52.83.193.245:10220',
-      ws: 'ws://52.83.193.245:10220/ws',
+      // platform: 'http://52.83.193.245:10220',
+      // ws: 'ws://52.83.193.245:10220/ws',
+
+      platform: 'http://52.83.193.245:10251',
+      ws: 'ws://52.83.193.245:10251/ws',
     };
   }
   return apiMap;

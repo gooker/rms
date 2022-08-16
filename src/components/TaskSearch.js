@@ -54,7 +54,7 @@ const TaskSearch = (props) => {
           <Col span={span}>{children}</Col>
         ) : (
           children.map((child, index) => (
-            <Col key={index} span={span}>
+            <Col key={index} span={child.props?.span ?? span}>
               {child}
             </Col>
           ))
