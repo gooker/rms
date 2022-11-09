@@ -4,7 +4,7 @@ import { NameSpace } from '@/config/config';
 const { Platform } = NameSpace;
 
 export async function fetchLogin(params, config) {
-  return request(`/${Platform}/sso/user/login`, {
+  return request(`/sso/user/login`, {
     method: 'POST',
     data: params,
     ...config,
@@ -13,14 +13,14 @@ export async function fetchLogin(params, config) {
 
 //获取当前登陆对象
 export async function getCurrentUser() {
-  return request(`/${Platform}/sso/user/getUser`, {
+  return request(`/sso/user/getUser`, {
     method: 'GET',
   });
 }
 
 // 登出
 export async function fetchLogout(params) {
-  return request(`/${Platform}/sso/user/logout`, {
+  return request(`/sso/user/logout`, {
     method: 'GET',
     data: params,
   });
@@ -28,7 +28,7 @@ export async function fetchLogout(params) {
 
 // 修改当前默认的section
 export async function fetchUpdateUserCurrentSection(params) {
-  return request(`/${Platform}/sso/user/updateUserDefaultSection`, {
+  return request(`/sso/user/updateUserDefaultSection`, {
     method: 'POST',
     data: params,
   });
@@ -36,28 +36,28 @@ export async function fetchUpdateUserCurrentSection(params) {
 
 // 修改当前语言
 export async function fetchUpdateUserCurrentLanguage(languageType) {
-  return request(`/${Platform}/sso/user/updateUserCurrentLanguage?languageType=${languageType}`, {
+  return request(`/sso/user/updateUserCurrentLanguage?languageType=${languageType}`, {
     method: 'POST',
   });
 }
 
 //获取用户管理列表
 export async function fetchUserManagerList(params) {
-  return request(`/${Platform}/sso/user/queryUserList`, {
+  return request(`/sso/user/queryUserList`, {
     method: 'GET',
     data: params,
   });
 }
 //新建用户
 export async function addUserManager(params) {
-  return request(`/${Platform}/sso/user/addUser`, {
+  return request(`/sso/user/addUser`, {
     method: 'POST',
     data: params,
   });
 }
 //更新用户
 export async function updateUserManage(params) {
-  return request(`/${Platform}/sso/user/updateUser`, {
+  return request(`/sso/user/updateUser`, {
     method: 'POST',
     data: params,
   });
@@ -65,7 +65,7 @@ export async function updateUserManage(params) {
 //重置用户密码
 export async function updateUserPassword(params) {
   return request(
-    `/${Platform}/sso/user/changeUserPassword?userId=${params.userId}&changePassword=${params.changePassword}`,
+    `/sso/user/changeUserPassword?userId=${params.userId}&changePassword=${params.changePassword}`,
     {
       method: 'POST',
       data: {},
@@ -75,7 +75,7 @@ export async function updateUserPassword(params) {
 
 //注销用户
 export async function fetchDeleteUser(params) {
-  return request(`/${Platform}/sso/user/deleteUser`, {
+  return request(`/sso/user/deleteUser`, {
     method: 'GET',
     data: params,
   });
@@ -83,14 +83,14 @@ export async function fetchDeleteUser(params) {
 
 // 查询所有区域
 export async function fetchSelectSectionList() {
-  return request(`/${Platform}/sso/section/selectSectionList`, {
+  return request(`/sso/section/selectSectionList`, {
     method: 'GET',
   });
 }
 
 // 当前有的区域查询 userId
 export async function fetchAllSectionByUserId(parms) {
-  return request(`/${Platform}/sso/section/querySectionByUserId`, {
+  return request(`/sso/section/querySectionByUserId`, {
     method: 'GET',
     data: parms,
   });
@@ -98,7 +98,7 @@ export async function fetchAllSectionByUserId(parms) {
 
 // 区域分配-保存
 export async function saveUserSections(params) {
-  return request(`/${Platform}/sso/user/updateUserSection`, {
+  return request(`/sso/user/updateUserSection`, {
     method: 'POST',
     data: params,
   });
@@ -106,14 +106,14 @@ export async function saveUserSections(params) {
 
 //查询所有角色信息
 export async function fetchAllUserRoleList() {
-  return request(`/${Platform}/sso/role/list`, {
+  return request(`/sso/role/list`, {
     method: 'GET',
   });
 }
 
 //获取用户已分配角色 userId
 export async function fetchUserAssignedRoleList(params) {
-  return request(`/${Platform}/sso/user/roleList`, {
+  return request(`/sso/user/roleList`, {
     method: 'GET',
     data: params,
   });
@@ -121,7 +121,7 @@ export async function fetchUserAssignedRoleList(params) {
 
 //保存用户分配角色
 export async function saveUsersAssignedRole(parms) {
-  return request(`/${Platform}/sso/user/roleAuthority`, {
+  return request(`/sso/user/roleAuthority`, {
     method: 'POST',
     data: parms,
   });
@@ -129,7 +129,7 @@ export async function saveUsersAssignedRole(parms) {
 
 //  区域管理--新增
 export async function fetchAddSection(parms) {
-  return request(`/${Platform}/sso/section/addSection`, {
+  return request(`/sso/section/addSection`, {
     method: 'POST',
     data: parms,
   });
@@ -137,7 +137,7 @@ export async function fetchAddSection(parms) {
 
 // 区域管理-删除
 export async function deleteSectionById(parms) {
-  return request(`/${Platform}/sso/section/deleteSectionById`, {
+  return request(`/sso/section/deleteSectionById`, {
     method: 'GET',
     data: parms,
   });
@@ -145,7 +145,7 @@ export async function deleteSectionById(parms) {
 
 //区域管理-编辑更新
 export async function updateSection(parms) {
-  return request(`/${Platform}/sso/section/updateSection`, {
+  return request(`/sso/section/updateSection`, {
     method: 'POST',
     data: parms,
   });
@@ -153,7 +153,7 @@ export async function updateSection(parms) {
 
 // 用户登录历史-列表
 export async function fetchUserLoginHistory(params) {
-  return request(`/${Platform}/sso/userLoginHistory/getLoginHistory`, {
+  return request(`/sso/userLoginHistory/getLoginHistory`, {
     method: 'POST',
     data: params,
   });
@@ -161,7 +161,7 @@ export async function fetchUserLoginHistory(params) {
 
 //角色管理--列表
 export async function fetchAllRoleList(parms) {
-  return request(`/${Platform}/sso/role/pageList`, {
+  return request(`/sso/role/pageList`, {
     method: 'GET',
     data: parms,
   });
@@ -169,7 +169,7 @@ export async function fetchAllRoleList(parms) {
 
 //角色管理--添加角色
 export async function fetchAddRole(parms) {
-  return request(`/${Platform}/sso/role`, {
+  return request(`/sso/role`, {
     method: 'POST',
     data: parms,
   });
@@ -177,7 +177,7 @@ export async function fetchAddRole(parms) {
 
 //角色管理--修改角色
 export async function fetchUpdateRole(params) {
-  return request(`/${Platform}/sso/role`, {
+  return request(`/sso/role`, {
     method: 'PUT',
     data: params,
   });
@@ -185,14 +185,14 @@ export async function fetchUpdateRole(params) {
 
 //角色管理--删除角色
 export async function fetchDeleteRoleById(params) {
-  return request(`/${Platform}/sso/role?id=${params.id}`, {
+  return request(`/sso/role?id=${params.id}`, {
     method: 'DELETE',
   });
 }
 
 //角色管理--导入角色
 export async function fetchUploadRoles(params) {
-  return request(`/${Platform}/sso/role/exportRoles`, {
+  return request(`/sso/role/exportRoles`, {
     method: 'POST',
     data: params,
   });
@@ -200,7 +200,7 @@ export async function fetchUploadRoles(params) {
 
 //角色管理---保存角色分配权限
 export async function saveRoleAssignAuthority(parms) {
-  return request(`/${Platform}/sso/role/authority`, {
+  return request(`/sso/role/authority`, {
     method: 'PUT',
     data: parms,
   });
@@ -208,7 +208,7 @@ export async function saveRoleAssignAuthority(parms) {
 
 // 根据Token获取用户，验证成功返回用户信息，验证失败就返回code -1
 export async function queryUserByToken() {
-  return request(`/${Platform}/sso/user/queryUserByToken`, { method: 'GET' });
+  return request(`/sso/user/queryUserByToken`, { method: 'GET' });
 }
 
 ///////////////////// *** 授权管理 *** /////////////////////
@@ -218,7 +218,7 @@ export async function queryUserByToken() {
  * @return boolean
  */
 export async function getCertificateStatus() {
-  return request(`/${Platform}/certificate/getCertificateStatus`, {
+  return request(`/certificate/getCertificateStatus`, {
     method: 'GET',
     attachSection: false,
   });
@@ -226,7 +226,7 @@ export async function getCertificateStatus() {
 
 // 获取授权码
 export async function getApplyToken() {
-  return request(`/${Platform}/certificate/getApplyToken`, {
+  return request(`/certificate/getApplyToken`, {
     method: 'GET',
     attachSection: false,
   });
@@ -234,7 +234,7 @@ export async function getApplyToken() {
 
 // 上传证书
 export async function uploadCertification(param) {
-  return request(`/${Platform}/certificate/active`, {
+  return request(`/certificate/active`, {
     method: 'POST',
     data: param,
     attachSection: false,
@@ -243,7 +243,7 @@ export async function uploadCertification(param) {
 
 // 获取授权状态
 export async function getAuthorityInfo() {
-  return request(`/${Platform}/certificate/getSystemInfo`, {
+  return request(`/certificate/getSystemInfo`, {
     method: 'GET',
     attachSection: false,
   });

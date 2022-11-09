@@ -197,7 +197,7 @@ export default {
       }
 
       // 筛选授权的APP
-      let grantedAPP = [AppCode.SSO];
+      let grantedAPP = [AppCode.SSO, AppCode.Report];
       if (currentUser.username !== 'admin') {
         // 约定: authorityKeys 中以 @@_ 开头的key就代表某个模块
         const startsBase = '@@_';

@@ -54,14 +54,14 @@ const HealthCarSearchForm = (props) => {
         <Form.Item hidden name={'endTime'} />
 
         {/* 日期 */}
-        <Col span={10}>
+        <Col span={8}>
           <Form.Item
-            name="timeRange"
-            label={<FormattedMessage id="app.form.dateRange" />}
+            name='timeRange'
+            label={<FormattedMessage id='app.form.dateRange' />}
             rules={[
               {
                 required: true,
-                message: <FormattedMessage id="reportCenter.time.required" />,
+                message: <FormattedMessage id='reportCenter.time.required' />,
               },
             ]}
           >
@@ -70,10 +70,10 @@ const HealthCarSearchForm = (props) => {
         </Col>
 
         {/* 小车 */}
-        <Col span={14}>
+        <Col span={8}>
           <Form.Item
             name={'vehicleSearch'}
-            label={<FormattedMessage id="app.vehicle" />}
+            label={<FormattedMessage id='app.vehicle' />}
             initialValue={{ type: 'Vehicle_ID', code: [] }}
           >
             <VehicleComponent dataSource={optionsData} />
@@ -93,13 +93,13 @@ const HealthCarSearchForm = (props) => {
             </Form.Item>
           </Col>
         ) : (
-          <Col span={12} />
+          <Col span={0}></Col>
         )}
 
-        <Col span={12}>
+        <Col>
           <Form.Item>
-            <Button type="primary" onClick={submitSearch}>
-              <FormattedMessage id="app.button.search" />
+            <Button type='primary' onClick={submitSearch}>
+              <FormattedMessage id='app.button.search' />
             </Button>
 
             {downloadVisible && (

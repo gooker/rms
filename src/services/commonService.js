@@ -466,7 +466,7 @@ export async function fetchCodeHealth(params) {
 
 // 小车健康
 export async function fetchVehicleHealth(params) {
-  return request(`/${NameSpace.Platform}/statistic/getVehicleHealth`, {
+  return request(`/${NameSpace.Platform}/statistic/getAgvHealth`, {
     method: 'POST',
     data: params,
   });
@@ -474,7 +474,7 @@ export async function fetchVehicleHealth(params) {
 
 // 小车负载报表
 export async function fetchVehicleload(params) {
-  return request(`/${NameSpace.Platform}/statistic/getVehicleLoad`, {
+  return request(`/${NameSpace.Platform}/statistic/getAgvLoad`, {
     method: 'POST',
     data: params,
   });

@@ -643,22 +643,22 @@ export const generateTableData = (originalData = {}, vehicleData = []) => {
 
   Object.values(originalData).forEach((record) => {
     record.forEach((item) => {
-      const { vehicleId, vehicleType } = item;
-      if (currentAxisData.includes(vehicleId)) {
-        currentCellIdData[vehicleId]['vehicleType'] = vehicleType;
-        currentCellIdData[vehicleId]['vehicleId'] = vehicleId;
+      const { agvId, robotType } = item;
+      if (currentAxisData.includes(agvId)) {
+        currentCellIdData[agvId]['vehicleType'] = robotType;
+        currentCellIdData[agvId]['vehicleId'] = agvId;
         forIn(item, (value, key) => {
           if (firstTimeDataMap.has(key)) {
-            let seryData = currentCellIdData[vehicleId][key] || 0;
+            let seryData = currentCellIdData[agvId][key] || 0;
             if (_key[key]) {
               let currentKey = _key[key];
-              currentCellIdData[vehicleId][key] = seryData * 1 + (value[currentKey] ?? 0) * 1;
+              currentCellIdData[agvId][key] = seryData * 1 + (value[currentKey] ?? 0) * 1;
             } else {
               let _sum = 0;
               forIn(value, (val2, k2) => {
                 _sum += val2;
               });
-              currentCellIdData[vehicleId][key] = seryData * 1 + _sum * 1;
+              currentCellIdData[agvId][key] = seryData * 1 + _sum * 1;
             }
           }
         });

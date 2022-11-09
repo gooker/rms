@@ -32,7 +32,7 @@ export const VehicleType = {
 
 // namespace
 export const NameSpace = {
-  Platform: 'platform',
+  Platform: 'coordinator',
   WS: 'ws',
 };
 

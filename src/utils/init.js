@@ -235,10 +235,6 @@ export function checkPermission(router, permissionMap, appCode) {
         if (!validateHookPermission(hooks)) {
           continue;
         }
-      } else {
-        if (!permissionMap[path]) {
-          continue;
-        }
       }
     }
 

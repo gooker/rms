@@ -3,10 +3,8 @@ import { message, Modal, notification } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { connect } from '@/utils/RmsDva';
 import HomeLayout from '@/layout/HomeLayout';
-import RmsConfirm from '@/components/RmsConfirm';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import { AlertCountPolling } from '@/workers/WebWorkerManager';
-import SocketClient from '@/entities/SocketClient';
 import { AppCode } from '@/config/config';
 import notice from '@/utils/notice';
 import { fetchGlobalExtraData, initI18n } from '@/utils/init';
@@ -67,32 +65,32 @@ class MainLayout extends React.Component {
 
             // 初始化页面长链接、告警相关功能
             if (username !== 'admin') {
-              // 初始化Socket客户端
-              this.socketClient = new SocketClient();
-
-              this.socketClient.connect();
-              this.socketClient.registerNotificationQuestion((message) => {
-                // 如果关闭提示，就直接不拉取接口
-                const sessionValue = window.sessionStorage.getItem('showErrorNotification');
-                const showErrorNotification = isNull(sessionValue) ? true : sessionValue === 'true';
-                if (!showErrorNotification) return;
-                this.showSystemAlert(message);
-              });
-              await dispatch({ type: 'global/saveSocketClient', payload: this.socketClient });
-
-              // 立即获取一次告警数量
-              dispatch({ type: 'global/fetchAlertCount' }).then((response) => {
-                if (response > 0) {
-                  RmsConfirm({
-                    content: formatMessage({ id: 'app.alarmCenter.requestHandle' }, { response }),
-                    okText: formatMessage({ id: 'app.alarmCenter.goHandle' }),
-                    cancelText: formatMessage({ id: 'app.button.cancel' }),
-                    onOk() {
-                      _this.goToQuestionCenter();
-                    },
-                  });
-                }
-              });
+              // // 初始化Socket客户端
+              // this.socketClient = new SocketClient();
+              //
+              // this.socketClient.connect();
+              // this.socketClient.registerNotificationQuestion((message) => {
+              //   // 如果关闭提示，就直接不拉取接口
+              //   const sessionValue = window.sessionStorage.getItem('showErrorNotification');
+              //   const showErrorNotification = isNull(sessionValue) ? true : sessionValue === 'true';
+              //   if (!showErrorNotification) return;
+              //   this.showSystemAlert(message);
+              // });
+              // await dispatch({ type: 'global/saveSocketClient', payload: this.socketClient });
+              //
+              // // 立即获取一次告警数量
+              // dispatch({ type: 'global/fetchAlertCount' }).then((response) => {
+              //   if (response > 0) {
+              //     RmsConfirm({
+              //       content: formatMessage({ id: 'app.alarmCenter.requestHandle' }, { response }),
+              //       okText: formatMessage({ id: 'app.alarmCenter.goHandle' }),
+              //       cancelText: formatMessage({ id: 'app.button.cancel' }),
+              //       onOk() {
+              //         _this.goToQuestionCenter();
+              //       },
+              //     });
+              //   }
+              // });
 
               // 加载地图Texture
               if (!textureLoaded) {

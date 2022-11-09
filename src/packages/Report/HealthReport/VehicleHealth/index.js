@@ -172,7 +172,7 @@ const HealthCar = (props) => {
           <TabPane key={'scan'} tab={formatMessage({ id: 'reportCenter.vehicle.scancode' })}>
             <ScanCodeComponent
               originData={scanOriginData}
-              originIds={getAllCellId(scanOriginData, 'vehicleId')}
+              originIds={getAllCellId(scanOriginData, 'agvId')}
               keyDataMap={keyCodeData}
               activeTab={activeTab}
             />
@@ -180,7 +180,7 @@ const HealthCar = (props) => {
           <TabPane key={'offline'} tab={formatMessage({ id: 'reportCenter.vehicle.offline' })}>
             <VehicleOfflineComponent
               originData={offlineOriginData}
-              originIds={getAllCellId(offlineOriginData, 'vehicleId')}
+              originIds={getAllCellId(offlineOriginData, 'agvId')}
               keyDataMap={keyOfflineData}
               activeTab={activeTab}
             />
@@ -188,7 +188,7 @@ const HealthCar = (props) => {
           <TabPane key={'statuserror'} tab={formatMessage({ id: 'reportCenter.vehicle.error' })}>
             <VehicleErrorComponent
               originData={statuserrorOriginData}
-              originIds={getAllCellId(statuserrorOriginData, 'vehicleId')}
+              originIds={getAllCellId(statuserrorOriginData, 'agvId')}
               keyDataMap={keyErrorData}
               activeTab={activeTab}
             />
@@ -196,7 +196,7 @@ const HealthCar = (props) => {
           <TabPane key={'fault'} tab={formatMessage({ id: 'reportCenter.vehicle.fault' })}>
             <VehicleFaultComponent
               originData={faultOriginData}
-              originIds={getAllCellId(faultOriginData, 'vehicleId')}
+              originIds={getAllCellId(faultOriginData, 'agvId')}
               keyDataMap={keyFaultData}
               activeTab={activeTab}
             />

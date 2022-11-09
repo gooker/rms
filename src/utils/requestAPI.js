@@ -50,7 +50,8 @@ export default function requestAPI() {
       // platform: 'http://52.83.193.245:10220',
       // ws: 'ws://52.83.193.245:10220/ws',
 
-      platform: 'http://52.83.193.245:10251',
+      sso: 'http://52.83.193.245:10221',
+      coordinator: 'http://192.168.110.79:8087',
       ws: 'ws://52.83.193.245:10251/ws',
     };
   }
